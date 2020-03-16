@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+    <link rel="stylesheet" href="/assets/bootstrap.min.css" />
+    <title>Login page</title>
+</head>
+<body>
+    <div class="d-flex h-100 align-items-center">
+        <div class="container">
+            <div class="row justify-content-sm-center">
+                <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
+                    <div class="jumbotron flex-grow-0 flex-shrink-1" id="gateway" style="box-shadow: 0 0 15px 0px #333333; background-color: #d9e0e2">
+                        <h1 class="display-4" id="logoText">Sketch desk</h1>
+                        <form>
+                            <div class="form-group">
+                                <label for="login">Логин</label>
+                                <input type="text" class="form-control" id="login" aria-describedby="loginHelp"
+                                    placeholder="Логин" />
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Пароль</label>
+                                <input type="password" class="form-control" id="password" placeholder="Пароль" />
+                            </div>
+                            <div class="form-group">
+                                <label for="checkbox">Чужой компьютер</label>
+                                <input type="checkbox" id="checkbox" />
+                            </div>
+                            <div id="errorMessage" style="padding: 0px 20px 15px 0px; font-size: 85%; font-weight: bolder; display: none; color: #D54541;">Не верная пара Логин/Пароль</div>
+                            <button type="button" id="submitForm" class="btn btn-success">Войти</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- scripts -->
+    <script src="/assets/jquery-3.4.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="/assets/aes.js"></script>
+    <script src="/assets/loginForm.js"></script>
+</body>
+
+</html>
