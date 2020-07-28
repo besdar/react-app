@@ -1,0 +1,38 @@
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+}
+
+.header > a, .leftHeader > * {
+    margin: 0 5px;
+    color: #4c8dce;
+}
+
+.header>* {
+    display: flex;
+    justify-content: space-around;
+    width: fit-content;
+    width: -moz-fit-content;
+    align-items: flex-end;
+}
+
+.progress_bar {
+    height: 5px !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+.showHeader {
+    position: fixed;
+    left: 0;
+    right: 0;
+    margin: auto!important;
+    width: min-content;
+    color: #4c8dce;
+}

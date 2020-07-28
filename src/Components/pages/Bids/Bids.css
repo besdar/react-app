@@ -1,0 +1,63 @@
+.p-col {
+    padding: .5em;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.child_messg_row td {
+    border: none !important;
+}
+
+.rce-container-mbox {
+    max-width: 600px;
+}
+
+.mssg-box {
+    background-color: #c2ddf2;
+    border: solid #c2ddf2;
+    border-radius: 5px;
+}
+
+body .p-treetable .p-treetable-thead tr th {
+    background-color: #c2ddf2 !important;
+}
+
+.badge {
+    background-color: #f44336;
+    color: #ffffff;
+    position: absolute;
+    font-size: 11px;
+    top: -9px;
+    right: -4px;
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-weight: bold;
+    line-height: 1;
+    vertical-align: baseline;
+    white-space: nowrap;
+    text-align: center;
+    border-radius: 10px;
+    z-index: 1;
+}
+
+.head_buttons>* {
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.head_buttons {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+}
+
+body .p-component {
+    font-size: 0.75vw;
+}
+
+/* @media only screen and (max-width: 376px) {
+    body .p-component {
+        font-size: 1.6vw;
+    }
+} */

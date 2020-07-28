@@ -1,0 +1,65 @@
+.avatarCardBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.p-card-footer {
+    overflow: hidden;
+}
+
+.cardFooter {
+    display: flex;
+    align-items: center;
+    float: right;
+    width: fit-content;
+}
+
+.cardFooter svg {
+    margin: 0px 5px;
+}
+
+.cardFooter svg:hover {
+    fill: #007ad9;
+}
+
+.cardFooter>div {
+    cursor: pointer;
+}
+
+.cardContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.cardContentText {
+    display: grid;
+    width: 90%;
+    position: relative;
+}
+
+.p-card-content {
+    overflow: auto;
+}
+
+.p-card-body {
+    padding: 0.625em;
+}
+
+.sticker {
+    border: 1px solid #bdbdbd;
+}
+
+.sticker:hover {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25), 0 5px 10px rgba(0,0,0,0.22);
+    cursor: pointer;
+}
+
+.shortCardContent {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

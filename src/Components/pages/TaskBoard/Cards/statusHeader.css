@@ -1,0 +1,34 @@
+.cardsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    color: #4c8dce;
+}
+
+.cardsHeader h3 {
+    margin-bottom: 0px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cardsHeader > * {
+    white-space: nowrap;
+}
+
+.showIcon path {
+    fill: #4c8dce;
+}
+
+.showIcon:hover path {
+    fill: darkblue;
+}
+
+.statusHeaderLineRight {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.statusHeaderLineRight > * {
+    margin-left: 8px;
+}

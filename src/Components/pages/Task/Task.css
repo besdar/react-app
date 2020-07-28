@@ -1,0 +1,49 @@
+.p-inputtext, .p-dropdown {
+    width: 100%!important;
+}
+
+.p-inputnumber {
+    display: block;
+}
+
+.status_buttons {
+    margin: 5px 5px 5px 0!important;
+}
+
+.p-col {width: auto;}
+
+.head_buttons {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.head_buttons>* {
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.badge {
+    background-color: #f44336;
+    color: #ffffff;
+    position: absolute;
+    top: -8px;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-weight: bold;
+    border-radius: 10px;
+    right: -5px;
+    line-height: normal;
+}
+
+#file_upload {
+    position: relative;
+    display: flex;
+    width: fit-content;
+    width: -moz-fit-content;
+}
+
+.task {
+    padding: 1%;
+}

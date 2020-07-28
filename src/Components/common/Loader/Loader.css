@@ -1,0 +1,20 @@
+.progressDiv {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progressLine {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: center;
+}
+
+.progressSpinner {
+    top: unset!important;
+    bottom: unset!important;
+}

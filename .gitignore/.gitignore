@@ -1,7 +1,11 @@
 .npmrc
 .env
+.lock
+server.log
 
 node_modules/
 dist/
 logs/
 .idea/
+server/config.js
+build/

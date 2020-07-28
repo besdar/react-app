@@ -1,0 +1,9 @@
+.numberWeightCell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.commandPallete {
+    text-align: start;
+}

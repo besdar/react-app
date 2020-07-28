@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+    line-height: 1.6;
+}
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+h1, h2, h3, h4, h5, .title {
+    font-family: 'Roboto Slab', serif;
+}
+
+button.p-button,
+body .p-accordion .p-accordion-header:not(.p-disabled).p-highlight a,
+body .p-tabview.p-tabview-top .p-tabview-nav li a, body .p-tabview.p-tabview-bottom .p-tabview-nav li a, body .p-tabview.p-tabview-left .p-tabview-nav li a, body .p-tabview.p-tabview-right .p-tabview-nav li a {
+    background-color: transparent;
+    color: #007ad9;
+}
+
+body .p-accordion .p-accordion-header:not(.p-disabled).p-highlight a .p-accordion-toggle-icon {
+    color: #007ad9;
+}
+
+body .p-datatable .p-datatable-thead > tr > th {
+    background-color: transparent;
+}
