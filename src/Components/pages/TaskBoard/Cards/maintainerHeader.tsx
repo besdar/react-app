@@ -15,7 +15,7 @@ const MaintainerHeader: React.FC<PropsType> = (props) => {
         return <div key={"_" + Math.random().toString(36).substr(2, 9)} className="p-col">
             <div className="maintainerHeaderLine">
                 <div className="avatarBlock">
-                    <img alt="avatar" src={props.list.avatar} />
+                    <div className="avatar_img"><img loading="lazy" alt="avatar" src={props.list.avatar} /></div>
                     <div className="title">{props.list.maintainer}: {props.list.list.length} / {props.list.weight.toFixed(0)}</div>
                 </div>
                 

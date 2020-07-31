@@ -35,7 +35,7 @@ export class PhotoMessage extends Component {
                         width: this.props.data.width,
                         height: this.props.data.height,
                     }}>
-                    <img
+                    <img loading="lazy"
                         src={this.props.data.uri}
                         alt={this.props.data.alt}
                         onClick={this.props.onOpen}

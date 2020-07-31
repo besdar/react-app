@@ -43,9 +43,7 @@ const BidMain: React.FC<PropsType> = (props) => {
             <div className="p-grid">
                 <div className="p-col">
                     <label htmlFor="name">Наименование: </label>
-                    <InputText type="text" id="name" value={props.Bid.name} onChange={(e) =>
-                        // @ts-ignore - error: Property 'value' does not exist on type 'EventTarget'
-                        props.setBidProp('name', e.target.value)} />
+                    <InputText type="text" id="name" value={props.Bid.name} onChange={(e) => props.setBidProp('name', (e.target as HTMLInputElement).value)} />
                 </div>
                 {props.Bid.source.value !== '' && <div className="p-col">
                     <label htmlFor="source">Основание: </label>
@@ -81,9 +79,7 @@ const BidMain: React.FC<PropsType> = (props) => {
                         </div>
                         <div className="p-col">
                             <label htmlFor="duration">Продолжительность: </label>
-                            <InputNumber type="text" id="duration" value={props.Bid.duration} onChange={(e) =>
-                                // @ts-ignore - error: Property 'value' does not exist on type 'EventTarget'
-                                props.setBidProp('duration', e.value)} />
+                            <InputNumber type="text" id="duration" value={props.Bid.duration} onChange={(e) => props.setBidProp('duration', e.value)} />
                         </div>
                         <div className="p-col">
                             <label htmlFor="mode">Вид задачи: </label>
@@ -143,10 +139,7 @@ const getSolving = (VisibilityAvailability: {invisible: Array<string>, unavailab
 
         return <div className="p-col">
             <span>Решение ошибки: </span>
-            <InputTextarea readOnly={readOnly} value={solving} onChange={(e) => {
-                // @ts-ignore - error: Property 'value' does not exist on type 'EventTarget'
-                setBidProp('solving', e.target.value)
-            }} autoResize />
+            <InputTextarea readOnly={readOnly} value={solving} onChange={(e) => setBidProp('solving', (e.target as HTMLTextAreaElement).value)} autoResize />
         </div>
     }
 }

@@ -6,9 +6,12 @@
     height: 80px;
 }
 
-.header > a, .leftHeader > * {
+.header > a, .leftHeader > *, .rightHeader > * {
     margin: 0 5px;
     color: #4c8dce;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .header>* {
@@ -35,4 +38,15 @@
     margin: auto!important;
     width: min-content;
     color: #4c8dce;
+    top: calc(0.6em + 85px);
+}
+
+.header_sidebar {
+    height: auto;
+    z-index: 1000;
+}
+
+.header_white_margin {
+    height: calc(0.6em + 85px);
+    width: 100%;
 }

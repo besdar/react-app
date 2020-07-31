@@ -41,7 +41,7 @@ type PropsType = {
 
 const linkTemplate = (el: attachementItemType) => (<a rel="noopener noreferrer" target="_blank" href={el.link}>{el.value}</a>)
 
-function uploadFile(event: any, setNewBidAttachement: (attachement: attachementItemType, attachement_link: attachementItemType) => void) {
+const uploadFile = (event: any, setNewBidAttachement: setNewBidAttachementType) => {
     let reader = new FileReader();
     // @ts-ignore - cannot define types of it now
     reader.onload = (function (theFile) { return function (el) { setNewBidAttachement({ data: el.target.result, filename: theFile.name }, { link: theFile.url, value: theFile.name }) }; })({ name: event.files[0].name, url: event.files[0].objectURL });
@@ -50,6 +50,14 @@ function uploadFile(event: any, setNewBidAttachement: (attachement: attachementI
     document.getElementById("file_upload").firstElementChild.lastElementChild.style.display = 'inline'; //its work of primereact, but why do they think i need it to do!??
 }
 
+const AttachementHeader = (props: {attachement_links_length: number, setNewBidAttachement: setNewBidAttachementType}) => <React.Fragment>
+    <h3>Вложения</h3>
+    <div id="file_upload">
+        <FileUpload chooseLabel='Выбрать файл' mode="basic" name="upload" maxFileSize={500000} auto={true} customUpload={true} uploadHandler={(e: any) => uploadFile(e, props.setNewBidAttachement)} />
+        <sup className="badge">{props.attachement_links_length}</sup>
+    </div>
+</React.Fragment>;
+
 const Bid: React.FC<PropsType> = (props) => {
 
     let growl = useRef<any>(null);
@@ -57,15 +65,11 @@ const Bid: React.FC<PropsType> = (props) => {
     if (!props.Bid.loaded) { return <Loader nameOfProcess="загружаем данные сделки" /> }
 
     if (props.NowMessage.detail !== '') {
-        // @ts-ignore - i don't know how to define 'GrowlMetod' type
         growl.current.show(props.NowMessage);
         props.setCurrentBidState('NowMessage', { ...props.NowMessage, detail: '' });
     }
 
-    let attachementHeader = <React.Fragment><h3>Вложения</h3><div id="file_upload">
-        <FileUpload chooseLabel='Выбрать файл' mode="basic" name="upload" maxFileSize={500000} auto={true} customUpload={true} uploadHandler={(e: any) => uploadFile(e, props.setNewBidAttachement)} />
-        <sup className="badge">{props.Bid.attachement_links.length}</sup>
-    </div></React.Fragment>;
+
 
     return (<div className="bid">
         <Growl ref={growl} />
@@ -81,13 +85,12 @@ const Bid: React.FC<PropsType> = (props) => {
                     maxHeight='none'
                     data={props.Bid.discussionData}
                     nowReplyMessageId={props.Bid.nowReplyMessageId}
-                    // @ts-ignore - error: property 'target' does not exist on type HTMLElement
-                    onResponseMessageClick={(e) => { props.setBidProp('nowReplyMessageId', e.target.id) }}
+                    onResponseMessageClick={(e) => { props.setBidProp('nowReplyMessageId', (e.target as Element).id) }}
                     sendReply={props.sendBidReply} />
             </TabPanel>
             <TabPanel header={<React.Fragment><IoIosAttach /><span>Вложения</span></React.Fragment>}>
                 <DataTable value={props.Bid.attachement_links}>
-                    <Column header={attachementHeader} body={linkTemplate} />
+                    <Column header={<AttachementHeader attachement_links_length={props.Bid.attachement_links.length} setNewBidAttachement={props.setNewBidAttachement} />} body={linkTemplate} />
                 </DataTable>
             </TabPanel>
             <TabPanel header={<React.Fragment><GoLink /><span>Связанные</span></React.Fragment>}>

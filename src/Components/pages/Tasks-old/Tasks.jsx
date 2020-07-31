@@ -67,7 +67,7 @@ const Tasks = (props) => {
     return (
       <div className="progressDiv"
         style={{ height: window.innerHeight + "px" }}>
-        <img src={window.location.origin + "/assets/loader.gif"}></img>
+        <img loading="lazy" src={window.location.origin + "/assets/loader.gif"}></img>
       </div>
     );
   }

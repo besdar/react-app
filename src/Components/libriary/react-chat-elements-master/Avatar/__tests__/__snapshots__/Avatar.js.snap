@@ -4,7 +4,7 @@ exports[`Avatar component should render without issues 1`] = `
 <div
   className="rce-avatar-container default default"
 >
-  <img
+  <img loading="lazy"
     alt=""
     className="rce-avatar"
     onError={[Function]}

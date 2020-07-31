@@ -26,9 +26,6 @@ type PropsType = {
     changeTaskPriority: changeTaskPriorityType
 }
 
-const widthOfGroupsOfColumns = window.innerWidth < 320 ? {waitings: 'auto', other: 'auto'} : {waitings: '40%', other: '20%'};
-const classnameOfGroupsOfColumns = window.innerWidth < 320 ? 'p-col' : 'p-col-1';
-
 const Taskboard: React.FC<PropsType> = (props) => {
 
     let growl = useRef<any>(null);
@@ -43,8 +40,8 @@ const Taskboard: React.FC<PropsType> = (props) => {
     return (<React.Fragment>
         <Growl ref={growl} position='bottomright' />
         <Header isAllCollapsed={props.isAllCollapsed} isAllCardExpanded={props.isAllCardExpanded} collapseAllMaintainerTabs={props.collapseAllMaintainerTabs} expandAllCards={props.expandAllCards} setHeaderVisibility={props.setHeaderVisibility} headerVisible={props.headerVisible} showSpinner={props.showSpinner} getTaskboardData={props.getTaskboardData} />
-        <div className="p-grid" style={{marginRight: '0'}}>
-            <div className={classnameOfGroupsOfColumns} style={{width: widthOfGroupsOfColumns.waitings}}> 
+        <div className={window.innerWidth > 425 ? "p-grid" : "p-grid-col"} style={{marginRight: '0'}}>
+            <div className='p-col' style={{flexBasis: '30%'}}> 
                 <Cards 
                     changeTaskPriority={props.changeTaskPriority} 
                     collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} 
@@ -55,7 +52,7 @@ const Taskboard: React.FC<PropsType> = (props) => {
                     status="waiting" 
                     data={props.Cards.waiting} />
             </div>
-            <div className={classnameOfGroupsOfColumns} style={{width: widthOfGroupsOfColumns.other}}>
+            <div className='p-col' style={{flexBasis: '15%'}}>
                 <Cards 
                     changeTaskPriority={props.changeTaskPriority} 
                     collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} 
@@ -67,12 +64,12 @@ const Taskboard: React.FC<PropsType> = (props) => {
                     data={props.Cards.atProgress} />
                 <Cards changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="testing" data={props.Cards.testing} />
             </div>
-            <div className={classnameOfGroupsOfColumns} style={{width: widthOfGroupsOfColumns.other}}>
+            <div className='p-col' style={{flexBasis: '15%'}}>
                 <Cards changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="currentRelease" data={props.Cards.currentRelease} />
                 <Cards changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="cyberTest" data={props.Cards.cyberTest} />
                 <Cards changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="implementation" data={props.Cards.implementation} />
             </div>
-            <div className={classnameOfGroupsOfColumns} style={{width: widthOfGroupsOfColumns.other}}>
+            <div className='p-col' style={{flexBasis: '15%'}}>
                 <Cards changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="ready" data={props.Cards.ready} />
             </div>
         </div>

@@ -55,7 +55,7 @@ type PropsType = MapPropsType & DispatchPropsType;
 class TaskboardContainer extends React.Component<PropsType> {
     componentDidMount() {
         document.title = "Taskboard";
-        this.props.getTaskboardData(window.innerWidth < 320);
+        this.props.getTaskboardData(window.innerWidth < 425);
     }
 
     render() {

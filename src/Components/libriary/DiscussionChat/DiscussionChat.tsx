@@ -10,7 +10,7 @@ import { sendBidsReplyType } from '../../../redux/reducers/bids-reducer';
 type PropsType = {
     nowReplyMessageId?: string,
     data: discussionDataType,
-    onResponseMessageClick?: (element: HTMLElement) => void,
+    onResponseMessageClick?: (element: React.FormEvent) => void,
     sendReply: sendBidReplyType | sendBidsReplyType,
     maxHeight: string,
     showAllMessages: boolean
@@ -29,9 +29,9 @@ const DiscussionChat: React.FC<PropsType> = (props) => {
                                 // eslint-disable-next-line
                                 el.id == props.nowReplyMessageId
                                 ))}
-                            rightButtons={<Button label='Отправить' id={props.data.id} onClick={function (element) {
+                            rightButtons={<Button label='Отправить' id={props.data.id} onClick={(element) => {
                                 // @ts-ignore - we need to take it from state. And we need to remove 'react-chat-elements-master' component at all
-                                let text = element.currentTarget.parentElement.parentElement.firstElementChild.value;
+                                const text = element.currentTarget.parentElement.parentElement.firstElementChild.value;
                                 props.sendReply(props.nowReplyMessageId || element.currentTarget.id, text);
                             }} />}
                              />

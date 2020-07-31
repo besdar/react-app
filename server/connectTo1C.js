@@ -68,7 +68,7 @@ export const putSaveParadocsTextsFrom1C = (req, res) => { AxiosMethodTo1C('put',
 export const pushBidButtonOn1C = (req, res) => { AxiosMethodTo1C('post', req.cookies.token, res, 'bid/' + req.body.number, req.body.BidObject) }
 export const getBidDataFrom1C = (req, res) => { AxiosMethodTo1C('get', req.cookies.token, res, 'bid/' + req.body.number, {}) }
 export const GetTaskboardDataFrom1C = (req, res) => { AxiosMethodTo1C('get', req.cookies.token, res, 'taskboard', {}) }
-export const pushTaskButtonTo1C = (req, res) => { AxiosMethodTo1C('post', req.cookies.token, res, 'task/' + req.body.TaskObject, req.body.TaskObject) }
+export const pushTaskButtonTo1C = (req, res) => { AxiosMethodTo1C('post', req.cookies.token, res, 'task/' + req.body.number, req.body.TaskObject) }
 export const getTaskDataFrom1C = (req, res) => { AxiosMethodTo1C('get', req.cookies.token, res, 'task/' + req.body.number, {}) }
 
 const AxiosMethodTo1C = (method, token, res, link1C, dataFor1C) => {

@@ -13,7 +13,7 @@ const Task = (props) => {
     if (!props.Task.loaded) {
         return <div style={{ width: "100%", height: window.innerHeight + 'px', display: "flex", alignItems: "center", justifyContent: "center" }}>
             {/* <ProgressSpinner /> */}
-            <img src={window.location.origin + '/assets/loader.gif'}></img>
+            <img loading="lazy" src={window.location.origin + '/assets/loader.gif'}></img>
         </div>
     }
 

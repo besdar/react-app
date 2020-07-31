@@ -16,18 +16,16 @@ type PropsType = {
 const StatusHeader: React.FC<PropsType> = (props) => {
     return <React.Fragment>
         <div className="p-col cardsHeader">
-        <h3 title={props.data.header}>{props.data.header}</h3>
-        <div className="statusHeaderLineRight">
-            <span>{props.tasksCount + ' / ' + props.commonWeight.toFixed(0)}</span>
-            <div className="iconButton" onClick={() => props.collapseAllMaintainerStatusesByTab(props.status)}>{props.data.isAllMaintainersCollapse ? <AiOutlineUsergroupAdd className="showIcon" /> : <AiOutlineUsergroupDelete className="showIcon" />}</div>
-            <div
-                className="iconButton"
-                onClick={() =>props.setCurrentStateOfCards(props.status, "isCollapse", props.data.isCollapse === undefined || !props.data.isCollapse)
-            }>
-                {props.data.isCollapse !== undefined && props.data.isCollapse ? (<FaPlus className="showIcon" />) : (<FaMinus className="showIcon" />)}
+            <h3 title={props.data.header}>{props.data.header}</h3>
+            <div className="statusHeaderLineRight">
+                <span>{props.tasksCount + ' / ' + props.commonWeight.toFixed(0)}</span>
+                <div className="iconButton" onClick={() => props.collapseAllMaintainerStatusesByTab(props.status)}>{props.data.isAllMaintainersCollapse ? <AiOutlineUsergroupAdd className="showIcon" /> : <AiOutlineUsergroupDelete className="showIcon" />}</div>
+                <div className="iconButton"
+                    onClick={() => props.setCurrentStateOfCards(props.status, "isCollapse", props.data.isCollapse === undefined || !props.data.isCollapse)}>
+                    {props.data.isCollapse !== undefined && props.data.isCollapse ? (<FaPlus className="showIcon" />) : (<FaMinus className="showIcon" />)}
+                </div>
             </div>
         </div>
-    </div>
         <hr style={{ marginTop: "0px" }} />
     </React.Fragment>
 };

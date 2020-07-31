@@ -26,7 +26,7 @@ const Cards: React.FC<PropsType> = (props) => {
   }
 
   const isItCollapseFirst =
-    props.data.isCollapse === undefined && window.innerWidth > 420;
+    props.data.isCollapse === undefined && window.innerWidth > 425;
   let tasksCount = 0;
   let commonWeight = 0;
   props.data.lists.forEach((list) => {
@@ -39,9 +39,9 @@ const Cards: React.FC<PropsType> = (props) => {
     renederedLists = props.data.lists.map((list, index) => (
       <React.Fragment key={index}>
         <MaintainerHeader list={list} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} status={props.status} index={index} />
-        {(list.isCollapse === undefined || !list.isCollapse || props.status === 'atProgress') && <div key={"_" + Math.random().toString(36).substr(2, 9)} className={props.status === "waiting" ? "p-col p-grid" : ""}>
+        {(list.isCollapse === undefined || !list.isCollapse || props.status === 'atProgress') && <div key={"_" + Math.random().toString(36).substr(2, 9)} className={props.status === "waiting" && window.innerWidth > 425 ? "p-col p-grid" : ""}>
           {list.list.map((el, ix) => (
-            <div style={{ position: "relative" }} key={index + "-" + ix} className={props.status === "waiting" ? "p-col-6" : "p-col"}>
+            <div style={{ position: "relative" }} key={index + "-" + ix} className={props.status === "waiting" && window.innerWidth > 425 ? "p-col-6" : "p-col"}>
               <Card
                 changeTaskStatus={props.changeTaskStatus}
                 status={props.status}

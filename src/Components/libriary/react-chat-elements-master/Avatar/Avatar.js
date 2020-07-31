@@ -63,7 +63,7 @@ export class Avatar extends Component {
 
         return (
             <div className={classNames('rce-avatar-container', this.props.type, this.props.size, this.props.className)}>
-                <img
+                <img loading="lazy"
                     alt={this.props.alt}
                     src={src}
                     onError={this.props.onError}

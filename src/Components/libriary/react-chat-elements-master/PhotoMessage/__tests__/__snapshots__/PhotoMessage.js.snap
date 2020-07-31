@@ -7,7 +7,7 @@ exports[`PhotoMessage component should render without issues 1`] = `
   <div
     className="rce-mbox-photo--img"
   >
-    <img
+    <img loading="lazy"
       onClick={null}
       onError={null}
       onLoad={null}

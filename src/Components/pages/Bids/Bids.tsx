@@ -68,7 +68,7 @@ const getBidsCols = (styleDisplayOfMessages: "none" | "flex") => {
 }
 
 //"id,number,label,status,time,type,customer,priority,project"
-function messageTemplate(node: TreeNode, sendBidsReply: (id: string, text: string) => void) {
+function messageTemplate(node: TreeNode, sendBidsReply: sendBidsReplyType) {
     if (node.data.is_it_child) {
         return <DiscussionChat
             showAllMessages={true}

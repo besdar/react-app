@@ -76,6 +76,7 @@ const actions = {
 
 // const setCurrentState = (name: "message", data: string): ThunkType => async (dispatch) => { dispatch(actions.setCurrentState(name, data)) }
 export const setFormData = (name: formKeysType, data: string | boolean): ThunkType => async (dispatch) => { dispatch(actions.setFormData(name, data)) }
+export const emptyCaptchaStatus = ():ThunkType => async (dispatch) => {dispatch(actions.setCurrentState('authCount', 0))}
 
 export const getAuthUserData = (): ThunkType => async (dispatch, getState) => {
     const nowState = getState();
@@ -116,3 +117,4 @@ export type setFormDataType = (name: formKeysType, data: string | boolean) => vo
 export type getAuthUserDataType = () => void;
 export type loginType = () => void;
 export type logoutType = () => void;
+export type emptyCaptchaStatusType = () => void;

@@ -130,6 +130,7 @@ export type ErrorType = typeof initialState.NowMessage;
 export type BidType = typeof initialState.Bid;
 export type BidMetadataType = typeof initialState.BidMetadata;
 export type discussionDataType = typeof initialState.Bid.discussionData;
+export type bidTableNametype = 'specifications' | 'userStory';
 
 export const BidReducer = (state = initialState, action: ActionsType): InitialStateType => {
     switch (action.type) {
@@ -195,7 +196,7 @@ export const BidReducer = (state = initialState, action: ActionsType): InitialSt
 
 const actions = {
     setCurrentBidState: (name: initialStateKeys, data: any) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
-    setBidSpec: (id: string, value: any, name: keyof BidSpecUsersType | 'none', tableName: 'specifications' | 'userStory') => ({ type: 'SET_BID_SPEC', id: id, value: value, name: name, tableName: tableName } as const),
+    setBidSpec: (id: string, value: any, name: keyof BidSpecUsersType | 'none', tableName: bidTableNametype) => ({ type: 'SET_BID_SPEC', id: id, value: value, name: name, tableName: tableName } as const),
     setBidProp: (property: BidKeysType, value: any) => ({ type: 'SET_BID_PROP', property: property, value: value } as const),
     addAttachement: (attachement: attachementItemType, attachement_link: attachementItemType) => ({ type: 'ADD_ATTACHEMENT', attachement: attachement, attachement_link: attachement_link } as const),
     setBidData: (Bid: BidType, BidMetadata: BidMetadataType, firstInit = false, NowMessage = initialState.NowMessage) => ({ type: 'SET_BID_DATA', Bid: Bid, BidMetadata: BidMetadata, firstInit: firstInit, NowMessage: NowMessage } as const),
@@ -204,7 +205,7 @@ const actions = {
 
 export const setCurrentBidState = (name: initialStateKeys, data: any): ThunkType => async (dispatch) => { dispatch(actions.setCurrentBidState(name, data)) }
 export const showBidDiscussionDialog = (index: number): ThunkType => async (dispatch, getState) => { dispatch(actions.setBidProp('DialogDiscussionData', { isVisible: true, index: index - 1, DiscussionData: getState().BidPage.Bid.userStory[index - 1].discussionData}))}
-export const setBidSpec = (tableName: 'specifications' | 'userStory', id = '', value = '', name = 'none' as BidSpecTypeKeys): ThunkType => async (dispatch) => { dispatch(actions.setBidSpec(id, value, name, tableName)) }
+export const setBidSpec = (tableName: bidTableNametype, id = '', value = '', name = 'none' as BidSpecTypeKeys): ThunkType => async (dispatch) => { dispatch(actions.setBidSpec(id, value, name, tableName)) }
 
 export const setBidProp = (property: BidKeysType, value: any): ThunkType => async (dispatch) => { dispatch(actions.setBidProp(property, value)) }
 export const getBidData = (number: string): ThunkType => async (dispatch) => {
@@ -284,16 +285,15 @@ type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 
 // thunk types //
-// нужно заменить на typeof
-export type setCurrentBidStateType = (name: initialStateKeys, data: any) => void;
-export type showBidDiscussionDialogType = (index: number) => void;
-export type setBidSpecType = (tableName: 'specifications' | 'userStory', id?: string, value?: string, name?: BidSpecTypeKeys) => void;
-export type setBidPropType = (property: BidKeysType, value: any) => void;
-export type getBidDataType = (number: string) => void;
-export type pushBidButtonType = (type: string) => void;
-export type setNewBidDataType = () => void;
-export type sendBidReplyType = (id: string, text: string) => void;
-export type setBidDataType = (Bid: BidType, BidMetadata: BidMetadataType) => void;
-export type setNewBidAttachementType = (attachement: attachementItemType, attachement_link: attachementItemType) => void;
-export type createNewBidBaseOnThisBidType = (type: 'СоздатьНаОснованииЗаявку' | 'СоздатьНаОснованииЗадачу') => void;
-export type sendBidDiscussionForUSLineType = () => void;
+export type setCurrentBidStateType = typeof setCurrentBidState;
+export type showBidDiscussionDialogType = typeof showBidDiscussionDialog;
+export type setBidSpecType = typeof setBidSpec;
+export type setBidPropType = typeof setBidProp;
+export type getBidDataType = typeof getBidData;
+export type pushBidButtonType = typeof pushBidButton;
+export type setNewBidDataType = typeof setNewBidData;
+export type setBidDataType = typeof setBidData;
+export type setNewBidAttachementType = typeof setNewBidAttachement;
+export type createNewBidBaseOnThisBidType = typeof createNewBidBaseOnThisBid;
+export type sendBidDiscussionForUSLineType = typeof sendBidDiscussionForUSLine;
+export type sendBidReplyType = typeof sendBidReply;

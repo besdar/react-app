@@ -1,5 +1,5 @@
 import { TaskboardAPI } from "../../api/taskboard-api";
-import { TasksAPI } from "../../api/tasks-api";
+import { TaskAPI } from "../../api/task-api";
 import { BaseThunkType, InferActionsTypes } from '../store/redux-store';
 
 export type CardType = {
@@ -202,7 +202,7 @@ export const getTaskboardData = (isItFirstInit = false): ThunkType => async (dis
     } else {
         const TaskboardData = response;
         const nowState = getState().TaskboardPage;
-        Object.keys(TaskboardData.Cards).forEach((key) => { TaskboardData.Cards[key as CardNames].isCollapse = isItFirstInit ? (window.innerWidth < 320) : nowState.Cards[key as CardNames].isCollapse });
+        Object.keys(TaskboardData.Cards).forEach((key) => { TaskboardData.Cards[key as CardNames].isCollapse = isItFirstInit ? (window.innerWidth < 425) : nowState.Cards[key as CardNames].isCollapse });
         dispatch(actions.setTaskboardData(TaskboardData.Cards, isItFirstInit));
     }
 }
@@ -244,7 +244,7 @@ export const setCurrentStateOfCardsList = (cardsName: CardNames, data: boolean, 
 
 export const changeTaskStatus = (number: string, status: string): ThunkType => async (dispatch) => {
     dispatch(actions.setTaskboardState('showSpinner', true));
-    const response = await TasksAPI.pushTaskButton({
+    const response = await TaskAPI.pushTaskButton({
         status: status,
         type: "СменитьСтатусЗадачи"
     }, number);
@@ -281,8 +281,9 @@ export const changeTaskStatus = (number: string, status: string): ThunkType => a
 }
 
 export const changeTaskPriority = (number: string, status: CardNames): ThunkType => async (dispatch, getState) => {
+    console.log(number);
     dispatch(actions.setTaskboardState('showSpinner', true));
-    const response = await TasksAPI.pushTaskButton({
+    const response = await TaskAPI.pushTaskButton({
         type: "СменитьПриоритетЗадачи"
     }, number);
     if (typeof response === "string") { dispatch(actions.setError(response)); }
@@ -312,15 +313,14 @@ type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 
 // thunk types //
-// нужно заменить на typeof
-export type setErrorType = (errorMessage?: string) => void;
-export type setHeaderVisibilityType = (headerVisible?: boolean) => void;
-export type setCardStateType = (id: string, cardName: CardNames, PropName: CardKeyType, value: boolean) => void;
-export type collapseAllMaintainerTabsType = () => void;
-export type collapseAllMaintainerStatusesByTabType = (CardName: CardNames) => void;
-export type getTaskboardDataType = (isItFirstInit?: boolean) => void;
-export type expandAllCardsType = () => void;
-export type setCurrentStateOfCardsType = (cardsName: CardNames, name: "header" | "lists" | "isCollapse", data: string | Array<CardListsType> | boolean) => void;
-export type setCurrentStateOfCardsListType = (cardsName: CardNames, data: boolean, index: number) => void;
-export type changeTaskStatusType = (number: string, status: string) => void;
-export type changeTaskPriorityType = (number: string, status: CardNames) => void;
+export type setErrorType = typeof setError;
+export type setHeaderVisibilityType = typeof setHeaderVisibility;
+export type setCardStateType = typeof setCardState;
+export type collapseAllMaintainerTabsType = typeof collapseAllMaintainerTabs;
+export type collapseAllMaintainerStatusesByTabType = typeof collapseAllMaintainerStatusesByTab;
+export type getTaskboardDataType = typeof getTaskboardData;
+export type expandAllCardsType = typeof expandAllCards;
+export type setCurrentStateOfCardsType = typeof setCurrentStateOfCards;
+export type setCurrentStateOfCardsListType = typeof setCurrentStateOfCardsList;
+export type changeTaskStatusType = typeof changeTaskStatus;
+export type changeTaskPriorityType = typeof changeTaskPriority;

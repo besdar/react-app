@@ -7,7 +7,7 @@ import './Task.css';
 import TaskMain from './tabs/TaskMain/TaskMain';
 
 import Loader from '../../common/Loader/Loader';
-import { TaskType, TaskMetadataType, attachementItemType, ErrorType, setNewTaskDataType, getTaskDataType, setCurrentTaskStateType, setTaskPropType, setTaskSpecType, pushTaskButtonType, setNewTaskAttachementType } from '../../../redux/reducers/task-reducer';
+import { TaskType, TaskMetadataType, attachementItemType, ErrorType, setNewTaskDataType, getTaskDataType, setCurrentTaskStateType, setTaskPropType, setTaskSpecType, pushTaskButtonType, setNewTaskAttachementType, setSpecificationContextType } from '../../../redux/reducers/task-reducer';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -15,8 +15,8 @@ import { FileUpload } from 'primereact/fileupload';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { FaBusinessTime } from 'react-icons/fa';
 import { IoIosAttach } from 'react-icons/io';
-import TaskConnected from './tabs/TaskConnected';
 import { GoLink } from 'react-icons/go';
+import TaskSpecification from './tabs/TaskSpecification/TaskSpecification';
 
 type PropsType = {
     Task: TaskType,
@@ -28,19 +28,60 @@ type PropsType = {
     setTaskProp: setTaskPropType,
     setTaskSpec: setTaskSpecType,
     pushTaskButton: pushTaskButtonType,
-    setNewTaskAttachement: setNewTaskAttachementType
+    setNewTaskAttachement: setNewTaskAttachementType,
+    setSpecificationContext: setSpecificationContextType
 
 }
 
 const linkTemplate = (el: attachementItemType) => (<a rel="noopener noreferrer" target="_blank" href={el.link}>{el.value}</a>)
 
-function uploadFile(event: any, setNewTaskAttachement: (attachement: attachementItemType, attachement_link: attachementItemType) => void) {
+const uploadFile = (event: any, setNewTaskAttachement: setNewTaskAttachementType) => {
     let reader = new FileReader();
     // @ts-ignore - cannot define types of it now
     reader.onload = (function (theFile) { return function (el) { setNewTaskAttachement({ data: el.target.result, filename: theFile.name }, { link: theFile.url, value: theFile.name }) }; })({ name: event.files[0].name, url: event.files[0].objectURL });
     reader.readAsDataURL(event.files.pop());
     // @ts-ignore - error 'object possibly be null'
     document.getElementById("file_upload").firstElementChild.lastElementChild.style.display = 'inline'; //its work of primereact, but why do they think i need it to do!??
+}
+
+const attachementColumnLinkTemplateHeader = (lenghtOfAttachementLinks: number, setNewTaskAttachement: setNewTaskAttachementType) => <React.Fragment>
+    <h3>Вложения</h3>
+    <div id="file_upload">
+        <FileUpload chooseLabel='Выбрать файл' mode="basic" name="upload" maxFileSize={500000} auto={true} customUpload={true} uploadHandler={(e: any) => uploadFile(e, setNewTaskAttachement)} />
+        <sup className="badge">{lenghtOfAttachementLinks}</sup>
+    </div>
+</React.Fragment>;
+
+const ConnectedColumns = () => {
+    let columns = [];
+    if (window.innerWidth > 1030) {
+        columns = [
+            { field: '', header: '#' },
+            { field: 'number', header: 'Номер' },
+            { field: 'name', header: 'Наименование' },
+            { field: 'project', header: 'Проект' },
+            { field: 'author', header: 'Автор' },
+            { field: 'time', header: 'Продолжительность' },
+            { field: 'type', header: 'Тип' },
+            { field: 'basement', header: 'Основание' },
+            { field: 'status', header: 'Статус' }
+        ];
+    }
+    else {
+        columns = [
+            { field: '', header: '#' },
+            { field: 'number', header: 'Номер' },
+            { field: 'name', header: 'Наименование' },
+            { field: 'project', header: 'Проект' },
+            { field: 'status', header: 'Статус' }
+        ];
+    }
+    return <React.Fragment>
+        {columns.map((el, index) => {
+            if (el.field === '') { return <Column key={index} expander={true} style={{ width: '3em' }} /> }
+            else { return <Column key={index} field={el.field} header={el.header} /> }
+        })}
+    </React.Fragment>
 }
 
 const Task: React.FC<PropsType> = (props) => {
@@ -50,15 +91,9 @@ const Task: React.FC<PropsType> = (props) => {
     if (!props.Task.loaded) { return <Loader nameOfProcess="загружаем данные задачи" /> }
 
     if (props.NowMessage.detail !== '') {
-        // @ts-ignore - i don't know how to define 'GrowlMetod' type
         growl.current.show(props.NowMessage);
         props.setCurrentTaskState('NowMessage', { ...props.NowMessage, detail: '' });
     }
-
-    let attachementHeader = <React.Fragment><h3>Вложения</h3><div id="file_upload">
-        <FileUpload chooseLabel='Выбрать файл' mode="basic" name="upload" maxFileSize={500000} auto={true} customUpload={true} uploadHandler={(e: any) => uploadFile(e, props.setNewTaskAttachement)} />
-        <sup className="badge">{props.Task.attachement_links.length}</sup>
-    </div></React.Fragment>;
 
     return (<div className="task">
         <Growl ref={growl} />
@@ -68,12 +103,18 @@ const Task: React.FC<PropsType> = (props) => {
                 <TaskMain getTaskData={props.getTaskData} Task={props.Task} setTaskSpec={props.setTaskSpec} setTaskProp={props.setTaskProp} TaskMetadata={props.TaskMetadata} pushTaskButton={props.pushTaskButton} />
             </TabPanel>
             <TabPanel header={<React.Fragment><GoLink /><span>Связанные</span></React.Fragment>}>
-                <TaskConnected connectedTasks={props.Task.connectedTasks} expandedRows={props.Task.expandedRows} setTaskProp={props.setTaskProp} />
+                <DataTable header="Связанные заявки" value={props.Task.connectedTasks} expandedRows={props.Task.expandedRows} onRowToggle={(e) => props.setTaskProp('expandedRows', e.data)}
+                    dataKey="number">
+                    <ConnectedColumns />
+                </DataTable>
             </TabPanel>
             <TabPanel header={<React.Fragment><IoIosAttach /><span>Вложения</span></React.Fragment>}>
                 <DataTable value={props.Task.attachement_links}>
-                    <Column header={attachementHeader} body={linkTemplate} />
+                    <Column header={() => attachementColumnLinkTemplateHeader(props.Task.attachement_links.length, props.setNewTaskAttachement)} body={linkTemplate} />
                 </DataTable>
+            </TabPanel>
+            <TabPanel header={<React.Fragment><IoIosAttach /><span>Техзадание</span></React.Fragment>}>
+                <TaskSpecification setSpecificationContext={props.setSpecificationContext} available={true} specification={props.Task.specification} setTaskSpec={props.setTaskSpec} />
             </TabPanel>
         </TabView>
     </div>)

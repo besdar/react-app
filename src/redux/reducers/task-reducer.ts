@@ -1,16 +1,25 @@
 import { TaskAPI } from "../../api/task-api";
 import { BaseThunkType, InferActionsTypes } from '../store/redux-store';
+import { GrowlMessage } from "primereact/growl";
 
 export type attachementItemType = {
     link: string,
     value: string
 }
 
+export type commentsItemType = {
+    isActive: boolean,
+    value: string,
+    header: string
+}
+
+type TaskSpecTypeKeys = keyof TaskSpecType;
 export type TaskSpecType = {
     value: string,
     number: number,
     isReady: boolean,
-    testStatus: boolean | null
+    testStatus: number,
+    comments: Array<commentsItemType>
 }
 
 export type connectedTasksItem = {
@@ -24,8 +33,6 @@ export type connectedTasksItem = {
     status: string
 }
 
-type TaskSpecTypeKeys = keyof TaskSpecType | 'none';
-
 type EnumTaskType = {
     label: string, // отображение на фронте
     value: string | number // уид или индекс перечисления
@@ -36,14 +43,15 @@ type projectSelectType = {
     value: projectValueType
 }
 
-type projectValueType = typeof initialState.Task.project;
-
-export type TaskType = typeof initialState.Task;
-export type TaskMetadataType = typeof initialState.TaskMetadata;
-
 const initialState = {
     Task: {
-        specifications: [] as Array<TaskSpecType>, // тех задание
+        specification: {
+            specifications: [] as Array<TaskSpecType>,
+            selectedLineNumber: 0,
+            commentFilters: {
+                isActive: true as boolean | undefined
+            }
+        }, // тех задание
         attachement: [] as Array<attachementItemType>, // вложения ввиде бинарных строк
         attachement_links: [] as Array<attachementItemType>, // те же самые вложения но в виде ссылок для отображения, служит для подсчета количества
         number: "",
@@ -94,12 +102,18 @@ const initialState = {
         customerSelectItems: [] as Array<EnumTaskType>,
         userSelectItems: [] as Array<EnumTaskType>
     }, // возможные значения перечислений. загружаем 1 раз при старте приложения
-    NowMessage: { life: 5000, severity: 'error' as 'success' | 'info' | 'warn' | 'error', summary: 'Ошибка', detail: '' } // текущее отображаемое сообщение
+    NowMessage: { life: 5000, severity: 'error' as NowMessageSeverityType, summary: 'Ошибка', detail: '' } as GrowlMessage // текущее отображаемое сообщение
 };
 
 type initialStateKeys = keyof typeof initialState;
 type TaskKeysType = keyof TaskType;
+type projectValueType = typeof initialState.Task.project;
+export type TaskType = typeof initialState.Task;
+export type TaskMetadataType = typeof initialState.TaskMetadata;
+export type specificationType = typeof initialState.Task.specification;
+type specificationKeystype = keyof specificationType;
 export type ErrorType = typeof initialState.NowMessage;
+type NowMessageSeverityType = 'success' | 'info' | 'warn' | 'error';
 
 export const TaskReducer = (state = initialState, action: ActionsType): InitialStateType => {
     switch (action.type) {
@@ -113,40 +127,50 @@ export const TaskReducer = (state = initialState, action: ActionsType): InitialS
         case 'SET_CURRENT_STATE':
             return {
                 ...state,
-                Task: { ...state.Task },
-                TaskMetadata: { ...state.TaskMetadata },
                 [action.name]: action.data
             };
         case 'SET_TASK_PROP':
             return {
                 ...state,
-                TaskMetadata: { ...state.TaskMetadata },
                 Task: { ...state.Task, [action.property]: action.value }
             };
         case 'SET_TASK_SPEC':
             return {
                 ...state,
-                TaskMetadata: { ...state.TaskMetadata },
                 Task: {
                     // если id пустой то это новая строка ТЗ иначе это редактирование существующей
-                    ...state.Task, specifications: (
-                        (action.id === '') ? 
-                            // we will add new items
-                            [...state.Task.specifications, { value: '', number: state.Task.specifications.length + 1, isReady: false, testStatus: null }] : 
-                                
-                            // we'll change existing item
-                            (state.Task.specifications).map((el, index: number) => {
-                                if (parseInt(action.id) === index + 1) { return { ...el, [action.name]: action.value } }
-                                return el;
-                            }))
+                    ...state.Task, specification: {
+                        ...state.Task.specification,
+                        selectedLineNumber: (action.id === '') ? state.Task.specification.specifications.length + 1 : parseInt(action.id) - 1,
+                        specifications: (
+                            (action.id === '') ?
+                                // we will add new items
+                                [...state.Task.specification.specifications, { value: '', number: state.Task.specification.specifications.length + 1, isReady: false, testStatus: 0, comments: [] }] :
+
+                                // we'll change existing item
+                                (state.Task.specification.specifications).map((el, index: number) => {
+                                    if (parseInt(action.id) === index + 1) { return { ...el, [action.name]: action.value } }
+                                    return el;
+                                }))
+                    }
                 }
             };
         case 'ADD_ATTACHEMENT':
             return {
                 ...state,
-                TaskMetadata: state.TaskMetadata,
                 Task: { ...state.Task, attachement: [...state.Task.attachement, action.attachement], attachement_links: [...state.Task.attachement_links, action.attachement_link] }
             };
+        case 'SET_SPECIFICATION_CONTEXT':
+            return {
+                ...state,
+                Task: {
+                    ...state.Task,
+                    specification: {
+                        ...state.Task.specification,
+                        [action.name]: action.value
+                    }
+                }
+            }
         default: return state;
     }
 }
@@ -156,11 +180,13 @@ const actions = {
     setTaskSpec: (id: string, value: any, name: keyof TaskSpecType | 'none') => ({ type: 'SET_TASK_SPEC', id: id, value: value, name: name } as const),
     setTaskProp: (property: TaskKeysType, value: any) => ({ type: 'SET_TASK_PROP', property: property, value: value } as const),
     addAttachement: (attachement: attachementItemType, attachement_link: attachementItemType) => ({ type: 'ADD_ATTACHEMENT', attachement: attachement, attachement_link: attachement_link } as const),
-    setTaskData: (Task: TaskType, TaskMetadata: TaskMetadataType, firstInit = false, NowMessage = initialState.NowMessage) => ({ type: 'SET_TASK_DATA', Task: Task, TaskMetadata: TaskMetadata, firstInit: firstInit, NowMessage: NowMessage } as const)
+    setTaskData: (Task: TaskType, TaskMetadata: TaskMetadataType, firstInit = false, NowMessage = initialState.NowMessage) => ({ type: 'SET_TASK_DATA', Task: Task, TaskMetadata: TaskMetadata, firstInit: firstInit, NowMessage: NowMessage } as const),
+    setSpecificationContext: (name: specificationKeystype, value: any) => ({ type: 'SET_SPECIFICATION_CONTEXT', name: name, value: value } as const)
 }
 
 export const setCurrentTaskState = (name: initialStateKeys, data: any): ThunkType => async (dispatch) => { dispatch(actions.setCurrentTaskState(name, data)) }
-export const setTaskSpec = (id = '', value = '', name = 'none' as TaskSpecTypeKeys): ThunkType => async (dispatch) => { dispatch(actions.setTaskSpec(id, value, name)) }
+export const setTaskSpec = (id = '', name = 'none' as TaskSpecTypeKeys | 'none', value = '' as any): ThunkType => async (dispatch) => { dispatch(actions.setTaskSpec(id, value, name)) }
+export const setSpecificationContext = (name: specificationKeystype, value: any): ThunkType => async (dispatch) => { dispatch(actions.setSpecificationContext(name, value)) }
 
 export const setTaskProp = (property: TaskKeysType, value: any): ThunkType => async (dispatch) => { dispatch(actions.setTaskProp(property, value)) }
 export const getTaskData = (number: string): ThunkType => async (dispatch) => {
@@ -202,19 +228,6 @@ export const setTaskData = (Task: TaskType, TaskMetadata: TaskMetadataType): Thu
     dispatch(actions.setTaskData((nowState.TaskPage.Task.loaded ? nowState.TaskPage.Task : { ...Task, loaded: true }), TaskMetadata));
 }
 
-export const sendTaskReply = (id: string, text: string): ThunkType => async (dispatch, getState) => {
-    // const nowState = getState().TaskPage.Task;
-    // if (nowState.number !== '') {
-    //     const response = await TasksAPI.sendCurrentReply(id, text, nowState.number);
-    //     if (typeof response === "string") { dispatch(actions.setCurrentTaskState('NowMessage', response)) }
-    //     else {
-    //         dispatch(actions.setDiscussionData(response));
-    //         alert("Успешно!");
-    //     }
-    // }
-    // else { alert("Обсуждения будут доступны только после сохранения заявки.") }
-}
-
 export const setNewTaskAttachement = (attachement: attachementItemType, attachement_link: attachementItemType): ThunkType => async (dispatch) => { dispatch(actions.addAttachement(attachement, attachement_link)); }
 
 export default TaskReducer;
@@ -224,12 +237,12 @@ type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 
 // thunk types //
-// нужно заменить на typeof
-export type setCurrentTaskStateType = (name: initialStateKeys, data: any) => void;
-export type setTaskSpecType = (tableName: 'specifications' | 'userStory', id?: string, value?: string, name?: TaskSpecTypeKeys) => void;
-export type setTaskPropType = (property: TaskKeysType, value: any) => void;
-export type getTaskDataType = (number: string) => void;
-export type pushTaskButtonType = (type: string) => void;
-export type setNewTaskDataType = () => void;
-export type setTaskDataType = (Task: TaskType, TaskMetadata: TaskMetadataType) => void;
-export type setNewTaskAttachementType = (attachement: attachementItemType, attachement_link: attachementItemType) => void;
+export type setCurrentTaskStateType = typeof setCurrentTaskState;
+export type setTaskSpecType = typeof setTaskSpec;
+export type setTaskPropType = typeof setTaskProp;
+export type getTaskDataType = typeof getTaskData;
+export type pushTaskButtonType = typeof pushTaskButton;
+export type setNewTaskDataType = typeof setNewTaskData;
+export type setTaskDataType = typeof setTaskData;
+export type setNewTaskAttachementType = typeof setNewTaskAttachement;
+export type setSpecificationContextType = typeof setSpecificationContext;

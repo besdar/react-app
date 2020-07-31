@@ -1,7 +1,7 @@
 import React from 'react';
 import Task from './Task';
 import { connect } from "react-redux";
-import { setCurrentTaskState, setTaskProp, setTaskSpec, pushTaskButton, getTaskData, setNewTaskData, setNewTaskAttachement, sendTaskReply, setNewTaskDataType, getTaskDataType, setCurrentTaskStateType, setTaskPropType, setTaskSpecType, pushTaskButtonType, setNewTaskAttachementType } from "../../../redux/reducers/task-reducer";
+import { setCurrentTaskState, setTaskProp, setTaskSpec, pushTaskButton, getTaskData, setNewTaskData, setNewTaskAttachement, setNewTaskDataType, getTaskDataType, setCurrentTaskStateType, setTaskPropType, setTaskSpecType, pushTaskButtonType, setNewTaskAttachementType, setSpecificationContext, setSpecificationContextType } from "../../../redux/reducers/task-reducer";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { compose } from "redux";
 import {AppStateType} from '../../../redux/store/redux-store';
@@ -22,7 +22,8 @@ type DispatchPropsType = {
     setTaskProp: setTaskPropType,
     setTaskSpec: setTaskSpecType,
     pushTaskButton: pushTaskButtonType,
-    setNewTaskAttachement: setNewTaskAttachementType
+    setNewTaskAttachement: setNewTaskAttachementType,
+    setSpecificationContext: setSpecificationContextType
 }
 
 type PathParamsType = {
@@ -56,7 +57,8 @@ class TaskContainer extends React.Component<PropsType> {
                 NowMessage={this.props.NowMessage}
                 setNewTaskAttachement={this.props.setNewTaskAttachement}
                 getTaskData={this.props.getTaskData}
-                setNewTaskData={this.props.setNewTaskData} />
+                setNewTaskData={this.props.setNewTaskData}
+                setSpecificationContext={this.props.setSpecificationContext} />
     }
 }
 
@@ -69,4 +71,4 @@ let mapStateToProps = (state: AppStateType) => {
     })
 }
 
-export default compose<React.ComponentType>(connect(mapStateToProps, {setCurrentTaskState, setTaskProp, setTaskSpec, pushTaskButton, getTaskData, setNewTaskData, setNewTaskAttachement, sendTaskReply}), withRouter)(TaskContainer);
+export default compose<React.ComponentType>(connect(mapStateToProps, {setCurrentTaskState, setTaskProp, setTaskSpec, pushTaskButton, getTaskData, setNewTaskData, setNewTaskAttachement, setSpecificationContext}), withRouter)(TaskContainer);

@@ -7,7 +7,7 @@ import store, { AppStateType } from "./redux/store/redux-store";
 import { withSuspense } from "./hoc/withSuspense";
 import LoginPage from "./Components/common/LoginPage/LoginPage";
 import MainPageContainer from "./Components/common/MainPage/MainPageContentContainer";
-import { getAuthUserData, logout } from "./redux/reducers/auth-reducer";
+import { getAuthUserData, logout, getAuthUserDataType, logoutType } from "./redux/reducers/auth-reducer";
 import Loader from "./Components/common/Loader/Loader";
 import 'primereact/resources/themes/nova-light/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -17,8 +17,8 @@ import './app.css';
 
 type MapPropsType = ReturnType<typeof mapStateToProps>;
 type DispatchPropsType = {
-    getAuthUserData: () => void,
-    logout: () => void
+    getAuthUserData: getAuthUserDataType,
+    logout: logoutType
 }
 
 const ParadocsContainer = React.lazy(() => import('./Components/pages/Paradocs/ParadocsContainer'));
@@ -41,8 +41,8 @@ class App extends Component<MapPropsType & DispatchPropsType> {
 
     render() {
         if (this.props.secret_key === undefined || this.props.secret_key === '') { return <Loader nameOfProcess="проверяем авторизацию" /> }
-        
-        if (!this.props.isAuth) {  return <LoginPage /> }
+
+        if (!this.props.isAuth) { return <LoginPage /> }
 
         return (
             <React.Fragment>
@@ -68,7 +68,7 @@ class App extends Component<MapPropsType & DispatchPropsType> {
                     <Route exact path='/taskboard'
                         render={() => <SuspendedTaskboard />} />
 
-                    <Route path='/logout' render={() => {this.props.logout(); return <div>bye</div>}} />
+                    <Route path='/logout' render={() => { this.props.logout(); return <div>bye</div> }} />
 
                     <Route path='*' render={() => <div>404 NOT FOUND</div>} />
                 </Switch>

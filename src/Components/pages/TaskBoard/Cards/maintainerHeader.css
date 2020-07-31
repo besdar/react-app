@@ -17,11 +17,18 @@
 .avatarBlock {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
 }
 
-.avatarBlock img {
+.avatarBlock .avatar_img {
     margin-right: 5%;
+    display: flex;
+}
+
+.avatarBlock .avatar_img img {
+    border-radius: 100%;
     height: 35px;
+    width: 35px;
 }
 
 .avatarBlock .title {

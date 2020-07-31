@@ -1,3 +1,30 @@
 .commandPallete {
     text-align: start;
 }
+
+.commandPallete > * {
+    margin-right: 1%!important;
+}
+
+.center_cell {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.testStatusCell
+{ 
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr 5fr;
+}
+
+.testStatusCell > * {
+    align-self: center;
+    justify-self: center;
+}
+
+.tableContainer {
+    display: flex;
+    flex-direction: column;
+}

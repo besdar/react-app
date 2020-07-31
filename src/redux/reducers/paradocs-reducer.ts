@@ -77,10 +77,9 @@ type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 
 // thunk types //
-// нужно заменить на typeof
-export type setEditorStateType = (editorModified: boolean, showPopup: boolean) => void;
+export type setEditorStateType = typeof setEditorState;
 export type getParadocsMenuType = typeof getParadocsMenu;
-export type getParadocsEditorsType = (uid: string) => void;
-export type SaveCurrentEditorType = (LineNumber: number, uid: string, text: string) => void;
-export type SaveCurrentEditorsType = (ArrayOfEditors: Array<Editor>, uid: string) => void;
-export type DialogOnExitType = (isModified?: boolean) => void;
+export type getParadocsEditorsType = typeof getParadocsEditors;
+export type SaveCurrentEditorType = typeof SaveCurrentEditor;
+export type SaveCurrentEditorsType = typeof SaveCurrentEditors;
+export type DialogOnExitType = typeof DialogOnExit;

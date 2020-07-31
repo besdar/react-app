@@ -129,11 +129,10 @@ type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 
 // thunk types //
-// нужно заменить на typeof
-export type setBidsCurrentStateType = (name: initialStateKeysType, data: any) => void;
-export type setBidsSpecType = (id?: string, value?: string, name?: string) => void;
-export type setBidsPropType = (property: string, value: any) => void;
-export type setBidsUserStoryType = (id?: string, value?: string) => void;
-export type getBidsListType = () => void;
-export type sendBidsReplyType = (id: string, text: string) => void;
-export type setBidsNewAttachementType = (attachement: attachementItemType, attachement_link: attachementItemType) => void;
+export type setBidsCurrentStateType = typeof setBidsCurrentState;
+export type setBidsSpecType = typeof setBidsSpec;
+export type setBidsPropType = typeof setBidsProp;
+export type setBidsUserStoryType = typeof setBidsUserStory;
+export type getBidsListType = typeof getBidsList;
+export type sendBidsReplyType = typeof sendBidsReply;
+export type setBidsNewAttachementType = typeof setBidsNewAttachement;

@@ -4,11 +4,6 @@ import { BaseThunkType, InferActionsTypes } from '../store/redux-store';
 import TreeNode from "primereact/components/treenode/TreeNode";
 import { MenuItem } from "primereact/components/menuitem/MenuItem";
 
-// модуль объективно перегружен, слишком много методов и свойств
-// но заявка находится в одном модуле со списком заявки т.к. при открытии завки/списка
-// инициализируется и заявка и список и методанные для заявки (если мы на форме списка или форме новой заявки - 
-// инициализируется всё 1 запросом к 1С)
-
 type initialStateKeysType = keyof typeof initialState;
 type ListOfAllowedItemsType = {
     currentStatus: string, 
@@ -57,14 +52,12 @@ export const getTasksList = (): ThunkType => async (dispatch) => {
 
 export const setTasksContextMenu = (number: string, status: string): ThunkType => async (dispatch, getState) => {
     const nowState = getState().TasksPage.ListOfAllowedItems;
-    let i = 0;
     let foundedArray = [] as Array<any>; // any because we change inside's type
-    while (i < nowState.length) {
+    for (let i = 0; i < nowState.length; i++) {
         if (nowState[i].currentStatus === status) {
             foundedArray = nowState[i].allowedStatuses;
             break;
         }
-        i++;
     }
     
     dispatch(actions.setTasksCurrentState('AllowedItems', foundedArray.map((elem) => {
@@ -84,7 +77,6 @@ type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 
 // thunk types //
-// нужно заменить на typeof
 export type setTasksCurrentStateType = typeof setTasksCurrentState;
 export type getTasksListType = typeof getTasksList;
 export type setTasksContextMenuType = typeof setTasksContextMenu;
