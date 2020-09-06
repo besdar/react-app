@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Growl } from 'primereact/growl';
+import { Toast } from 'primereact/toast';
 
 import Header from './header';
 
@@ -30,7 +30,6 @@ type PropsType = {
     pushTaskButton: pushTaskButtonType,
     setNewTaskAttachement: setNewTaskAttachementType,
     setSpecificationContext: setSpecificationContextType
-
 }
 
 const linkTemplate = (el: attachementItemType) => (<a rel="noopener noreferrer" target="_blank" href={el.link}>{el.value}</a>)
@@ -44,13 +43,10 @@ const uploadFile = (event: any, setNewTaskAttachement: setNewTaskAttachementType
     document.getElementById("file_upload").firstElementChild.lastElementChild.style.display = 'inline'; //its work of primereact, but why do they think i need it to do!??
 }
 
-const attachementColumnLinkTemplateHeader = (lenghtOfAttachementLinks: number, setNewTaskAttachement: setNewTaskAttachementType) => <React.Fragment>
-    <h3>Вложения</h3>
-    <div id="file_upload">
+const attachementColumnLinkTemplateHeader = (lenghtOfAttachementLinks: number, setNewTaskAttachement: setNewTaskAttachementType) => (<div id="file_upload">
         <FileUpload chooseLabel='Выбрать файл' mode="basic" name="upload" maxFileSize={500000} auto={true} customUpload={true} uploadHandler={(e: any) => uploadFile(e, setNewTaskAttachement)} />
         <sup className="badge">{lenghtOfAttachementLinks}</sup>
-    </div>
-</React.Fragment>;
+    </div>);
 
 const ConnectedColumns = () => {
     let columns = [];
@@ -76,27 +72,25 @@ const ConnectedColumns = () => {
             { field: 'status', header: 'Статус' }
         ];
     }
-    return <React.Fragment>
-        {columns.map((el, index) => {
-            if (el.field === '') { return <Column key={index} expander={true} style={{ width: '3em' }} /> }
+    return columns.map((el, index) => {
+            if (el.field === '') { return <Column header={el.header} key={index} expander={true} style={{ width: '3em' }} /> }
             else { return <Column key={index} field={el.field} header={el.header} /> }
-        })}
-    </React.Fragment>
+        });
 }
 
 const Task: React.FC<PropsType> = (props) => {
 
-    let growl = useRef<any>(null);
+    let toast = useRef<any>(null);
 
     if (!props.Task.loaded) { return <Loader nameOfProcess="загружаем данные задачи" /> }
 
     if (props.NowMessage.detail !== '') {
-        growl.current.show(props.NowMessage);
+        toast.current.show(props.NowMessage);
         props.setCurrentTaskState('NowMessage', { ...props.NowMessage, detail: '' });
     }
 
     return (<div className="task">
-        <Growl ref={growl} />
+        <Toast ref={toast} />
         <Header Task={props.Task} pushTaskButton={props.pushTaskButton} />
         <TabView>
             <TabPanel header={<React.Fragment><FaBusinessTime /><span>Основное</span></React.Fragment>}>
@@ -105,16 +99,16 @@ const Task: React.FC<PropsType> = (props) => {
             <TabPanel header={<React.Fragment><GoLink /><span>Связанные</span></React.Fragment>}>
                 <DataTable header="Связанные заявки" value={props.Task.connectedTasks} expandedRows={props.Task.expandedRows} onRowToggle={(e) => props.setTaskProp('expandedRows', e.data)}
                     dataKey="number">
-                    <ConnectedColumns />
+                    {ConnectedColumns()}
                 </DataTable>
             </TabPanel>
             <TabPanel header={<React.Fragment><IoIosAttach /><span>Вложения</span></React.Fragment>}>
-                <DataTable value={props.Task.attachement_links}>
-                    <Column header={() => attachementColumnLinkTemplateHeader(props.Task.attachement_links.length, props.setNewTaskAttachement)} body={linkTemplate} />
+                <DataTable value={props.Task.attachement_links} header={attachementColumnLinkTemplateHeader(props.Task.attachement_links.length, props.setNewTaskAttachement)}>
+                    <Column header="Вложения" body={linkTemplate} />
                 </DataTable>
             </TabPanel>
             <TabPanel header={<React.Fragment><IoIosAttach /><span>Техзадание</span></React.Fragment>}>
-                <TaskSpecification setSpecificationContext={props.setSpecificationContext} available={true} specification={props.Task.specification} setTaskSpec={props.setTaskSpec} />
+                <TaskSpecification nowUser={props.TaskMetadata.nowUser} setTaskProp={props.setTaskProp} setSpecificationContext={props.setSpecificationContext} available={true} Task={props.Task} setTaskSpec={props.setTaskSpec} />
             </TabPanel>
         </TabView>
     </div>)

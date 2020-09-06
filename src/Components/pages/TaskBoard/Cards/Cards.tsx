@@ -1,68 +1,94 @@
 import React from "react";
 import Card from "./Card/Card";
 import "./Cards.css";
-import {CardsItemType, CardNames,  changeTaskStatusType, setCurrentStateOfCardsType, setCurrentStateOfCardsListType, setCardStateType, collapseAllMaintainerStatusesByTabType, changeTaskPriorityType} from '../../../../redux/reducers/taskboard-reducer';
+import { CardsItemType, CardNames, changeTaskStatusType, setCurrentStateOfCardsType, setCurrentStateOfCardsListType, setCardStateType, collapseAllMaintainerStatusesByTabType, changeTaskPriorityType, setTaskboardFilterType, CardListsType } from '../../../../redux/reducers/taskboard-reducer';
 import StatusHeader from './statusHeader';
 import MaintainerHeader from './maintainerHeader';
 
 type PropsType = {
+  collapseAllMaintainerStatusesByTab: collapseAllMaintainerStatusesByTabType
+} & StatusListPropsType
+
+type StatusListPropsType = {
   data: CardsItemType,
   status: CardNames,
-  changeTaskStatus: changeTaskStatusType,
-  setCurrentStateOfCards: setCurrentStateOfCardsType,
   setCurrentStateOfCardsList: setCurrentStateOfCardsListType,
+  setCurrentStateOfCards: setCurrentStateOfCardsType,
+  changeTaskStatus: changeTaskStatusType,
   setCardState: setCardStateType,
-  collapseAllMaintainerStatusesByTab: collapseAllMaintainerStatusesByTabType,
-  changeTaskPriority: changeTaskPriorityType
+  changeTaskPriority: changeTaskPriorityType,
+  setTaskboardFilter: setTaskboardFilterType,
+  isReadyVisible: boolean
+}
+
+type MaintainerListPropsType = {
+  list: CardListsType,
+  status: CardNames,
+  isReadyVisible: boolean,
+  changeTaskStatus: changeTaskStatusType,
+  setCardState: setCardStateType,
+  changeTaskPriority: changeTaskPriorityType,
+  setTaskboardFilter: setTaskboardFilterType
+}
+
+const MaintainerList = (props: MaintainerListPropsType) => {
+  if ((props.list.isCollapse !== undefined && (props.list.isCollapse || props.status === 'atProgress')) && props.list.list.length > 0) { return <div></div> }
+
+  return <div style={{ gridTemplateColumns: props.status === "waiting" && window.innerWidth > 425 ? props.isReadyVisible ? '1fr 1fr' : '1fr 1fr 1fr' : '1fr' }} className="p-col cardsStickersContainer">
+    {props.list.list.map((el) => {
+      return <Card
+          changeTaskStatus={props.changeTaskStatus}
+          status={props.status}
+          data={el}
+          avatar={props.list.avatar}
+          setCardState={props.setCardState}
+          maintainer={props.list.maintainer}
+          changeTaskPriority={props.changeTaskPriority}
+          setTaskboardFilter={props.setTaskboardFilter}
+        />
+    })}
+  </div>
+}
+
+const StatusList = (props: StatusListPropsType) => {
+
+  const isItCollapseFirst = props.data.isCollapse === undefined && window.innerWidth < 425;
+  
+  if (props.data.isCollapse || isItCollapseFirst) { return <div></div> }
+
+  return <React.Fragment>
+    {props.status === 'atProgress' && <div className="emptyMaintainerHeaderLine"></div>}
+    {props.data.lists.map((list, index) => {
+      return list.list.length > 0 && <React.Fragment key={index}>
+        <MaintainerHeader setTaskboardFilter={props.setTaskboardFilter} list={list} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} status={props.status} index={index} />
+        <MaintainerList changeTaskPriority={props.changeTaskPriority} changeTaskStatus={props.changeTaskStatus} isReadyVisible={props.isReadyVisible} list={list} setCardState={props.setCardState} setTaskboardFilter={props.setTaskboardFilter} status={props.status} />
+      </React.Fragment>
+    })}
+  </React.Fragment>
 }
 
 const Cards: React.FC<PropsType> = (props) => {
-  // let CardList = new Array(props.colspan);
-  // for (let i = 0; i < props.colspan; i++) { CardList[i] = []; }
-  // for (let p = 0; p < props.data.lists.length; p++) { CardList[p % props.colspan].push(<Card data={props.data.list[p]} />); }
 
   if (!props.data.lists.length) {
     return <div></div>;
   }
 
-  const isItCollapseFirst =
-    props.data.isCollapse === undefined && window.innerWidth > 425;
   let tasksCount = 0;
   let commonWeight = 0;
+  
   props.data.lists.forEach((list) => {
     tasksCount = tasksCount + list.list.length
     commonWeight = commonWeight + list.weight;
   });
 
-  let renederedLists = [] as Array<any>;
-  if (props.data.isCollapse === false || isItCollapseFirst) {
-    renederedLists = props.data.lists.map((list, index) => (
-      <React.Fragment key={index}>
-        <MaintainerHeader list={list} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} status={props.status} index={index} />
-        {(list.isCollapse === undefined || !list.isCollapse || props.status === 'atProgress') && <div key={"_" + Math.random().toString(36).substr(2, 9)} className={props.status === "waiting" && window.innerWidth > 425 ? "p-col p-grid" : ""}>
-          {list.list.map((el, ix) => (
-            <div style={{ position: "relative" }} key={index + "-" + ix} className={props.status === "waiting" && window.innerWidth > 425 ? "p-col-6" : "p-col"}>
-              <Card
-                changeTaskStatus={props.changeTaskStatus}
-                status={props.status}
-                data={el}
-                avatar={list.avatar}
-                setCardState={props.setCardState}
-                maintainer={list.maintainer}
-                changeTaskPriority={props.changeTaskPriority}
-              />
-            </div>
-          ))}
-        </div>}
-      </React.Fragment>
-    ))
-    if (props.status === 'atProgress') {renederedLists.unshift(<div key={renederedLists.length + 1} className="emptyMaintainerHeaderLine"></div>)}
+  if (!tasksCount) {
+    return <div></div>
   }
-  
+
   return (
     <div className="p-grid-col">
       <StatusHeader collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} data={props.data} tasksCount={tasksCount} commonWeight={commonWeight} status={props.status} setCurrentStateOfCards={props.setCurrentStateOfCards} />
-      {renederedLists}
+      <StatusList isReadyVisible={props.isReadyVisible} changeTaskPriority={props.changeTaskPriority} changeTaskStatus={props.changeTaskStatus} data={props.data} setCardState={props.setCardState} setCurrentStateOfCards={props.setCurrentStateOfCards} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} setTaskboardFilter={props.setTaskboardFilter} status={props.status} />
     </div>
   );
 };

@@ -8,10 +8,6 @@
     border: none !important;
 }
 
-.rce-container-mbox {
-    max-width: 600px;
-}
-
 .mssg-box {
     background-color: #c2ddf2;
     border: solid #c2ddf2;
@@ -53,9 +49,12 @@ body .p-treetable .p-treetable-thead tr th {
 }
 
 body .p-component {
-    font-size: 0.75vw;
+    /* font-size: 0.75vw; */
 }
 
+.p-grid {
+    margin-right: 0px;
+}
 /* @media only screen and (max-width: 376px) {
     body .p-component {
         font-size: 1.6vw;

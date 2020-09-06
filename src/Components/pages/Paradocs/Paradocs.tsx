@@ -71,7 +71,7 @@ const Paradocs: React.FC<PropsType> = (props) => {
                     value={props.items}
                     style={{ width: '95%' }}
                     selectionMode="single"
-                    onSelectionChange={() => {
+                    onSelectionChange={function (e) {
                         // @ts-ignore - do not use 'this'
                         if (!props.editorModified) { props.getParadocsEditors(this.node.data.id); }
                         else { props.DialogOnExit(); }

@@ -8,7 +8,6 @@ import { NavLink } from 'react-router-dom';
 import Header from './header';
 import Loader from '../../common/Loader/Loader';
 import TreeNode from 'primereact/components/treenode/TreeNode';
-import StatusIcon from '../../libriary/StatusIcon';
 import {ContextMenu} from 'primereact/contextmenu';
 import { MenuItem } from 'primereact/components/menuitem/MenuItem';
 import { setTasksCurrentStateType, setTasksContextMenuType } from '../../../redux/reducers/tasks-reducer';
@@ -30,7 +29,6 @@ const Tasks: React.FC<PropsType> = (props) => {
     let cols = [];
     if (window.innerWidth > 1350) {
         cols = [
-            { field: 'status', header: 'Статус', width: '8%'},
             { field: 'label', header: 'Наименование', width: ''},
             { field: 'number', header: 'Номер', width: '8%'},
             { field: 'maintainer', header: 'Исполнитель', width: ''},
@@ -41,7 +39,6 @@ const Tasks: React.FC<PropsType> = (props) => {
     }
     else {
         cols = [
-            { field: 'status', header: 'Статус', width: '' },
             { field: 'label', header: 'Наименование', width: ''},
             { field: 'number', header: 'Номер', width: ''},
             { field: 'maintainer', header: 'Исполнитель', width: ''},
@@ -57,9 +54,6 @@ const Tasks: React.FC<PropsType> = (props) => {
             }} />
         }
         else if (col.field === 'label') {return <Column expander key={col.field} field={col.field} header={col.header} />}
-        else if (col.field === 'status') {return <Column style={{width: '80px'}} key={col.field} field={col.field} header={col.header} body={(elem: any) => (<div data-itemID={elem.data.number} onContextMenu={(el) => {
-            // props.setTasksContextMenu(el.currentTarget.dataset.itemid as string); cm.current.show()
-        }} className="iconCell"><StatusIcon size='1em' isHeader={false} status={elem.data.status === '' ? elem.data.label : elem.data.status} /></div>)} />}
         else { return <Column key={col.field} style={{width: col.width}} field={col.field} header={col.header} /> }
     });
 

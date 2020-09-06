@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Growl } from 'primereact/growl';
+import { Toast } from 'primereact/toast';
 
 import Header from './header';
 
@@ -19,7 +19,6 @@ import { FaBusinessTime, FaComments } from 'react-icons/fa';
 import { FiUsers } from 'react-icons/fi';
 import { GoLink } from 'react-icons/go';
 import { IoIosAttach } from 'react-icons/io';
-import { ToggleButton } from 'primereact/togglebutton';
 
 type PropsType = {
     Bid: BidType,
@@ -60,33 +59,31 @@ const AttachementHeader = (props: {attachement_links_length: number, setNewBidAt
 
 const Bid: React.FC<PropsType> = (props) => {
 
-    let growl = useRef<any>(null);
+    let toast = useRef<any>(null);
 
     if (!props.Bid.loaded) { return <Loader nameOfProcess="загружаем данные сделки" /> }
 
     if (props.NowMessage.detail !== '') {
-        growl.current.show(props.NowMessage);
+        toast.current.show(props.NowMessage);
         props.setCurrentBidState('NowMessage', { ...props.NowMessage, detail: '' });
     }
 
-
-
     return (<div className="bid">
-        <Growl ref={growl} />
+        <Toast ref={toast} />
         <Header createNewBidBaseOnThisBid={props.createNewBidBaseOnThisBid} Bid={props.Bid} pushBidButton={props.pushBidButton} />
         <TabView>
             <TabPanel header={<React.Fragment><FaBusinessTime /><span>Основное</span></React.Fragment>}>
                 <BidMain sendBidDiscussionForUSLine={props.sendBidDiscussionForUSLine} getBidData={props.getBidData} showBidDiscussionDialog={props.showBidDiscussionDialog} Bid={props.Bid} setBidSpec={props.setBidSpec} setBidProp={props.setBidProp} BidMetadata={props.BidMetadata} pushBidButton={props.pushBidButton} />
             </TabPanel>
             <TabPanel header={<React.Fragment><FaComments /><span>Обсуждения</span></React.Fragment>}>
-                <ToggleButton checked={props.Bid.showAllDiscussionMessages} onLabel='Все' offLabel='Только актуальные' onChange={() => props.setBidProp('showAllDiscussionMessages', !props.Bid.showAllDiscussionMessages)} />
-                <DiscussionChat
-                    showAllMessages={props.Bid.showAllDiscussionMessages}
-                    maxHeight='none'
-                    data={props.Bid.discussionData}
-                    nowReplyMessageId={props.Bid.nowReplyMessageId}
-                    onResponseMessageClick={(e) => { props.setBidProp('nowReplyMessageId', (e.target as Element).id) }}
-                    sendReply={props.sendBidReply} />
+                <div className='p-col'>
+                    <DiscussionChat
+                        showAllMessagesButton={true}
+                        maxHeight='none'
+                        data={props.Bid.discussionData}
+                        sendReply={props.sendBidReply} />
+                </div>
+                
             </TabPanel>
             <TabPanel header={<React.Fragment><IoIosAttach /><span>Вложения</span></React.Fragment>}>
                 <DataTable value={props.Bid.attachement_links}>

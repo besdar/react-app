@@ -26,6 +26,8 @@ export type InferActionsTypes<T> = T extends { [keys: string]: (...args: any[]) 
 
 export type BaseThunkType<A extends Action = Action, R = Promise<void>> = ThunkAction<R, AppStateType, unknown, A>;
 
+export type ReturnObjectValuesType<T> = T extends { [keys: string]: infer U } ? U : never;
+
 // @ts-ignore
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 

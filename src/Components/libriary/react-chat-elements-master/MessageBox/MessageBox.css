@@ -61,7 +61,8 @@
     margin-bottom: 3px;
     padding: 6px 9px 8px 9px;
     float: left;
-    min-width: 140px;
+    min-width: 200px;
+    max-width: 70%;
 }
 
 .rce-mbox.message-focus {
@@ -107,6 +108,7 @@
 .rce-mbox-text {
     font-size: 13.6px;
     word-break: break-word;
+    padding-bottom: 10px;
 }
 
 .rce-mbox-text:after {

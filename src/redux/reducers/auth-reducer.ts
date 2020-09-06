@@ -6,8 +6,7 @@ import { FormAction } from 'redux-form/lib/actions';
 let initialState = {
     token: '',
     isAuth: false,
-    open_security_key: '',
-    secret_key: '',
+    showLoad: true,
     formData: {
         username: '',
         passwd: '',
@@ -27,6 +26,7 @@ const authReducer = (state = initialState, action: ActionsType): InitialStateTyp
                 ...state,
                 isAuth: action.isAuth,
                 token: action.token,
+                showLoad: true,
                 formData: {
                     ...initialState.formData
                 }
@@ -34,9 +34,8 @@ const authReducer = (state = initialState, action: ActionsType): InitialStateTyp
         case 'SET_AUTH_KEY':
             return {
                 ...state,
-                open_security_key: action.open_security_key,
-                secret_key: action.secret_key,
-                isAuth: action.isAuth
+                isAuth: action.isAuth,
+                showLoad: false
             }
         case 'SET_STATE':
             return {
@@ -68,34 +67,50 @@ const authReducer = (state = initialState, action: ActionsType): InitialStateTyp
 
 const actions = {
     setAuthUserData: (token: string, isAuth: boolean) => ({ type: 'SET_AUTH_USER_DATA', token: token, isAuth: isAuth } as const),
-    setAuthSecurityKey: (open_security_key: string, secret_key: string, isAuth = false) => ({ type: 'SET_AUTH_KEY', open_security_key: open_security_key, secret_key: secret_key, isAuth: isAuth } as const),
+    setAuthSecurityKey: (isAuth = false) => ({ type: 'SET_AUTH_KEY', isAuth: isAuth } as const),
     setCurrentState: (name: keyof typeof initialState, data: string | boolean | number) => ({ type: 'SET_STATE', name: name, data: data } as const),
     setFormData: (name: formKeysType, data: string | boolean) => ({ type: 'SET_FORM_STATE', name: name, data: data } as const),
-    setErrorMessage: (message = '') => ({type: 'SET_ERROR_MESSAGE', message: message} as const)
+    setErrorMessage: (message = '') => ({ type: 'SET_ERROR_MESSAGE', message: message } as const)
 }
 
 // const setCurrentState = (name: "message", data: string): ThunkType => async (dispatch) => { dispatch(actions.setCurrentState(name, data)) }
 export const setFormData = (name: formKeysType, data: string | boolean): ThunkType => async (dispatch) => { dispatch(actions.setFormData(name, data)) }
-export const emptyCaptchaStatus = ():ThunkType => async (dispatch) => {dispatch(actions.setCurrentState('authCount', 0))}
+export const emptyCaptchaStatus = (): ThunkType => async (dispatch) => { dispatch(actions.setCurrentState('authCount', 0)) }
 
 export const getAuthUserData = (): ThunkType => async (dispatch, getState) => {
     const nowState = getState();
     if (!nowState.AuthReducer.isAuth) {
         const response = await AuthAPI.checkToken(nowState.AuthReducer.token);
         if (typeof response === "string") { dispatch(actions.setErrorMessage(response)) }
-        else if (response.valid !== true) { dispatch(actions.setAuthSecurityKey(response.open_key, response.secret_key)) } // secret_key is encrypted
-        else { dispatch(actions.setAuthSecurityKey(response.open_key, response.secret_key, true)) }
+        else if (response.valid !== true) { dispatch(actions.setAuthSecurityKey()) } // secret_key is encrypted
+        else { dispatch(actions.setAuthSecurityKey(true)) }
     }
+}
+
+const readCookie = (name: string) => {
+    let nameEQ = name + "=";
+    let ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return '';
 }
 
 export const login = (): ThunkType => async (dispatch, getState) => {
     const nowState = getState();
 
-    let key = new NodeRSA();
-    key.importKey(nowState.AuthReducer.open_security_key, 'pkcs8-public-pem');
-    
-    const response = await AuthAPI.login({ credentials: key.encrypt(nowState.AuthReducer.formData, 'base64'), secret_key: nowState.AuthReducer.secret_key });
-    
+    const key = new NodeRSA();
+    const open_key = decodeURIComponent(readCookie('open_key'));
+    key.importKey(open_key, 'pkcs8-public-pem');
+
+    const authObject = { 
+        credentials: key.encrypt(nowState.AuthReducer.formData, 'base64'), 
+        secret_key: decodeURIComponent(readCookie('secret_key')) 
+    }
+    const response = await AuthAPI.login(authObject);
+
     if (typeof response === "string") { dispatch(actions.setErrorMessage(response)) }
     else { dispatch(actions.setAuthUserData(response.token, true)) }
 }

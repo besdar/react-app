@@ -1,3 +1,63 @@
 .p-scrollpanel-content {
     height: 100%;
 }
+
+.send-inputgroup {
+    display: flex;
+    width: 100%;
+    align-items: flex-end;
+    background-color: #c2ddf2;
+    border: solid #c2ddf2;
+    border-radius: 0 0 3px 3px;
+}
+
+.msg-reply-container {
+    background-color: #c2ddf2;
+    border: solid #c2ddf2;
+    border-radius: 3px 3px 0 0;
+}
+
+.send-inputgroup .p-inputtext {
+    border: none;
+}
+
+.send-inputgroup .p-inputtext:enabled:focus {
+    box-shadow: none;
+} 
+
+.msg-container {
+    max-width: 70%;
+    background-color: var(--primary-color);
+    color: var(--primary-color-text);
+    padding: 10px;
+    margin: 5px 0;
+    overflow: hidden;
+}
+
+.msg-footer {
+    display: flex;
+    float: right;
+}
+
+.msg-date {
+    margin-left: 10px;
+}
+
+.msg-reply-btn {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.send-bttn {
+    margin: 10px;
+    display: flex;
+}
+
+.msg-title {
+    -webkit-text-stroke: 0.02em;    
+    font-weight: bold;
+}
+
+.mssg-box {
+    display: grid;
+}

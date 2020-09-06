@@ -8,8 +8,7 @@ import { withSuspense } from "./hoc/withSuspense";
 import LoginPage from "./Components/common/LoginPage/LoginPage";
 import MainPageContainer from "./Components/common/MainPage/MainPageContentContainer";
 import { getAuthUserData, logout, getAuthUserDataType, logoutType } from "./redux/reducers/auth-reducer";
-import Loader from "./Components/common/Loader/Loader";
-import 'primereact/resources/themes/nova-light/theme.css';
+import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
@@ -40,8 +39,6 @@ class App extends Component<MapPropsType & DispatchPropsType> {
     componentDidMount() { this.props.getAuthUserData(); }
 
     render() {
-        if (this.props.secret_key === undefined || this.props.secret_key === '') { return <Loader nameOfProcess="проверяем авторизацию" /> }
-
         if (!this.props.isAuth) { return <LoginPage /> }
 
         return (
@@ -78,8 +75,7 @@ class App extends Component<MapPropsType & DispatchPropsType> {
 }
 
 const mapStateToProps = (state: AppStateType) => ({
-    isAuth: state.AuthReducer.isAuth,
-    secret_key: state.AuthReducer.secret_key
+    isAuth: state.AuthReducer.isAuth
 })
 
 let AppContainer = compose<React.ComponentType>(

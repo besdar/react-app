@@ -110,7 +110,14 @@ const BidMain: React.FC<PropsType> = (props) => {
 
                         <div className="p-col">
                             <label htmlFor="type">Тип: </label>
-                            <Dropdown id="type" value={props.Bid.type} options={props.BidMetadata.typeSelectItems} onChange={(e) => props.setBidProp('type', e.target.value)} />
+                            <Dropdown id="type" value={props.Bid.type} options={props.BidMetadata.typeSelectItems} onChange={(e) => {
+                                props.setBidProp('type', e.target.value); 
+                                if (e.target.value) { // 'Разработка нового функционала' = 0
+                                    props.setBidProp('VisibilityAvailability', {...props.Bid.VisibilityAvailability, invisible: props.Bid.VisibilityAvailability.invisible.filter((el) => el !== 'Решение')});
+                                } else if (!props.Bid.VisibilityAvailability.invisible.includes("Решение")) {
+                                    props.setBidProp('VisibilityAvailability', {...props.Bid.VisibilityAvailability, invisible: [...props.Bid.VisibilityAvailability.invisible, 'Решение']});
+                                }
+                                }} />
                         </div>
 
                         {props.Bid.VisibilityAvailability.invisible.find((element) => (element === "СтатусАнализа")) === undefined && <div className="p-col">
@@ -123,7 +130,7 @@ const BidMain: React.FC<PropsType> = (props) => {
             </div>
             <h3>Задание</h3>
             {accordion}
-            {props.Bid.userStory.length && <Dialog style={{maxWidth: '600px'}} header="Обсуждение (создание)" visible={props.Bid.DialogDiscussionData.isVisible} 
+            {props.Bid.userStory.length > 0 && <Dialog style={{maxWidth: '600px'}} header="Обсуждение (создание)" visible={props.Bid.DialogDiscussionData.isVisible} 
                 onHide={() => {props.setBidProp('DialogDiscussionData', {...props.Bid.DialogDiscussionData, isVisible: false})}} 
                 footer={<Button icon='pi pi-check' onClick={props.sendBidDiscussionForUSLine} label="OK" />}>
                 <div>{props.Bid.userStory[props.Bid.DialogDiscussionData.index].value}</div>
@@ -138,7 +145,7 @@ const getSolving = (VisibilityAvailability: {invisible: Array<string>, unavailab
         const readOnly = (VisibilityAvailability.unavailable.find((element: string) => (element === "Основание")) !== undefined);
 
         return <div className="p-col">
-            <span>Решение ошибки: </span>
+            <span>Решение: </span>
             <InputTextarea readOnly={readOnly} value={solving} onChange={(e) => setBidProp('solving', (e.target as HTMLTextAreaElement).value)} autoResize />
         </div>
     }

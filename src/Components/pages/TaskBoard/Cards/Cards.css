@@ -1,3 +1,9 @@
 .emptyMaintainerHeaderLine {
     height: calc(35px + 1rem);
 }
+
+.cardsStickersContainer {
+    display: grid;
+    row-gap: 0.625em;
+    column-gap: 0.625em;
+}

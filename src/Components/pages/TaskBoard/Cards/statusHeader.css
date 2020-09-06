@@ -3,6 +3,7 @@
     justify-content: space-between;
     align-items: baseline;
     color: #4c8dce;
+    flex-wrap: wrap;
 }
 
 .cardsHeader h3 {
@@ -10,6 +11,7 @@
     -webkit-box-flex: 1;
     flex: 1 0;
     min-width: 0;
+    font-size: larger;
 
     white-space: nowrap;
     overflow: hidden;

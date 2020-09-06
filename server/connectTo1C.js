@@ -26,16 +26,26 @@ export const logout = (req, res) => { deleteCookie(req, res); res.redirect('/');
 
 // Auth middleware
 export const checkToken = (req, res) => {
-    let rsa_keys = createRSAKeys(); // получаем ключи шифрования для шифрования данных
+     // получаем ключи шифрования для шифрования данных
     try {
         axios.post(config.serverHost + config.databaseLink + '/api/token/' + (req.cookies.sessionKey || 'null'), { token: (req.cookies.token || req.body.token || "null") }, config.bioSphereAuth).then((response) => {
             const data = response.data;
-            rsa_keys.secret_key = CryptoJS.AES.encrypt(rsa_keys.secret_key, data.secret_key).toString(); // sessionKey - ключ шифрования с сервера для закрытого ключа шифрования rsa. Для того чтобы хранить зашифрованный закрытый ключ на клиенте безопасно
-            res.cookie('sessionKey', data.sessionKey);
+            let rsa_keys = {};
+            if (!req.cookies.secret_key || !req.cookies.open_key || data.secret_updated) {
+                rsa_keys = createRSAKeys();
+                rsa_keys.secret_key = CryptoJS.AES.encrypt(rsa_keys.secret_key, data.secret_key).toString(); // sessionKey - ключ шифрования с сервера для закрытого ключа шифрования rsa. Для того чтобы хранить зашифрованный закрытый ключ на клиенте безопасно
+            }
+            else {
+                rsa_keys.secret_key = req.cookies.secret_key;
+                rsa_keys.open_key = req.cookies.open_key;
+            }
+            res.cookie('sessionKey', data.sessionKey, {sameSite: true});
+            res.cookie('secret_key', rsa_keys.secret_key, {sameSite: true});
+            res.cookie('open_key', rsa_keys.open_key, {sameSite: true});
             res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify({ open_key: rsa_keys.open_key, secret_key: rsa_keys.secret_key, valid: data.valid }));
+            res.send(JSON.stringify({ valid: data.valid }));
         }).catch((error) => {deleteCookie(req, res); logger('error at request to "' + config.serverHost + config.databaseLink + '/api/token/' + (req.cookies.sessionKey || 'null') + '" of method "' + 'post' + '" for "' + 'checkToken' + '": ' + error.message);});
-    } catch (error) {deleteCookie(req, res); logger('error at request to "' + config.serverHost + config.databaseLink + '/api/' + link1C + '" of method "' + method + '" for "' + link1C + '": ' + error.message);}
+    } catch (error) {deleteCookie(req, res); logger('error at request to "' + config.serverHost + config.databaseLink + '/api/token/' + (req.cookies.sessionKey || 'null') + '" of method "post" for "checkToken": ' + error.message);}
 };
 
 export const checkUserAuthPost = (req, res) => {
@@ -51,12 +61,12 @@ export const checkUserAuthPost = (req, res) => {
                 NotTrustedDevice: credentials.NotTrustedDevice
             }, config.bioSphereAuth).then((response) => {
                 const dataResp = response.data;
-                res.cookie('token', dataResp.token);
+                res.cookie('token', dataResp.token, {sameSite: true});
                 res.setHeader('Content-Type', 'application/json');
                 res.send(JSON.stringify({ token: dataResp.token, isAuth: (dataResp.errorMessage == '') }));
-            }).catch((error) => {deleteCookieAndSendLoginResponse(req, res, error.response.data)});
-        }).catch((error) => {deleteCookieAndSendLoginResponse(req, res, error.response.data)});
-    } catch (err) {deleteCookieAndSendLoginResponse(req, res, err.data)}
+            }).catch((error) => {deleteCookieAndSendLoginResponse(req, res, error.response.data); logger('error at request to "' + config.serverHost + config.databaseLink + '/api/auth/' + req.cookies.sessionKey + '" of method "post" for "checkUserAuthPost": ' + error.message)});
+        }).catch((error) => {deleteCookieAndSendLoginResponse(req, res, err.response.data); logger('error at request to "' + config.serverHost + config.databaseLink + '/api/auth/' + req.cookies.sessionKey + '" of method "get" for "checkUserAuthPost": ' + error.message)});
+    } catch (err) {deleteCookieAndSendLoginResponse(req, res, err.data); logger('error at request to "' + config.serverHost + config.databaseLink + '/api/auth/' + req.cookies.sessionKey + '" of method "get" for "checkUserAuthPost": ' + err.message);}
 }
 
 export const getGetParadocsMenuFrom1C = (req, res) => { AxiosMethodTo1C('get', req.cookies.token, res, 'GetPanelMenu', {}) }
@@ -83,6 +93,6 @@ const AxiosMethodTo1C = (method, token, res, link1C, dataFor1C) => {
             data: dataFor1C
         }).then((data_response) => {
             res.send(JSON.stringify(data_response.data));
-        }).catch((error) => { logger('error at data request to "' + config.serverHost + config.databaseLink + '/api/' + link1C + '" of method "' + method + '" for "' + link1C + '": ' + error.message); logger(JSON.stringify(response.data)); res.send(error.response.data) });
+        }).catch((error) => { logger('error at data request to "' + config.serverHost + config.databaseLink + '/api/' + link1C + '" of method "' + method + '" for "' + link1C + '": ' + error.message); res.send(error.response.data) });
     }).catch((error) => { logger('error at check token before data request to "' + config.serverHost + config.databaseLink + '/api/getUserAuth/' + (token || "null") + '" of method "' + method + '" for "' + link1C + '": ' + error.message); deleteCookie(req, res); res.send(error.message) });
 }

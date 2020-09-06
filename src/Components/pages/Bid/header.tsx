@@ -16,12 +16,12 @@ const Header: React.FC<PropsType> = (props) => {
         <h1 style={{ margin: "0px" }}>{props.Bid.number === "" ? "Новая заявка" : props.Bid.name}</h1>
     </div>
     <div className="p-col-2 head_buttons">
-        <Button style={{ display: "inline-flex" }} icon="pi pi-save" onClick={() => props.pushBidButton('Сохранить')} />
+        <Button tooltip="Сохранить" style={{ display: "inline-flex" }} icon="pi pi-save" onClick={() => props.pushBidButton('Сохранить')} />
         {props.Bid.number !== "" && <React.Fragment>
-            <Button style={{ display: "inline-flex" }} icon="pi pi-palette" onClick={() => props.createNewBidBaseOnThisBid('СоздатьНаОснованииЗадачу')} />
-            <Button style={{ display: "inline-flex" }} icon="pi pi-palette" onClick={() => props.createNewBidBaseOnThisBid('СоздатьНаОснованииЗаявку')} />
+            <Button label="+Задача" style={{ display: "inline-flex" }} icon="pi pi-palette" onClick={() => props.createNewBidBaseOnThisBid('СоздатьНаОснованииЗадачу')} />
+            <Button label="+Заявка" style={{ display: "inline-flex" }} icon="pi pi-palette" onClick={() => props.createNewBidBaseOnThisBid('СоздатьНаОснованииЗаявку')} />
         </React.Fragment>}
-        <Link style={{ display: "inline-flex" }} to='/bids'><Button icon="pi pi-arrow-left" /></Link> 
+        <Link style={{ display: "inline-flex", textDecoration: 'none' }} to='/bids'><Button tooltip="Назад" icon="pi pi-arrow-left" /></Link> 
     </div>
 </div>
 }

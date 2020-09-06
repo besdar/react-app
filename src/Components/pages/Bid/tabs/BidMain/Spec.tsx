@@ -16,29 +16,29 @@ type PropsType = {
 
 const Spec: React.FC<PropsType> = (props) => {
 
-    return <DataTable header={<DataTableHeader setBidSpec={props.setBidSpec} tableName={props.tableName} />} value={props.dataTable}>
-        <Column field="number" header="#" body={(rowData: any) => numberTemplate(rowData, props.tableName, props.setBidSpec)} style={{ width: '5%' }} />
+    return <DataTable header={<DataTableHeader available={props.available} setBidSpec={props.setBidSpec} tableName={props.tableName} />} value={props.dataTable}>
+        <Column field="number" header="#" body={(rowData: BidSpecType | BidSpecUsersType) => numberTemplate(rowData, props.tableName, props.setBidSpec)} style={{ width: '5%' }} />
         <Column field="value" header={"Текст " + (props.tableName === 'specifications' ? "техзадания" : 'задания')} editor={(prop: any) => textEditor(prop, props.available, props.setBidSpec, props.tableName)} />
-        {props.tableName === 'userStory' && <Column field="discussionData" header="#" body={(prop: BidSpecUsersType) => discussionsButtons(prop, props.available, props.showBidDiscussionDialog)} style={{ width: '5%' }} />}
+        {props.tableName === 'userStory' && <Column field="discussionData" header="#" body={(prop: BidSpecUsersType) => discussionsButtons(prop, props.showBidDiscussionDialog)} style={{ width: '5%' }} />}
     </DataTable>
 }
 
-const DataTableHeader = (props: {setBidSpec: setBidSpecType, tableName: bidTableNametype}) => <div className="p-col commandPallete">
-    <Button icon="pi pi-plus" onClick={() => props.setBidSpec(props.tableName)} /> {/* добавить требование */}
+const DataTableHeader = (props: {setBidSpec: setBidSpecType, tableName: bidTableNametype, available: boolean}) => <div className="p-col commandPallete">
+    <Button disabled={!props.available} icon="pi pi-plus" onClick={() => props.setBidSpec(props.tableName)} /> {/* добавить требование */}
 </div>;
 
 const textEditor = (prop: any, available: boolean, setBidSpec: setBidSpecType, tableName: bidTableNametype) => <InputTextarea disabled={!available} rows={5} style={{ width: window.innerWidth / 3 + 'px' }}
     id={prop.rowData.number} value={prop.rowData.value} onChange={(e) => setBidSpec(tableName, (e.target as HTMLTextAreaElement).id, (e.target as HTMLTextAreaElement).value, 'value')}
     autoResize />;
 
-const discussionsButtons = (prop: BidSpecUsersType, available: boolean, showBidDiscussionDialog: showBidDiscussionDialogType) => (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+const discussionsButtons = (prop: BidSpecUsersType, showBidDiscussionDialog: showBidDiscussionDialogType) => (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
     <div style={{ position: 'relative', width: 'min-content' }}>
         <sup className='badge'>{prop.discussionData.count}</sup>
-        <Button disabled={!available} icon='pi pi-comments' data-itemID={prop.number} onClick={(element) => { showBidDiscussionDialog(parseInt(element.currentTarget.dataset.itemid as string)) }} />
+        <Button icon='pi pi-comments' data-itemID={prop.number} onClick={(element) => { showBidDiscussionDialog(parseInt(element.currentTarget.dataset.itemid as string)) }} />
     </div>
 </div>);
 
-const numberTemplate = (rowData: any, tableName: bidTableNametype, setBidSpec: setBidSpecType) => {
+const numberTemplate = (rowData: BidSpecType | BidSpecUsersType, tableName: bidTableNametype, setBidSpec: setBidSpecType) => {
     if (tableName === 'specifications') {
         return <div className="numberWeightCell">
             <div>{rowData.number}</div>

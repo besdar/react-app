@@ -1,20 +1,21 @@
 import React from "react";
 import { FaMinus, FaPlus } from "react-icons/fa";
-import { CardNames, CardListsType, setCurrentStateOfCardsListType } from '../../../../redux/reducers/taskboard-reducer';
+import { CardNames, CardListsType, setCurrentStateOfCardsListType, setTaskboardFilterType } from '../../../../redux/reducers/taskboard-reducer';
 import './maintainerHeader.css';
 
 type PropsType = {
     status: CardNames,
     setCurrentStateOfCardsList: setCurrentStateOfCardsListType,
     list: CardListsType,
-    index: number
+    index: number,
+    setTaskboardFilter: setTaskboardFilterType
 }
 
 const MaintainerHeader: React.FC<PropsType> = (props) => {
     if (props.status !== "atProgress") {
         return <div key={"_" + Math.random().toString(36).substr(2, 9)} className="p-col">
             <div className="maintainerHeaderLine">
-                <div className="avatarBlock">
+                <div className="avatarBlock" onClick={() => props.setTaskboardFilter('visibleMaintainer', props.list.maintainer)}>
                     <div className="avatar_img"><img loading="lazy" alt="avatar" src={props.list.avatar} /></div>
                     <div className="title">{props.list.maintainer}: {props.list.list.length} / {props.list.weight.toFixed(0)}</div>
                 </div>

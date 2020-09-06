@@ -21,7 +21,7 @@ type PropsType = {
     setBidsCurrentState: setBidsCurrentStateType,
     messagesList: Array<TreeNode>,
     projectSelectItems: Array<projectSelectType>,
-    selectedProjectSelectItems: Array<projectSelectType>
+    selectedProjectSelectItems: Array<projectSelectTypeValue>
 }
 
 const filterProject = (value: Array<projectSelectTypeValue>, setBidsCurrentState: setBidsCurrentStateType, dt: React.MutableRefObject<any>) => {
@@ -60,7 +60,7 @@ const getBidsCols = (styleDisplayOfMessages: "none" | "flex") => {
         if (col.field === 'number') {
             return <Column key={col.field} field={col.field} expander={col.expander} header={col.header} body={(node: TreeNode) => {
                 if (isNaN(node.data.number)) { return node.data.number + '(' + node.children.length + ')' }
-                else { return <NavLink to={'/bids/' + node.data.number}>{node.data.number}</NavLink> }
+                else { return <NavLink style={{textDecoration: 'none', color: 'inherit'}} to={'/bids/' + node.data.number}>{node.data.number}</NavLink> }
             }} />
         }
         else { return <Column key={col.field} style={col.field === 'projectUID' ? { display: 'none' } : {}} field={col.field} expander={col.expander} header={col.header} /> }
@@ -71,7 +71,7 @@ const getBidsCols = (styleDisplayOfMessages: "none" | "flex") => {
 function messageTemplate(node: TreeNode, sendBidsReply: sendBidsReplyType) {
     if (node.data.is_it_child) {
         return <DiscussionChat
-            showAllMessages={true}
+            showAllMessagesButton={false}
             maxHeight={'250px'}
             sendReply={sendBidsReply}
             data={node.data} />
@@ -129,7 +129,7 @@ const Bids: React.FC<PropsType> = (props) => {
             messagesList={props.messagesList} />
         <div className={window.innerWidth > 1030 ? "p-grid" : "p-grid p-dir-col-rev"}>
             <div className="p-col">
-                <MultiSelect style={{ marginLeft: '10px' }} placeholder="Проекты" value={props.selectedProjectSelectItems} options={props.projectSelectItems} onChange={(e) => filterProject(e.value, props.setBidsCurrentState, dt)} />
+                <MultiSelect style={{ margin: '10px' }} placeholder="Проекты" value={props.selectedProjectSelectItems} options={props.projectSelectItems} onChange={(e) => filterProject(e.value, props.setBidsCurrentState, dt)} />
                 <TreeTable ref={dt} value={props.bidsList} autoLayout={true}>
                     {getBidsCols(props.styleDisplayOfMessages)}
                 </TreeTable>

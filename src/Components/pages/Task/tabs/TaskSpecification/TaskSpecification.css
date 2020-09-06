@@ -10,6 +10,7 @@
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+    cursor: pointer;
 }
 
 .testStatusCell
@@ -17,6 +18,7 @@
     display: grid;
     align-items: center;
     grid-template-columns: 1fr 5fr;
+    cursor: pointer;
 }
 
 .testStatusCell > * {

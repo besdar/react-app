@@ -3,7 +3,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 80px;
+    height: 40px;
 }
 
 .header > a, .leftHeader > *, .rightHeader > * {
@@ -29,6 +29,7 @@
     left: 0;
     right: 0;
     width: 100%;
+    z-index: 1001;
 }
 
 .showHeader {
@@ -38,7 +39,7 @@
     margin: auto!important;
     width: min-content;
     color: #4c8dce;
-    top: calc(0.6em + 85px);
+    z-index: 1000;
 }
 
 .header_sidebar {
@@ -47,6 +48,6 @@
 }
 
 .header_white_margin {
-    height: calc(0.6em + 85px);
+    height: calc(0.6em + 45px);
     width: 100%;
 }

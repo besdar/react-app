@@ -9,6 +9,7 @@ import {Captcha} from 'primereact/captcha';
 // import { withRouter } from "react-router-dom";
 // import { compose } from "redux";
 import "./LoginPage.css";
+import Loader from '../Loader/Loader';
 
 type MapPropsType = ReturnType<typeof mapStateToProps>
 type DispatchPropsType = {
@@ -22,6 +23,7 @@ type DispatchPropsType = {
 type PropsType = MapPropsType & DispatchPropsType;
 
 const LoginForm: React.FC<PropsType> = (props) => {
+    if (props.showLoad) { return <Loader nameOfProcess="проверяем авторизацию" /> }
 
     return <div style={{ height: window.innerHeight }} className="login_container">
         <div className="p-fluid login_form" onKeyPress={(event) => {if (event.key === 'Enter') props.login()}}>
@@ -46,7 +48,8 @@ const mapStateToProps = (state: AppStateType) => ({
     isAuth: state.AuthReducer.isAuth,
     formData: state.AuthReducer.formData,
     message: state.AuthReducer.message,
-    authCount: state.AuthReducer.authCount
+    authCount: state.AuthReducer.authCount,
+    showLoad: state.AuthReducer.showLoad
 })
 
 export default connect(mapStateToProps, { login, setFormData, emptyCaptchaStatus })(LoginForm);

@@ -1,15 +1,22 @@
 import axios from "axios";
-import { CardsType } from "../redux/reducers/taskboard-reducer";
+import { CardNames, CardType } from "../redux/reducers/taskboard-reducer";
+import { TaskType, TaskMetadataType } from "../redux/reducers/task-reducer";
 
-// используется в доске и непонятно что имеется ввиду под TaskObject
+export type pushTaskButtonObjectType = 'Сохранить' | 'СменитьСтатусЗадачи' | 'СменитьПриоритетЗадачи';
 type taskObjectType = {
     status?: string,
-    type: 'СменитьСтатусЗадачи' | 'СменитьПриоритетЗадачи'
+    taskPage?: TaskType,
+    type: pushTaskButtonObjectType
+}
+
+export type changeStatusResponseType = {
+    newStatus: CardNames | '',
+    data: CardType
 }
 
 // в этом файле мы обращаемся с клиента на сервер (ноду)
 // выглядит как будто мы делаем пост (всегда пост) запрос к самим себе (на свой же домен)
 export const TaskAPI = {
-    getTaskData(number: string) {return axios.post('/GetTaskData', {number: number}).then(res => res.data).catch((error) => (error.message))},
-    pushTaskButton(TaskObject: taskObjectType, number: string) {return axios.post<string | {Cards: CardsType}>('/pushTaskButton', {TaskObject: TaskObject, number: number}).then(res => res.data).catch((error) => (error.message))}
+    getTaskData(number: string): Promise<string | {task: TaskType, taskMetadata: TaskMetadataType}> {return axios.post('/GetTaskData', {number: number}).then(res => res.data).catch((error) => (error.message))},
+    pushTaskButton(TaskObject: taskObjectType, number: string): Promise<string | changeStatusResponseType | {Task: TaskType}> {return axios.post('/pushTaskButton', {TaskObject: TaskObject, number: number}).then(res => res.data).catch((error) => (error.message))}
 }

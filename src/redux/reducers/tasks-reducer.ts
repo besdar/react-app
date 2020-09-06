@@ -1,5 +1,5 @@
 import { TasksAPI } from "../../api/tasks-api";
-import { BaseThunkType, InferActionsTypes } from '../store/redux-store';
+import { BaseThunkType, InferActionsTypes, ReturnObjectValuesType } from '../store/redux-store';
 //import { setTaskData } from "./task-reducer";
 import TreeNode from "primereact/components/treenode/TreeNode";
 import { MenuItem } from "primereact/components/menuitem/MenuItem";
@@ -35,11 +35,11 @@ export const TasksReducer = (state = initialState, action: ActionsType): Initial
 }
 
 const actions = {
-    setTasksCurrentState: (name: initialStateKeysType, data: any) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
+    setTasksCurrentState: (name: initialStateKeysType, data: ReturnObjectValuesType<InitialStateType>) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
     setTasksList: (tasksList: Array<TreeNode>) => ({ type: 'SET_TASKS_LIST', tasksList: tasksList} as const)
 }
 
-export const setTasksCurrentState = (name: initialStateKeysType, data: any): ThunkType => async (dispatch) => { dispatch(actions.setTasksCurrentState(name, data)) }
+export const setTasksCurrentState = (name: initialStateKeysType, data: ReturnObjectValuesType<InitialStateType>): ThunkType => async (dispatch) => { dispatch(actions.setTasksCurrentState(name, data)) }
 
 export const getTasksList = (): ThunkType => async (dispatch) => {
     const response = await TasksAPI.getTasksList();

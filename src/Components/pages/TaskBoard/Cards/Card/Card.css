@@ -9,6 +9,10 @@
     border-radius: 100%;
 }
 
+.avatarCardBlock span {
+    display: flex;
+}
+
 .p-card-footer {
     overflow: hidden;
 }
@@ -28,37 +32,34 @@
     fill: #007ad9;
 }
 
-.cardFooter>div {
-    cursor: pointer;
-}
-
 .cardContent {
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
 }
 
 .cardContentText {
-    display: grid;
-    width: 90%;
     position: relative;
+    margin-left: 10px;
 }
 
 .p-card-content {
     overflow: auto;
+    padding: 0!important
 }
 
 .p-card-body {
-    padding: 0.625em;
+    padding: 0.625em!important;
 }
 
 .sticker {
     border: 1px solid #bdbdbd;
+    height: fit-content;
+    height: -moz-fit-content;
+    position: relative;
 }
 
 .sticker:hover {
     box-shadow: 0 2px 5px rgba(0,0,0,0.25), 0 5px 10px rgba(0,0,0,0.22);
-    cursor: pointer;
 }
 
 .shortCardContent {
@@ -71,7 +72,7 @@
 .cardExpandArrow {
     display: none;
     position: absolute;
-    bottom: 0;
+    bottom: calc(-6px - 0.625em);
     left: 0;
     right: 0;
     align-items: center;
@@ -80,4 +81,17 @@
 
 .sticker:hover .cardExpandArrow {
     display: flex;
+}
+
+.cardExpandArrow svg:hover {
+    fill: #007ad9
+}
+
+.sticker:hover .cardExpandArrow svg, .avatarCardBlock svg:hover, .cardFooter>div {
+    cursor: pointer;
+}
+
+.totalCardWeight {
+    right: 0.625em;
+    position: absolute;
 }

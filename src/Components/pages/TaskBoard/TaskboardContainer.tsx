@@ -6,7 +6,6 @@ import {
     setCurrentStateOfCards,
     changeTaskStatus,
     setError,  
-    CardsType, 
     setCurrentStateOfCardsList, 
     setHeaderVisibility,
     setCardState,
@@ -24,7 +23,9 @@ import {
     expandAllCardsType,
     collapseAllMaintainerTabsType,
     collapseAllMaintainerStatusesByTabType,
-    changeTaskPriorityType
+    changeTaskPriorityType,
+    setTaskboardFilterType,
+    setTaskboardFilter
 } from "../../../redux/reducers/taskboard-reducer";
 import { withRouter } from "react-router-dom";
 import { compose } from "redux";
@@ -37,17 +38,13 @@ type DispatchPropsType = {
     setCurrentStateOfCards: setCurrentStateOfCardsType,
     setCurrentStateOfCardsList: setCurrentStateOfCardsListType,
     setError: setErrorType,
-    Cards: CardsType,
-    showSpinner: boolean,
-    headerVisible: boolean,
     setHeaderVisibility: setHeaderVisibilityType,
     setCardState: setCardStateType,
     expandAllCards: expandAllCardsType,
     collapseAllMaintainerTabs: collapseAllMaintainerTabsType,
-    isAllCollapsed: boolean,
-    isAllCardExpanded: boolean,
     collapseAllMaintainerStatusesByTab: collapseAllMaintainerStatusesByTabType,
-    changeTaskPriority: changeTaskPriorityType
+    changeTaskPriority: changeTaskPriorityType,
+    setTaskboardFilter: setTaskboardFilterType
 }
 
 type PropsType = MapPropsType & DispatchPropsType;
@@ -78,6 +75,8 @@ class TaskboardContainer extends React.Component<PropsType> {
                 isAllCardExpanded={this.props.Taskboard.isAllCardExpanded}
                 collapseAllMaintainerStatusesByTab={this.props.collapseAllMaintainerStatusesByTab}
                 changeTaskPriority={this.props.changeTaskPriority}
+                setTaskboardFilter={this.props.setTaskboardFilter}
+                filters={this.props.Taskboard.filters}
             />
         );
     }
@@ -97,7 +96,8 @@ export default compose<React.ComponentType>(
         expandAllCards,
         collapseAllMaintainerTabs,
         collapseAllMaintainerStatusesByTab,
-        changeTaskPriority
+        changeTaskPriority,
+        setTaskboardFilter
     }),
     withRouter
 )(TaskboardContainer);

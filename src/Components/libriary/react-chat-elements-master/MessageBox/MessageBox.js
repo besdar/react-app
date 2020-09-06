@@ -96,7 +96,7 @@ export class MessageBox extends Component {
 
                                 {
                                     this.props.type === 'text' &&
-                                    <div className="rce-mbox-text">
+                                    <div style={!this.props.isActual ? {textDecoration: 'line-through'} : {}} className="rce-mbox-text">
                                         {this.props.text}
                                     </div>
                                 }

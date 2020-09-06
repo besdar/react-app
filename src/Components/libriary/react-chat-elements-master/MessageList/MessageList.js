@@ -141,7 +141,7 @@ export class MessageList extends Component {
                     className='rce-mlist'>
                     {
                         this.props.dataSource.map((x, i) => {
-                            if (x.isActual || this.props.showAllMessages === undefined || this.props.showAllMessages) {
+                            if (x.isActual || this.props.showAllMessages === undefined || this.props.showAllMessages === undefined || this.props.showAllMessages) {
                                 return <MessageBox
                                     key={i}
                                     {...x}
@@ -156,9 +156,7 @@ export class MessageList extends Component {
                                     onResponseMessageClick={this.props.onResponseMessageClick}
                                 />
                             }
-                            else {
-                                return <div></div>;
-                            }
+                            else {return <div></div>}
                         })
                     }
                 </div>

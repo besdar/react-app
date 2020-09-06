@@ -1,9 +1,9 @@
 import { TaskboardAPI } from "../../api/taskboard-api";
-import { TaskAPI } from "../../api/task-api";
-import { BaseThunkType, InferActionsTypes } from '../store/redux-store';
+import { TaskAPI, changeStatusResponseType } from "../../api/task-api";
+import { BaseThunkType, InferActionsTypes, ReturnObjectValuesType } from '../store/redux-store';
 
 export type CardType = {
-    taskInfo: string,
+    project: string,
     title: string,
     customer: string,
     priority: number,
@@ -13,7 +13,13 @@ export type CardType = {
     color: string,
     number: string,
     weight: number,
-    isExpanded?: boolean
+    totalWeight: number,
+    isExpanded?: boolean,
+    isVisible?: boolean,
+    atWork: {
+        maintainer: '',
+        avatar: ''
+    }
 }
 
 type CardKeyType = keyof CardType;
@@ -42,47 +48,67 @@ let initialState = {
             header: '',
             lists: [] as Array<CardListsType>,
             additionalInfo: {}
-        } as CardsItemType,
+        },
         atProgress: {
             header: '',
             lists: [] as Array<CardListsType>,
             additionalInfo: {}
-        } as CardsItemType,
+        },
         testing: {
             header: '',
             lists: [] as Array<CardListsType>,
             additionalInfo: {}
-        } as CardsItemType,
+        },
         currentRelease: {
             header: '',
             lists: [] as Array<CardListsType>,
             additionalInfo: {}
-        } as CardsItemType,
+        },
         cyberTest: {
             header: '',
             lists: [] as Array<CardListsType>,
             additionalInfo: {}
-        } as CardsItemType,
+        } ,
         implementation: {
             header: '',
             lists: [] as Array<CardListsType>,
             additionalInfo: {}
-        } as CardsItemType,
+        },
         ready: {
             header: '',
             lists: [] as Array<CardListsType>,
             additionalInfo: {}
-        } as CardsItemType
-    },
+        }
+    } as CardsType,
     errorMessage: '',
     showSpinner: false,
     headerVisible: false,
     isAllCollapsed: false,
-    isAllCardExpanded: false
+    isAllCardExpanded: false,
+    filters: {
+        visibleProject: '',
+        invisibleCardNames: [] as Array<CardNames>,
+        visibleMaintainer: '',
+        searchFilter: {
+            selectedCard: '',
+            cardsSearchArray: [] as Array<string>,
+            suggestedCards: [] as Array<string>
+        }
+    }
 };
 
+export type filtersType = typeof initialState.filters;
+type filtersTypeKeys = keyof filtersType;
 type stateKeys = keyof typeof initialState;
-export type CardsType = typeof initialState.Cards;
+export type CardsType = {
+    waiting: CardsItemType,
+    atProgress: CardsItemType,
+    testing: CardsItemType,
+    currentRelease: CardsItemType,
+    cyberTest: CardsItemType,
+    implementation: CardsItemType,
+    ready: CardsItemType
+};
 export type CardNames = keyof CardsType;
 
 const TaskboardReducer = (state = initialState, action: ActionsType): InitialStateType => {
@@ -140,9 +166,9 @@ const TaskboardReducer = (state = initialState, action: ActionsType): InitialSta
 }
 
 const actions = {
-    setTaskboardState: (name: stateKeys, value: boolean | CardsType | string) => ({ type: 'SET_TASKBOARD_STATE', name: name, value: value } as const),
+    setTaskboardState: (name: stateKeys, value: ReturnObjectValuesType<InitialStateType>) => ({ type: 'SET_TASKBOARD_STATE', name: name, value: value } as const),
     setTaskboardData: (Cards: CardsType, isItFirstInit = false) => ({ type: 'INITIALIZE_TASKBOARD', Cards: Cards, isItFirstInit: isItFirstInit } as const),
-    setPropOfOneOfCardsState: (name: CardsItemTypeKeys, cardsName: CardNames, data: string | Array<CardListsType> | boolean) => ({ type: 'SET_PROP_STATE_FOR_ONE_STATUS_CARS_LIST', name: name, cardsName: cardsName, data: data } as const),
+    setPropOfOneOfCardsState: (name: CardsItemTypeKeys, cardsName: CardNames, data: ReturnObjectValuesType<CardsItemType>) => ({ type: 'SET_PROP_STATE_FOR_ONE_STATUS_CARS_LIST', name: name, cardsName: cardsName, data: data } as const),
     setError: (errorText: string) => ({ type: 'SET_ERROR', errorText: errorText } as const),
     setTaskboardExpandedState: (Cards: CardsType, name: 'isAllCollapsed' | 'isAllCardExpanded') => ({ type: 'SET_EXPANDED_STATE_FOR_ALL', Cards: Cards, name: name } as const),
     setStateForOneStatusCardList: (cardsName: CardNames, data: CardsItemType) => ({ type: 'SET_STATE_FOR_ONE_STATUS_CARS_LIST', cardsName: cardsName, data: data } as const)
@@ -167,6 +193,19 @@ export const setCardState = (id: string, cardName: CardNames, PropName: CardKeyT
     dispatch(actions.setPropOfOneOfCardsState('lists', cardName, nowState));
 }
 
+export const setTaskboardFilter = (filterName: filtersTypeKeys, filterValue: ReturnObjectValuesType<filtersType>): ThunkType => async (dispatch, getState) => {
+    const nowState = JSON.parse(JSON.stringify(getState().TaskboardPage.filters));
+    if (filterName === 'visibleProject' || filterName === 'visibleMaintainer') {
+        nowState[filterName] = nowState[filterName] === '' ? filterValue : '';
+    } else if (filterName === 'searchFilter') {
+        nowState[filterName] = filterValue;
+    } else {
+        if (nowState[filterName].includes(filterValue)) {nowState[filterName] = nowState[filterName].filter((el: any) => (el !== filterValue))}
+        else {nowState[filterName] = [...nowState[filterName], filterValue]}
+    }
+    dispatch(actions.setTaskboardState('filters', nowState));
+}
+
 export const collapseAllMaintainerTabs = (): ThunkType => async (dispatch, getState) => {
     const nowState = getState().TaskboardPage;
     const CollapsedState = !nowState.isAllCollapsed;
@@ -174,7 +213,7 @@ export const collapseAllMaintainerTabs = (): ThunkType => async (dispatch, getSt
     Cards.atProgress.isCollapse = CollapsedState; // collapse by status
     Object.keys(Cards).filter(e => e !== 'atProgress').forEach((element) => {
         Cards[element as CardNames].isAllMaintainersCollapse = CollapsedState;
-        Cards[element as CardNames].lists.forEach((elemen: any, index: any) => {
+        Cards[element as CardNames].lists.forEach((elemen: {}, index: number) => {
             Cards[element as CardNames].lists[index].isCollapse = CollapsedState;
         });
     });
@@ -202,8 +241,29 @@ export const getTaskboardData = (isItFirstInit = false): ThunkType => async (dis
     } else {
         const TaskboardData = response;
         const nowState = getState().TaskboardPage;
-        Object.keys(TaskboardData.Cards).forEach((key) => { TaskboardData.Cards[key as CardNames].isCollapse = isItFirstInit ? (window.innerWidth < 425) : nowState.Cards[key as CardNames].isCollapse });
+        if (!(isItFirstInit && window.innerWidth > 425)) {
+            Object.keys(TaskboardData.Cards).forEach((key) => { 
+                // set the start collapse status
+                TaskboardData.Cards[key as CardNames].isCollapse = isItFirstInit ? (window.innerWidth < 425) : nowState.Cards[key as CardNames].isCollapse;
+            });
+        }
+        
+        const newSearchArray = [] as Array<string>;
+        // get the array of cards context
+        Object.keys(TaskboardData.Cards).forEach((key) => {
+            TaskboardData.Cards[key as CardNames].lists.forEach((elem) => {
+                elem.list.forEach((element) => {
+                    newSearchArray.push(element.number + ', ' + element.title);
+                });
+            });
+        });
+        
         dispatch(actions.setTaskboardData(TaskboardData.Cards, isItFirstInit));
+        dispatch(actions.setTaskboardState('filters', {...nowState.filters, searchFilter: {
+            cardsSearchArray: newSearchArray,
+            selectedCard: '',
+            suggestedCards: []
+        }}));
     }
 }
 
@@ -242,38 +302,107 @@ export const setCurrentStateOfCardsList = (cardsName: CardNames, data: boolean, 
     dispatch(actions.setPropOfOneOfCardsState('lists', cardsName, newList));
 }
 
-export const changeTaskStatus = (number: string, status: string): ThunkType => async (dispatch) => {
+export const changeTaskStatus = (number: string, status: string): ThunkType => async (dispatch, getState) => {
     dispatch(actions.setTaskboardState('showSpinner', true));
+    const nowState = JSON.parse(JSON.stringify(getState().TaskboardPage.Cards)) as CardsType;
     const response = await TaskAPI.pushTaskButton({
         status: status,
         type: "СменитьСтатусЗадачи"
     }, number);
     if (typeof response === "string") { dispatch(actions.setError(response)); }
-    else {
-        // работа в задаче 9765
-        // let nowState = getState().TaskboardPage.Cards;
-        // const changedStatusCard = response as {
-        //     newStatus: CardNames,
-        //     data: CardType | CardListsType
-        // };
-        // Object.keys(nowState).forEach((key) => { //deletion
-        //     nowState[key as CardNames].lists.forEach((element, index) => {
-        //         nowState[key as CardNames].lists[index].list = element.list.filter((elem) => elem.id !== id);
-        //     });
-        // });
+    else if ((response as changeStatusResponseType).newStatus !== status) { // if task do not already had work status because of testing
+        const changedStatusCard = response as changeStatusResponseType;
+        const changedCardInfo = {
+            card: {} as CardType,
+            listsObj: {
+                maintainer: '',
+                list: [],
+                weight: 0,
+                avatar: ''
+            } as CardListsType,
+            listsIndex: 0,
+            cardPreviousCardName: '' as CardNames
+        };
 
-        // if (isArray(changeTaskStatus)) { // new maintainer at status
-        //     nowState[changedStatusCard.newStatus].lists.push(changedStatusCard.data as CardListsType);
-        // }
-        // else { // Card
-        //     nowState[changedStatusCard.newStatus].lists.forEach((element, index) => { //addition
-        //         if (nowState[changedStatusCard.newStatus].lists[index].maintainer === element.maintainer) {
-        //             nowState[changedStatusCard.newStatus].lists[index].list.push(changedStatusCard.data as CardType)
-        //         }
-        //     })
-        // };
+        const cardsNamesKeys = Object.keys(nowState) as Array<CardNames>;
+        outerLoop: for (let i = 0; i < cardsNamesKeys.length; i++) { //deletion and getting info
+            let key = cardsNamesKeys[i];
+            for (let j = 0; j < nowState[key].lists.length; j++) {
+                let element = nowState[key].lists[j];
+                nowState[key].lists[j].list = element.list.reduce((accumulator, elem) => {
+                    if (elem.number === number) {
+                        changedCardInfo.card = {...elem};
+                        if (elem.atWork.maintainer !== '') {
+                            accumulator.push({...elem, status: changedStatusCard.data.status, allowedStatuses: changedStatusCard.data.allowedStatuses});
+                        }
+                    } else { accumulator.push(elem) }
+                    return accumulator;
+                }, [] as Array<CardType>);
+                if (JSON.stringify(changedCardInfo.card) !== '{}') {
+                    changedCardInfo.listsObj.maintainer = nowState[key].lists[j].maintainer;
+                    changedCardInfo.listsObj.avatar = nowState[key].lists[j].avatar;
+                    changedCardInfo.listsIndex = j;
+                    changedCardInfo.cardPreviousCardName = key;
+                    break outerLoop;
+                }
+            };
+        };
 
-        const nowState = response.Cards;
+        if (!nowState[changedCardInfo.cardPreviousCardName].lists[changedCardInfo.listsIndex].list.length) { // this maintainer is empty now
+            // delete maintainer array
+            if (changedCardInfo.cardPreviousCardName === 'atProgress' && nowState[changedCardInfo.cardPreviousCardName].lists.length <= 1) {
+                // we need only delete info about maintainer
+                nowState[changedCardInfo.cardPreviousCardName].lists[changedCardInfo.listsIndex].avatar = '';
+                nowState[changedCardInfo.cardPreviousCardName].lists[changedCardInfo.listsIndex].isCollapse = undefined;
+                nowState[changedCardInfo.cardPreviousCardName].lists[changedCardInfo.listsIndex].maintainer = '';
+                nowState[changedCardInfo.cardPreviousCardName].lists[changedCardInfo.listsIndex].weight = 0;
+                nowState[changedCardInfo.cardPreviousCardName].lists[changedCardInfo.listsIndex].list.push({
+                    allowedStatuses: [],
+                    color: 'white',
+                    customer: '',
+                    id: '',
+                    number: '',
+                    priority: 0,
+                    status: '',
+                    project: '',
+                    title: '',
+                    weight: 0,
+                    totalWeight: 0,
+                    atWork: {
+                        avatar: '',
+                        maintainer: ''
+                    }
+                });
+            }
+            else {
+                nowState[changedCardInfo.cardPreviousCardName].lists.splice(changedCardInfo.listsIndex, 1);
+            }
+        }
+
+        if (changedStatusCard.newStatus !== '' && changedCardInfo.card.atWork.maintainer === '') { // card can get such status that get no appearance on the screen
+            let maintainerFound = false;
+            for (let j = 0; j < nowState[changedStatusCard.newStatus].lists.length; j++) { // do maintainer already exist in CardsList with this status?
+                const element = nowState[changedStatusCard.newStatus].lists[j];
+                if (element.maintainer === changedCardInfo.listsObj.maintainer) {
+                    maintainerFound = true;
+                    element.list.push({...changedCardInfo.card, ...changedStatusCard.data});
+                    element.weight = element.weight + changedStatusCard.data.weight;
+                    break;
+                }
+            };
+
+            if (!maintainerFound) { // we need to add lists with this maintainer
+                nowState[changedStatusCard.newStatus].lists.push({
+                    avatar: changedCardInfo.listsObj.avatar,
+                    list: [{...changedCardInfo.card, ...changedStatusCard.data}],
+                    maintainer: changedCardInfo.listsObj.maintainer,
+                    weight: changedStatusCard.data.weight
+                });
+            }
+        }
+
+
+        // const nowState = response.Cards;
 
         dispatch(actions.setTaskboardData(nowState));
         dispatch(actions.setTaskboardState('showSpinner', false));
@@ -281,7 +410,6 @@ export const changeTaskStatus = (number: string, status: string): ThunkType => a
 }
 
 export const changeTaskPriority = (number: string, status: CardNames): ThunkType => async (dispatch, getState) => {
-    console.log(number);
     dispatch(actions.setTaskboardState('showSpinner', true));
     const response = await TaskAPI.pushTaskButton({
         type: "СменитьПриоритетЗадачи"
@@ -324,3 +452,4 @@ export type setCurrentStateOfCardsType = typeof setCurrentStateOfCards;
 export type setCurrentStateOfCardsListType = typeof setCurrentStateOfCardsList;
 export type changeTaskStatusType = typeof changeTaskStatus;
 export type changeTaskPriorityType = typeof changeTaskPriority;
+export type setTaskboardFilterType = typeof setTaskboardFilter;
