@@ -6,14 +6,6 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { compose } from "redux";
 import {AppStateType} from '../../../redux/store/redux-store';
 
-// function resize() {
-//     let elements = document.getElementsByClassName('p-inputtextarea') as HTMLCollectionOf<HTMLElement>;
-//     Array.from(elements).forEach((el: HTMLElement) => {
-//         el.style.height = el.scrollHeight + 'px';
-//         el.style.overflow = 'hidden';
-//     });
-// }
-
 type MapPropsType = ReturnType<typeof mapStateToProps>
 type DispatchPropsType = {
     setNewTaskData: setNewTaskDataType,
@@ -40,12 +32,12 @@ class TaskContainer extends React.Component<PropsType> {
         else {this.props.setNewTaskData()}
     }
 
-    componentDidUpdate() {
+    //componentDidUpdate() {
         // if (this.props.fistInit === true) {
         //     window.setTimeout(resize, 0.1); //бага веба, нужно разобраться почему scrollHeight браузером при первом открытии вычисляется неверно
             //this.props.setCurrentTaskState('fistInit', false);
         // }  
-    }
+    //}
 
     render() {
         return <Task Task={this.props.Task}
@@ -62,7 +54,15 @@ class TaskContainer extends React.Component<PropsType> {
     }
 }
 
-let mapStateToProps = (state: AppStateType) => {
+// function resize() {
+//     let elements = document.getElementsByClassName('p-inputtextarea') as HTMLCollectionOf<HTMLElement>;
+//     Array.from(elements).forEach((el: HTMLElement) => {
+//         el.style.height = el.scrollHeight + 'px';
+//         el.style.overflow = 'hidden';
+//     });
+// }
+
+const mapStateToProps = (state: AppStateType) => {
     return ({
         Task: state.TaskPage.Task,
         TaskMetadata: state.TaskPage.TaskMetadata,

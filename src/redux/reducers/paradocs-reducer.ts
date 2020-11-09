@@ -1,5 +1,5 @@
 import { ParadocsAPI } from "../../api/paradocs-api";
-import {BaseThunkType, InferActionsTypes} from '../store/redux-store';
+import { BaseThunkType, InferActionsTypes } from '../store/redux-store';
 import TreeNode from "primereact/components/treenode/TreeNode";
 
 export type Editor = {
@@ -8,7 +8,7 @@ export type Editor = {
     id: number
 }
 
-let initialState = {
+const initialState = {
     items: [] as Array<TreeNode>, // список навигации парадокса 
     editors: [] as Array<Editor>, // тексты конкретной выбранной темы парадокса
     uid: "" as string, // уид отправляемого на сохранение
@@ -34,41 +34,47 @@ export const ParadocsReducer = (state = initialState, action: ActionsType): Init
                 showPopup: false
             };
         case 'SET_EDITOR_STATE':
-                return {
-                    ...state,
-                    ...state.items,
-                    ...state.editors,
-                    editorModified: action.editorModified,
-                    showPopup: action.showPopup
-                };
+            return {
+                ...state,
+                ...state.items,
+                ...state.editors,
+                editorModified: action.editorModified,
+                showPopup: action.showPopup
+            };
         default:
             return state;
     }
 }
 
 const actions = {
-    setEditorState: (editorModified: boolean, showPopup: boolean) => ({type: 'SET_EDITOR_STATE', editorModified: editorModified, showPopup: showPopup} as const),
-    setParadocsMenu: (items: Array<TreeNode>) => ({type: 'SET_PARADOCS_MENU', items: items} as const),
-    setParadocsEditors: (editors: Array<Editor>, uid: string) => ({type: 'SET_PARADOCS_EDITORS', editors: editors, uid: uid} as const)
+    setEditorState: (editorModified: boolean, showPopup: boolean) => ({ type: 'SET_EDITOR_STATE', editorModified: editorModified, showPopup: showPopup } as const),
+    setParadocsMenu: (items: Array<TreeNode>) => ({ type: 'SET_PARADOCS_MENU', items: items } as const),
+    setParadocsEditors: (editors: Array<Editor>, uid: string) => ({ type: 'SET_PARADOCS_EDITORS', editors: editors, uid: uid } as const)
 }
 
-export const setEditorState = (editorModified: boolean, showPopup: boolean):ThunkType => async (dispatch) => {dispatch(actions.setEditorState(editorModified, showPopup))}
+export const setEditorState = (editorModified: boolean, showPopup: boolean): ThunkType => async (dispatch) => { dispatch(actions.setEditorState(editorModified, showPopup)) }
 
 export const getParadocsMenu = (): ThunkType => async (dispatch) => {
     const response = await ParadocsAPI.GetPanelMenu();
-    if (typeof response === 'string') {alert(response)}
-    else {dispatch(actions.setParadocsMenu(response));}
+    if (typeof response === 'string') {
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        else { alert(response) }
+    }
+    else { dispatch(actions.setParadocsMenu(response)); }
 }
 
 export const getParadocsEditors = (uid: string): ThunkType => async (dispatch) => {
     const response = await ParadocsAPI.getParadocsTexts(uid);
-    if (typeof response === 'string') {alert(response)}
-    else {dispatch(actions.setParadocsEditors(response, uid));}
+    if (typeof response === 'string') {
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        else { alert(response) }
+    }
+    else { dispatch(actions.setParadocsEditors(response, uid)); }
 }
 
-export const SaveCurrentEditor = (LineNumber: number, uid: string, text: string): void => {ParadocsAPI.SaveCurrentEditor(LineNumber, uid, text)}
-export const SaveCurrentEditors = (ArrayOfEditors: Array<Editor>, uid: string): void => {ParadocsAPI.SaveCurrentEditors(ArrayOfEditors, uid)}
-export const DialogOnExit = (isModified = false): ThunkType => async (dispatch) => {dispatch(actions.setEditorState(isModified, isModified))}
+export const SaveCurrentEditor = (LineNumber: number, uid: string, text: string): void => { ParadocsAPI.SaveCurrentEditor(LineNumber, uid, text) }
+export const SaveCurrentEditors = (ArrayOfEditors: Array<Editor>, uid: string): void => { ParadocsAPI.SaveCurrentEditors(ArrayOfEditors, uid) }
+export const DialogOnExit = (isModified = false): ThunkType => async (dispatch) => { dispatch(actions.setEditorState(isModified, isModified)) }
 
 export default ParadocsReducer;
 

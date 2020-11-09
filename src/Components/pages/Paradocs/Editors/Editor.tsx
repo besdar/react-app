@@ -10,7 +10,7 @@ type PropsType = {
 }
 
 export const Editors: React.FC<PropsType> = (props) => {
-    if (!props.editors.length) { return <div></div> }
+    if (!props.editors.length) { return null }
 
     return <React.Fragment>
         {props.editors.map(m => <Editor

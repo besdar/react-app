@@ -19,6 +19,7 @@ import { FaBusinessTime, FaComments } from 'react-icons/fa';
 import { FiUsers } from 'react-icons/fi';
 import { GoLink } from 'react-icons/go';
 import { IoIosAttach } from 'react-icons/io';
+import { ParsedQuery } from 'query-string';
 
 type PropsType = {
     Bid: BidType,
@@ -34,8 +35,8 @@ type PropsType = {
     sendBidReply: sendBidReplyType,
     showBidDiscussionDialog: showBidDiscussionDialogType,
     createNewBidBaseOnThisBid: createNewBidBaseOnThisBidType,
-    sendBidDiscussionForUSLine: sendBidDiscussionForUSLineType
-
+    sendBidDiscussionForUSLine: sendBidDiscussionForUSLineType,
+    queryParams: ParsedQuery
 }
 
 const linkTemplate = (el: attachementItemType) => (<a rel="noopener noreferrer" target="_blank" href={el.link}>{el.value}</a>)
@@ -71,7 +72,7 @@ const Bid: React.FC<PropsType> = (props) => {
     return (<div className="bid">
         <Toast ref={toast} />
         <Header createNewBidBaseOnThisBid={props.createNewBidBaseOnThisBid} Bid={props.Bid} pushBidButton={props.pushBidButton} />
-        <TabView>
+        <TabView activeIndex={props.queryParams.openTab === 'Discussion' ? 1 : 0}>
             <TabPanel header={<React.Fragment><FaBusinessTime /><span>Основное</span></React.Fragment>}>
                 <BidMain sendBidDiscussionForUSLine={props.sendBidDiscussionForUSLine} getBidData={props.getBidData} showBidDiscussionDialog={props.showBidDiscussionDialog} Bid={props.Bid} setBidSpec={props.setBidSpec} setBidProp={props.setBidProp} BidMetadata={props.BidMetadata} pushBidButton={props.pushBidButton} />
             </TabPanel>

@@ -3,7 +3,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 40px;
+    height: 60px;
 }
 
 .header > a, .leftHeader > *, .rightHeader > * {
@@ -19,7 +19,7 @@
     justify-content: space-around;
     width: fit-content;
     width: -moz-fit-content;
-    align-items: flex-end;
+    align-items: center;
 }
 
 .progress_bar {
@@ -42,12 +42,13 @@
     z-index: 1000;
 }
 
-.header_sidebar {
-    height: auto;
-    z-index: 1000;
+.header_sidebar > div {
+    box-shadow: 0px 1px 2px -1px rgba(0, 0, 0, 0.1), 0px 1px 3px 1px rgba(0, 0, 0, 0.14), 0px 1px 2px 5px rgba(0, 0, 0, 0.12);
+    padding: 5px 0;
+    overflow: hidden;
 }
 
 .header_white_margin {
-    height: calc(0.6em + 45px);
+    height: 70px;
     width: 100%;
 }

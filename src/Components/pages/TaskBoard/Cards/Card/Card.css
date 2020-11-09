@@ -72,7 +72,7 @@
 .cardExpandArrow {
     display: none;
     position: absolute;
-    bottom: calc(-6px - 0.625em);
+    bottom: calc(6px - 0.625em);
     left: 0;
     right: 0;
     align-items: center;
@@ -85,6 +85,11 @@
 
 .cardExpandArrow svg:hover {
     fill: #007ad9
+}
+
+.cardFooterActions {
+    flex-direction: column;
+    align-items: flex-end!important;
 }
 
 .sticker:hover .cardExpandArrow svg, .avatarCardBlock svg:hover, .cardFooter>div {

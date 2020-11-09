@@ -72,7 +72,7 @@ export const BidsReducer = (state = initialState, action: ActionsType): InitialS
 
 const actions = {
     setCurrentState: (name: initialStateKeysType, data: ReturnObjectValuesType<InitialStateType>) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
-    setBidsList: (bidsList: Array<TreeNode>, messagesList: Array<TreeNode>, projectSelectItems: Array<projectSelectType>) => ({ type: 'SET_BIDS_LIST', bidsList: bidsList, messagesList: messagesList, projectSelectItems: projectSelectItems} as const),
+    setBidsList: (bidsList: Array<TreeNode>, messagesList: Array<TreeNode>, projectSelectItems: Array<projectSelectType>) => ({ type: 'SET_BIDS_LIST', bidsList: bidsList, messagesList: messagesList, projectSelectItems: projectSelectItems } as const),
     deleteReplyMessage: (current_reply_id: string) => ({ type: 'DELETE_REPLY_MESSAGE', current_reply_id: current_reply_id } as const),
     setBidSpec: (id: string, value: string, name: string) => ({ type: 'SET_BID_SPEC', id: id, value: value, name: name } as const),
     setUserStory: (id: string, value: string) => ({ type: 'SET_BID_US', id: id, value: value } as const),
@@ -81,12 +81,14 @@ const actions = {
 
 export const setBidsCurrentState = (name: initialStateKeysType, data: ReturnObjectValuesType<InitialStateType>): ThunkType => async (dispatch) => { dispatch(actions.setCurrentState(name, data)) }
 export const setBidsSpec = (id = '', value = '', name = 'none'): ThunkType => async (dispatch) => { dispatch(actions.setBidSpec(id, value, name)) }
-export const setBidsUserStory = (id = '', value = ''): ThunkType => async (dispatch) => { dispatch(actions.setUserStory(id, value )) }
+export const setBidsUserStory = (id = '', value = ''): ThunkType => async (dispatch) => { dispatch(actions.setUserStory(id, value)) }
 
 export const getBidsList = (): ThunkType => async (dispatch) => {
     const response = await BidsAPI.getBidsList();
-    if (typeof response === 'string') {alert(response)}
-    else {
+    if (typeof response === 'string') {
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        else { alert(response) }
+    } else {
         dispatch(actions.setBidsList(response.bidsList, response.messagesList, response.bidMetadata.projectSelectItems));
         setBidData(response.bid, response.bidMetadata);
     }
@@ -101,7 +103,7 @@ export const sendBidsReply = (id: string, text: string): ThunkType => async (dis
     else { alert("Что-то пошло не так :(") }
 }
 
-export const setBidsNewAttachement = (attachement: attachementItemType, attachement_link: attachementItemType): ThunkType=> async (dispatch) => { dispatch(actions.addAttachement(attachement, attachement_link)); }
+export const setBidsNewAttachement = (attachement: attachementItemType, attachement_link: attachementItemType): ThunkType => async (dispatch) => { dispatch(actions.addAttachement(attachement, attachement_link)); }
 
 export default BidsReducer;
 

@@ -60,7 +60,7 @@ const getBidsCols = (styleDisplayOfMessages: "none" | "flex") => {
         if (col.field === 'number') {
             return <Column key={col.field} field={col.field} expander={col.expander} header={col.header} body={(node: TreeNode) => {
                 if (isNaN(node.data.number)) { return node.data.number + '(' + node.children.length + ')' }
-                else { return <NavLink style={{textDecoration: 'none', color: 'inherit'}} to={'/bids/' + node.data.number}>{node.data.number}</NavLink> }
+                else { return <NavLink style={{ textDecoration: 'none', color: 'inherit' }} to={'/bids/' + node.data.number}>{node.data.number}</NavLink> }
             }} />
         }
         else { return <Column key={col.field} style={col.field === 'projectUID' ? { display: 'none' } : {}} field={col.field} expander={col.expander} header={col.header} /> }
@@ -77,28 +77,27 @@ function messageTemplate(node: TreeNode, sendBidsReply: sendBidsReplyType) {
             data={node.data} />
     }
     else {
-        let parent = () => (<div></div>);
-        if (JSON.stringify(node.data.parent) !== "{}") {
-            parent = () => (<div style={{ color: "lightgrey" }}><div className="p-grid">
+        return <React.Fragment>
+            <div className="p-grid">
                 <div className="p-col">
-                    {node.data.parent.message}
+                    <a href={'/bids/' + node.data.number + '?openTab=Discussion'} style={{ color: 'black', fontWeight: 'bold' }}>{node.data.number + ' ' + node.data.label}</a>
                 </div>
-            </div><div className="p-grid">
+            </div>
+            {JSON.stringify(node.data.parent) !== "{}" && <div style={{ color: "lightgrey" }}>
+                <div className="p-grid">
+                    <div className="p-col">
+                        {node.data.parent.message}
+                    </div>
+                </div>
+                <div className="p-grid">
                     <div className="p-col-4">
                         <b>{node.data.parent.date}</b>
                     </div>
                     <div className="p-col">
                         <b>{node.data.parent.author}</b>
                     </div>
-                </div></div>);
-        };
-        return <React.Fragment>
-            <div className="p-grid">
-                <div className="p-col">
-                    <a href={'/bids/' + node.data.number} style={{ color: 'black', fontWeight: 'bold' }}>{node.data.number + ' ' + node.data.label}</a>
                 </div>
-            </div>
-            {parent()}
+            </div>}
             <div className="p-grid">
                 <div className="p-col">
                     {node.data.message}
@@ -127,9 +126,9 @@ const Bids: React.FC<PropsType> = (props) => {
             setBidsCurrentState={props.setBidsCurrentState}
             styleDisplayOfMessages={props.styleDisplayOfMessages}
             messagesList={props.messagesList} />
+        <MultiSelect style={{ margin: '10px' }} placeholder="Проекты" value={props.selectedProjectSelectItems} options={props.projectSelectItems} onChange={(e) => filterProject(e.value, props.setBidsCurrentState, dt)} />
         <div className={window.innerWidth > 1030 ? "p-grid" : "p-grid p-dir-col-rev"}>
             <div className="p-col">
-                <MultiSelect style={{ margin: '10px' }} placeholder="Проекты" value={props.selectedProjectSelectItems} options={props.projectSelectItems} onChange={(e) => filterProject(e.value, props.setBidsCurrentState, dt)} />
                 <TreeTable ref={dt} value={props.bidsList} autoLayout={true}>
                     {getBidsCols(props.styleDisplayOfMessages)}
                 </TreeTable>

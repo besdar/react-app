@@ -5,7 +5,6 @@ import { AppStateType } from '../../../redux/store/redux-store';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
-import {Captcha} from 'primereact/captcha';
 // import { withRouter } from "react-router-dom";
 // import { compose } from "redux";
 import "./LoginPage.css";
@@ -39,7 +38,7 @@ const LoginForm: React.FC<PropsType> = (props) => {
                 <Checkbox inputId="notTrustedDevice" checked={props.formData.NotTrustedDevice} value={props.formData.NotTrustedDevice} onChange={(e) => {props.setFormData("NotTrustedDevice", e.target.checked)}} />
                 <label htmlFor="notTrustedDevice">Чужой компьютер</label>
             </div>
-            {props.authCount > 2 ? <Captcha siteKey="YOUR_SITE_KEY" onResponse={props.emptyCaptchaStatus}></Captcha> : <Button type="submit" id="submitForm" label="Войти" onClick={props.login} />}
+            <Button type="submit" id="submitForm" label="Войти" onClick={props.login} />
         </div>
     </div>
 }

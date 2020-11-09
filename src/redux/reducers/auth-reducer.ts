@@ -3,7 +3,7 @@ import { BaseThunkType, InferActionsTypes } from '../store/redux-store';
 import NodeRSA from 'node-rsa';
 import { FormAction } from 'redux-form/lib/actions';
 
-let initialState = {
+const initialState = {
     token: '',
     isAuth: false,
     showLoad: true,
@@ -48,7 +48,8 @@ const authReducer = (state = initialState, action: ActionsType): InitialStateTyp
                 formData: {
                     ...state.formData,
                     [action.name]: action.data
-                }
+                },
+                message: ''
             }
         case 'SET_ERROR_MESSAGE':
             return {
@@ -112,7 +113,12 @@ export const login = (): ThunkType => async (dispatch, getState) => {
     const response = await AuthAPI.login(authObject);
 
     if (typeof response === "string") { dispatch(actions.setErrorMessage(response)) }
-    else { dispatch(actions.setAuthUserData(response.token, true)) }
+    else { 
+        dispatch(actions.setAuthUserData(response.token, true));
+        if (window.location.pathname === '/login') {
+            window.location.href = '/';
+        } 
+    }
 }
 
 export const logout = (): ThunkType => async (dispatch) => {

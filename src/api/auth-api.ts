@@ -12,8 +12,7 @@ export const AuthAPI = {
     async checkToken(token: string): Promise<{valid: boolean} | string> {try {
         const res = await axios.post('/checkToken', { token: token });
         return res.data;
-    }
-    catch (error) {
+    } catch (error) {
         return error.message;
     }},
     logout() {axios.post('/logout')}

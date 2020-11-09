@@ -5,6 +5,7 @@ import { setCurrentBidState, setBidProp, setBidSpec, pushBidButton, getBidData, 
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { compose } from "redux";
 import {AppStateType} from '../../../redux/store/redux-store';
+import queryString from 'query-string';
 
 // function resize() {
 //     let elements = document.getElementsByClassName('p-inputtextarea') as HTMLCollectionOf<HTMLElement>;
@@ -43,12 +44,12 @@ class BidContainer extends React.Component<PropsType> {
         else {this.props.setNewBidData()}
     }
 
-    componentDidUpdate() {
+    //componentDidUpdate() {
         // if (this.props.fistInit === true) {
         //     window.setTimeout(resize, 0.1); //бага веба, нужно разобраться почему scrollHeight браузером при первом открытии вычисляется неверно
             //this.props.setCurrentBidState('fistInit', false);
         // }  
-    }
+    //}
 
     render() {
         return <Bid Bid={this.props.Bid}
@@ -64,11 +65,12 @@ class BidContainer extends React.Component<PropsType> {
                 getBidData={this.props.getBidData}
                 createNewBidBaseOnThisBid={this.props.createNewBidBaseOnThisBid}
                 sendBidDiscussionForUSLine={this.props.sendBidDiscussionForUSLine}
-                setNewBidData={this.props.setNewBidData} />
+                setNewBidData={this.props.setNewBidData}
+                queryParams={queryString.parse(this.props.location.search)} />
     }
 }
 
-let mapStateToProps = (state: AppStateType) => {
+const mapStateToProps = (state: AppStateType) => {
     return ({
         Bid: state.BidPage.Bid,
         BidMetadata: state.BidPage.BidMetadata,

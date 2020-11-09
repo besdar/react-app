@@ -18,7 +18,7 @@ const Spec: React.FC<PropsType> = (props) => {
 
     return <DataTable header={<DataTableHeader available={props.available} setBidSpec={props.setBidSpec} tableName={props.tableName} />} value={props.dataTable}>
         <Column field="number" header="#" body={(rowData: BidSpecType | BidSpecUsersType) => numberTemplate(rowData, props.tableName, props.setBidSpec)} style={{ width: '5%' }} />
-        <Column field="value" header={"Текст " + (props.tableName === 'specifications' ? "техзадания" : 'задания')} editor={(prop: any) => textEditor(prop, props.available, props.setBidSpec, props.tableName)} />
+        <Column field="value" header={"Текст " + (props.tableName === 'specifications' ? "техзадания" : 'задания')} editor={(prop) => textEditor(prop, props.available, props.setBidSpec, props.tableName)} />
         {props.tableName === 'userStory' && <Column field="discussionData" header="#" body={(prop: BidSpecUsersType) => discussionsButtons(prop, props.showBidDiscussionDialog)} style={{ width: '5%' }} />}
     </DataTable>
 }

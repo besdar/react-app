@@ -25,11 +25,44 @@ import {
     collapseAllMaintainerStatusesByTabType,
     changeTaskPriorityType,
     setTaskboardFilterType,
-    setTaskboardFilter
+    setTaskboardFilter,
+    CardsType,
+    CardListsType,
+    CardType,
+    filtersType
 } from "../../../redux/reducers/taskboard-reducer";
-import { withRouter } from "react-router-dom";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 import { compose } from "redux";
 import { AppStateType } from '../../../redux/store/redux-store';
+import queryString from 'query-string';
+
+const cardListsFilter = (lists: Array<CardListsType>, filters: filtersType) => {
+    return lists.reduce((acc, element) => {
+        if (!filters.visibleMaintainer || filters.visibleMaintainer === element.maintainer) { // отсортируем исполнителя
+            acc.push({
+                ...element, list: element.list.reduce((accumulator, elem) => {
+                    if (!filters.visibleProject || filters.visibleProject === elem.project) { // фильтрация пректа. Если фильтр пуст или в этом элементе нужный проект
+                        if ((elem.number + ', ' + elem.title).toUpperCase().includes(filters.searchFilter.inputSelectedCard.toUpperCase())) { accumulator.push(elem) } // если в тексте карточки есть нужныые слова
+                    }
+                    return accumulator;
+                }, [] as Array<CardType>)
+            });
+        }
+        return acc;
+    }, [] as Array<CardListsType>);
+}
+
+const filterCards = (Cards: CardsType, filters: filtersType): CardsType => {
+    return {
+        waiting: { ...Cards.waiting, lists: cardListsFilter(Cards.waiting.lists, filters) },
+        atProgress: { ...Cards.atProgress, lists: cardListsFilter(Cards.atProgress.lists, filters) },
+        testing: { ...Cards.testing, lists: cardListsFilter(Cards.testing.lists, filters) },
+        currentRelease: { ...Cards.currentRelease, lists: cardListsFilter(Cards.currentRelease.lists, filters) },
+        cyberTest: { ...Cards.cyberTest, lists: cardListsFilter(Cards.cyberTest.lists, filters) },
+        implementation: { ...Cards.implementation, lists: cardListsFilter(Cards.implementation.lists, filters) },
+        ready: { ...Cards.ready, lists: cardListsFilter(Cards.ready.lists, filters) }
+    }
+}
 
 type MapPropsType = ReturnType<typeof mapStateToProps>;
 type DispatchPropsType = {
@@ -47,42 +80,37 @@ type DispatchPropsType = {
     setTaskboardFilter: setTaskboardFilterType
 }
 
-type PropsType = MapPropsType & DispatchPropsType;
+type PropsType = MapPropsType & DispatchPropsType & RouteComponentProps;
 
 class TaskboardContainer extends React.Component<PropsType> {
     componentDidMount() {
         document.title = "Taskboard";
-        this.props.getTaskboardData(window.innerWidth < 425);
+        this.props.getTaskboardData(true);
     }
 
     render() {
         return (
-            <Taskboard
+            <Taskboard {...this.props.Taskboard}
                 changeTaskStatus={this.props.changeTaskStatus}
                 getTaskboardData={this.props.getTaskboardData}
                 setCurrentStateOfCards={this.props.setCurrentStateOfCards}
-                Cards={this.props.Taskboard.Cards}
-                showSpinner={this.props.Taskboard.showSpinner}
                 setCurrentStateOfCardsList={this.props.setCurrentStateOfCardsList}
-                errorMessage={this.props.Taskboard.errorMessage}
                 setError={this.props.setError}
-                headerVisible={this.props.Taskboard.headerVisible}
                 setHeaderVisibility={this.props.setHeaderVisibility}
                 setCardState={this.props.setCardState}
                 expandAllCards={this.props.expandAllCards}
                 collapseAllMaintainerTabs={this.props.collapseAllMaintainerTabs}
-                isAllCollapsed={this.props.Taskboard.isAllCollapsed}
-                isAllCardExpanded={this.props.Taskboard.isAllCardExpanded}
                 collapseAllMaintainerStatusesByTab={this.props.collapseAllMaintainerStatusesByTab}
                 changeTaskPriority={this.props.changeTaskPriority}
                 setTaskboardFilter={this.props.setTaskboardFilter}
-                filters={this.props.Taskboard.filters}
+                queryParams={queryString.parse(this.props.location.search)}
+                Cards={filterCards(this.props.Taskboard.Cards, this.props.Taskboard.filters)} // мутация данных. Но это фильтр и в теории данные сами по себе не меняются
             />
         );
     }
 }
 
-let mapStateToProps = (state: AppStateType) => ({ Taskboard: state.TaskboardPage })
+const mapStateToProps = (state: AppStateType) => ({ Taskboard: state.TaskboardPage })
 
 export default compose<React.ComponentType>(
     connect(mapStateToProps, {

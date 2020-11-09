@@ -44,9 +44,9 @@ const uploadFile = (event: any, setNewTaskAttachement: setNewTaskAttachementType
 }
 
 const attachementColumnLinkTemplateHeader = (lenghtOfAttachementLinks: number, setNewTaskAttachement: setNewTaskAttachementType) => (<div id="file_upload">
-        <FileUpload chooseLabel='Выбрать файл' mode="basic" name="upload" maxFileSize={500000} auto={true} customUpload={true} uploadHandler={(e: any) => uploadFile(e, setNewTaskAttachement)} />
-        <sup className="badge">{lenghtOfAttachementLinks}</sup>
-    </div>);
+    <FileUpload chooseLabel='Выбрать файл' mode="basic" name="upload" maxFileSize={500000} auto={true} customUpload={true} uploadHandler={(e: any) => uploadFile(e, setNewTaskAttachement)} />
+    <sup className="badge">{lenghtOfAttachementLinks}</sup>
+</div>);
 
 const ConnectedColumns = () => {
     let columns = [];
@@ -62,8 +62,7 @@ const ConnectedColumns = () => {
             { field: 'basement', header: 'Основание' },
             { field: 'status', header: 'Статус' }
         ];
-    }
-    else {
+    } else {
         columns = [
             { field: '', header: '#' },
             { field: 'number', header: 'Номер' },
@@ -72,10 +71,12 @@ const ConnectedColumns = () => {
             { field: 'status', header: 'Статус' }
         ];
     }
-    return columns.map((el, index) => {
+    return <React.Fragment>
+        {columns.map((el, index) => {
             if (el.field === '') { return <Column header={el.header} key={index} expander={true} style={{ width: '3em' }} /> }
             else { return <Column key={index} field={el.field} header={el.header} /> }
-        });
+        })}
+    </React.Fragment>
 }
 
 const Task: React.FC<PropsType> = (props) => {
@@ -92,14 +93,14 @@ const Task: React.FC<PropsType> = (props) => {
     return (<div className="task">
         <Toast ref={toast} />
         <Header Task={props.Task} pushTaskButton={props.pushTaskButton} />
-        <TabView>
+        <TabView activeIndex={props.Task.number === '' ? 0 : 3}>
             <TabPanel header={<React.Fragment><FaBusinessTime /><span>Основное</span></React.Fragment>}>
                 <TaskMain getTaskData={props.getTaskData} Task={props.Task} setTaskSpec={props.setTaskSpec} setTaskProp={props.setTaskProp} TaskMetadata={props.TaskMetadata} pushTaskButton={props.pushTaskButton} />
             </TabPanel>
             <TabPanel header={<React.Fragment><GoLink /><span>Связанные</span></React.Fragment>}>
                 <DataTable header="Связанные заявки" value={props.Task.connectedTasks} expandedRows={props.Task.expandedRows} onRowToggle={(e) => props.setTaskProp('expandedRows', e.data)}
                     dataKey="number">
-                    {ConnectedColumns()}
+                    <ConnectedColumns />
                 </DataTable>
             </TabPanel>
             <TabPanel header={<React.Fragment><IoIosAttach /><span>Вложения</span></React.Fragment>}>
@@ -108,7 +109,12 @@ const Task: React.FC<PropsType> = (props) => {
                 </DataTable>
             </TabPanel>
             <TabPanel header={<React.Fragment><IoIosAttach /><span>Техзадание</span></React.Fragment>}>
-                <TaskSpecification nowUser={props.TaskMetadata.nowUser} setTaskProp={props.setTaskProp} setSpecificationContext={props.setSpecificationContext} available={true} Task={props.Task} setTaskSpec={props.setTaskSpec} />
+                <TaskSpecification
+                    nowUser={props.TaskMetadata.nowUser}
+                    setTaskProp={props.setTaskProp}
+                    setSpecificationContext={props.setSpecificationContext}
+                    Task={props.Task}
+                    setTaskSpec={props.setTaskSpec} />
             </TabPanel>
         </TabView>
     </div>)

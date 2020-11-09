@@ -40,7 +40,7 @@ class ParadocsContainer extends React.Component<PropsType> {
     }
 }
 
-let mapStateToProps = (state: AppStateType) => {
+const mapStateToProps = (state: AppStateType) => {
     return ({
         items: state.ParadocsPage.items,
         editors: state.ParadocsPage.editors,

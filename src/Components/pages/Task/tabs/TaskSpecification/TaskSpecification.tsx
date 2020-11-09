@@ -15,7 +15,6 @@ import { Dialog } from 'primereact/dialog';
 type PropsType = {
     setTaskSpec: setTaskSpecType,
     Task: TaskType,
-    available: boolean,
     setSpecificationContext: setSpecificationContextType,
     setTaskProp: setTaskPropType,
     nowUser: userItemType
@@ -43,7 +42,7 @@ const Spec: React.FC<PropsType> = (props) => {
     ];
 
     return <React.Fragment>
-        <ContextMenu ref={cm} model={items}></ContextMenu>
+        <ContextMenu ref={cm} model={items} />
         <Dialog modal={true} header="Введите комментарий" visible={props.Task.specification.dialogData.visible}
             onHide={() => { props.setSpecificationContext('dialogData', { ...props.Task.specification.dialogData, visible: false }) }}
             footer={<Button label="Ok" icon="pi pi-check" onClick={() => {
@@ -59,7 +58,7 @@ const Spec: React.FC<PropsType> = (props) => {
                     <DataTable scrollable={true} scrollHeight={'400px'} header={<SpecificationHeader setTaskSpec={props.setTaskSpec} />} value={props.Task.specification.specifications}>
                         <Column field="number" header="#" style={{ width: '5%' }} body={(rowData: TaskSpecType) => <div onClick={() => props.setSpecificationContext('selectedLineNumber', rowData.number - 1)} className="center_cell">{rowData.number}</div>} />
                         <Column field="isReady" header="" style={{ width: '5%' }} body={(rowData: TaskSpecType) => checkboxIsTaskPointReady(rowData, props.setTaskSpec)} />
-                        <Column field="value" header="Описание задачи" editor={(prop: any) => <TextEditor prop={prop} available={props.available} setTaskSpec={props.setTaskSpec} />} />
+                        <Column field="value" header="Описание задачи" body={(rowData: TaskSpecType) => <TextEditor number={rowData.number} value={rowData.value} setTaskSpec={props.setTaskSpec} />} />
                         <Column field="testStatus" header="" style={{ width: '20%' }} body={(rowData: TaskSpecType) => testStatusTemplate(rowData, cm, props.setSpecificationContext)} />
                     </DataTable>
                 </div>
@@ -106,17 +105,15 @@ type CommentsHeaderPropsType = {
     nowUser: userItemType
 }
 
-// () => 
-
 const CommentsHeader = (props: CommentsHeaderPropsType) => <div className="p-col commandPallete">
     <Button icon="pi pi-plus"
         onClick={() => props.setSpecificationContext('dialogData', { ...props.specification.dialogData, visible: true })} />
     <ToggleButton onLabel="Все комментарии" offLabel="Только актуальные" checked={JSON.stringify(props.specification.commentFilters) !== '{}'} onChange={(e) => props.setSpecificationContext('commentFilters', e.value ? { isActive: true } : { isActive: undefined })} />
 </div>;
 
-const TextEditor = (props: { prop: any, available: boolean, setTaskSpec: setTaskSpecType }) => <InputTextarea
-    disabled={!props.available} rows={5} style={{ width: window.innerWidth / 3 + 'px' }} id={props.prop.rowData.number}
-    value={props.prop.rowData.value} onChange={(e) => props.setTaskSpec((e.target as HTMLTextAreaElement).id, 'value', (e.target as HTMLTextAreaElement).value)} autoResize />;
+const TextEditor = (props: { value: string, setTaskSpec: setTaskSpecType, number: number }) => <InputTextarea
+    rows={5} style={{ width: window.innerWidth / 3 + 'px' }} id={props.number.toString()}
+    value={props.value} onChange={(e) => props.setTaskSpec((e.target as HTMLTextAreaElement).id, 'value', (e.target as HTMLTextAreaElement).value)} autoResize />;
 
 const CommentLineTemplate = (rowData: commentsItemType) => <div>
     <span>{new Intl.DateTimeFormat('ru', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' }).format(new Date(rowData.dateCreated)) + ', ' + rowData.user.name}</span>
@@ -133,8 +130,7 @@ const testStatusTemplate = (rowData: TaskSpecType, ref: React.MutableRefObject<a
             <RiStopCircleLine />
             <span>Тестирование не проводилось</span>
         </div>
-    }
-    else if (rowData.testStatus === 1) {
+    } else if (rowData.testStatus === 1) {
         return <div className="testStatusCell"
             onClick={(e) => {
                 setSpecificationContext('selectedLineNumber', rowData.number - 1);
@@ -143,8 +139,7 @@ const testStatusTemplate = (rowData: TaskSpecType, ref: React.MutableRefObject<a
             <FcOk />
             <span>Успешно</span>
         </div>
-    }
-    else {
+    } else {
         return <div className="testStatusCell"
             onClick={(e) => {
                 setSpecificationContext('selectedLineNumber', rowData.number - 1);

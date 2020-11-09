@@ -26,7 +26,7 @@ const MaintainerHeader: React.FC<PropsType> = (props) => {
             </div>
         </div>
     }
-    else { return <div></div> }
+    else { return null }
 };
 
 export default React.memo(MaintainerHeader);

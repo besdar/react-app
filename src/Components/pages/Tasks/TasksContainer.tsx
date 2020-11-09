@@ -33,7 +33,7 @@ class TasksContainer extends React.Component<PropsType> {
     }
 }
 
-let mapStateToProps = (state: AppStateType) => {
+const mapStateToProps = (state: AppStateType) => {
     return ({
         tasksList: state.TasksPage.tasksList,
         AllowedItems: state.TasksPage.AllowedItems

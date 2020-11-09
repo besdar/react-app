@@ -155,12 +155,12 @@ export const TaskReducer = (state = initialState, action: ActionsType): InitialS
                     // если id пустой то это новая строка ТЗ иначе это редактирование существующей
                     ...state.Task, specification: {
                         ...state.Task.specification,
-                        selectedLineNumber: (action.id === '') ? state.Task.specification.specifications.length + 1 : parseInt(action.id) - 1,
+                        selectedLineNumber: (action.id === '') ? state.Task.specification.specifications.length : parseInt(action.id) - 1,
                         specifications: (
                             (action.id === '') ?
                                 // we will add new items
-                                [...state.Task.specification.specifications, { value: '', number: state.Task.specification.specifications.length + 1, isReady: null, testStatus: 0, comments: [], stringUID: '' }] :
-
+                                [...state.Task.specification.specifications, { value: '', number: state.Task.specification.specifications.length + 1, isReady: null, testStatus: 0, comments: [], stringUID: '' }] 
+                            :
                                 // we'll change existing item
                                 (state.Task.specification.specifications).map((el, index: number) => {
                                     if (parseInt(action.id) === index + 1) { return { ...el, [action.name]: action.value } }
@@ -206,8 +206,10 @@ export const setTaskProp = (property: TaskKeysType, value: ReturnObjectValuesTyp
 export const getTaskData = (number: string): ThunkType => async (dispatch) => {
     dispatch(actions.setTaskProp('loaded', false)); //надо сразу установить экран загрузки
     const response = await TaskAPI.getTaskData(number);
-    if (typeof response === 'string') { alert(response) }
-    else {
+    if (typeof response === 'string') {
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        else { alert(response) }
+    } else {
         response.taskMetadata.projectSelectItems.forEach((element: projectSelectType, index: number) => {
             if (element.value.id === response.task.project.id) {
                 // value - object, so: 
@@ -222,9 +224,11 @@ export const getTaskData = (number: string): ThunkType => async (dispatch) => {
 
 export const pushTaskButton = (type: pushTaskButtonObjectType): ThunkType => async (dispatch, getState) => {
     const nowState = getState().TaskPage;
-    const response = await TaskAPI.pushTaskButton({ type: type, taskPage: nowState.Task}, nowState.Task.number);
-    if (typeof response === "string") { dispatch(actions.setCurrentTaskState('NowMessage', { ...nowState.NowMessage, detail: response })) }
-    else { dispatch(actions.setTaskData({ ...((response as {Task: TaskType}).Task as TaskType), loaded: true }, nowState.TaskMetadata, false, { life: 5000, severity: 'success', detail: 'Всё хорошо!', summary: 'Замечательно!' })) }
+    const response = await TaskAPI.pushTaskButton({ type: type, taskPage: nowState.Task }, nowState.Task.number);
+    if (typeof response === "string") {
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        else { dispatch(actions.setCurrentTaskState('NowMessage', { ...nowState.NowMessage, detail: response })) }
+    } else { dispatch(actions.setTaskData({ ...((response as { Task: TaskType }).Task as TaskType), loaded: true }, nowState.TaskMetadata, false, { life: 5000, severity: 'success', detail: 'Всё хорошо!', summary: 'Замечательно!' })) }
 }
 
 export const setNewTaskData = (): ThunkType => async (dispatch, getState) => {
@@ -233,8 +237,10 @@ export const setNewTaskData = (): ThunkType => async (dispatch, getState) => {
     if (nowState.TaskMetadata.modeSelectItems.length) { dispatch(actions.setTaskData(initialState.Task, nowState.TaskMetadata)) }
     else {
         const response = await TaskAPI.getTaskData("NewTask");
-        if (typeof response === 'string') { alert(response) }
-        else { dispatch(actions.setTaskData(initialState.Task, response.taskMetadata)) }
+        if (typeof response === 'string') {
+            if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+            else { alert(response) }
+        } else { dispatch(actions.setTaskData(initialState.Task, response.taskMetadata)) }
     }
 }
 export const setTaskData = (Task: TaskType, TaskMetadata: TaskMetadataType): ThunkType => async (dispatch, getState) => {

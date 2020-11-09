@@ -5,9 +5,9 @@ import { connect, Provider } from "react-redux";
 import { compose } from "redux";
 import store, { AppStateType } from "./redux/store/redux-store";
 import { withSuspense } from "./hoc/withSuspense";
-import LoginPage from "./Components/common/LoginPage/LoginPage";
+import LoginPageContainer from "./Components/common/LoginPage/LoginPageContainer";
 import MainPageContainer from "./Components/common/MainPage/MainPageContentContainer";
-import { getAuthUserData, logout, getAuthUserDataType, logoutType } from "./redux/reducers/auth-reducer";
+import { logout, logoutType } from "./redux/reducers/auth-reducer";
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -16,18 +16,17 @@ import './app.css';
 
 type MapPropsType = ReturnType<typeof mapStateToProps>;
 type DispatchPropsType = {
-    getAuthUserData: getAuthUserDataType,
     logout: logoutType
 }
 
-const ParadocsContainer = React.lazy(() => import('./Components/pages/Paradocs/ParadocsContainer'));
+// const ParadocsContainer = React.lazy(() => import('./Components/pages/Paradocs/ParadocsContainer'));
 const BidsContainer = React.lazy(() => import('./Components/pages/Bids/BidsContainer'));
 const TasksContainer = React.lazy(() => import('./Components/pages/Tasks/TasksContainer'));
 const BidContainer = React.lazy(() => import('./Components/pages/Bid/BidContainer'));
 const TaskContainer = React.lazy(() => import('./Components/pages/Task/TaskContainer'));
 const TaskboardContainer = React.lazy(() => import('./Components/pages/TaskBoard/TaskboardContainer'));
 
-const SuspendedParadocs = withSuspense(ParadocsContainer);
+// const SuspendedParadocs = withSuspense(ParadocsContainer);
 const SuspendedBids = withSuspense(BidsContainer);
 const SuspendedTasks = withSuspense(TasksContainer);
 const SuspendedBid = withSuspense(BidContainer);
@@ -36,10 +35,8 @@ const SuspendedTaskboard = withSuspense(TaskboardContainer);
 
 class App extends Component<MapPropsType & DispatchPropsType> {
 
-    componentDidMount() { this.props.getAuthUserData(); }
-
     render() {
-        if (!this.props.isAuth) { return <LoginPage /> }
+        if (!this.props.isAuth) { return <LoginPageContainer /> }
 
         return (
             <React.Fragment>
@@ -47,8 +44,8 @@ class App extends Component<MapPropsType & DispatchPropsType> {
                     <Route exact path='/'
                         render={() => <MainPageContainer />} />
 
-                    <Route exact path='/paradocs'
-                        render={() => <SuspendedParadocs />} />
+                    {/* <Route exact path='/paradocs'
+                        render={() => <SuspendedParadocs />} /> */}
 
                     <Route path='/bids/:bidNumber'
                         render={() => <SuspendedBid />} />
@@ -67,6 +64,9 @@ class App extends Component<MapPropsType & DispatchPropsType> {
 
                     <Route path='/logout' render={() => { this.props.logout(); return <div>bye</div> }} />
 
+                    <Route path='/login'
+                        render={() => <LoginPageContainer />} />
+
                     <Route path='*' render={() => <div>404 NOT FOUND</div>} />
                 </Switch>
             </React.Fragment>
@@ -78,9 +78,9 @@ const mapStateToProps = (state: AppStateType) => ({
     isAuth: state.AuthReducer.isAuth
 })
 
-let AppContainer = compose<React.ComponentType>(
+const AppContainer = compose<React.ComponentType>(
     withRouter,
-    connect(mapStateToProps, { getAuthUserData, logout }))(App);
+    connect(mapStateToProps, { logout }))(App);
 
 const BioSphereJSApp: React.FC = () => {
     return <BrowserRouter >

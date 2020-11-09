@@ -36,7 +36,7 @@ class BidsContainer extends React.Component<PropsType> {
     }
 }
 
-let mapStateToProps = (state: AppStateType) => {
+const mapStateToProps = (state: AppStateType) => {
     return ({
         bidsList: state.BidsPage.bidsList,
         messagesList: state.BidsPage.messagesList,

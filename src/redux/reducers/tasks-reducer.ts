@@ -43,8 +43,10 @@ export const setTasksCurrentState = (name: initialStateKeysType, data: ReturnObj
 
 export const getTasksList = (): ThunkType => async (dispatch) => {
     const response = await TasksAPI.getTasksList();
-    if (typeof response === 'string') {alert(response)}
-    else {
+    if (typeof response === 'string') {
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login'}
+        else {alert(response)}
+    } else {
         dispatch(actions.setTasksList(response.tasksList));
         //setTaskData(response.task, response.taskMetadata);
     }
@@ -52,7 +54,7 @@ export const getTasksList = (): ThunkType => async (dispatch) => {
 
 export const setTasksContextMenu = (number: string, status: string): ThunkType => async (dispatch, getState) => {
     const nowState = getState().TasksPage.ListOfAllowedItems;
-    let foundedArray = [] as Array<any>; // any because we change inside's type
+    let foundedArray = [] as Array<string>;
     for (let i = 0; i < nowState.length; i++) {
         if (nowState[i].currentStatus === status) {
             foundedArray = nowState[i].allowedStatuses;
@@ -63,7 +65,7 @@ export const setTasksContextMenu = (number: string, status: string): ThunkType =
     dispatch(actions.setTasksCurrentState('AllowedItems', foundedArray.map((elem) => {
         return {
             label: elem,
-            command: (event: any) => {
+            command: (event) => {
                 //props???
             }
         }

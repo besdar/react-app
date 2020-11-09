@@ -12,7 +12,6 @@ let reducers = combineReducers({
     ParadocsPage: ParadocsReducer,
     BidsPage: BidsReducer,
     BidPage: BidReducer,
-    // TasksPage: TasksReducer,
     TaskboardPage: TaskboardReducer,
     AuthReducer: AuthReducer,
     TasksPage: TasksReducer,

@@ -22,21 +22,26 @@ type PropsType = {
     sendBidDiscussionForUSLine: sendBidDiscussionForUSLineType
 }
 
-const BidMain: React.FC<PropsType> = (props) => {
-
-    let accordion = <Accordion>
-        <AccordionTab header="Требования">
-            <Spec available={props.Bid.VisibilityAvailability.unavailable.find((element) => (element === "Задание")) === undefined} showBidDiscussionDialog={props.showBidDiscussionDialog} setBidSpec={props.setBidSpec} tableName={'userStory'} dataTable={props.Bid.userStory} />
-        </AccordionTab>
-    </Accordion>;
+const MyAccordion = (props: {Bid: BidType, showBidDiscussionDialog: showBidDiscussionDialogType, setBidSpec: setBidSpecType}) => {
     if (props.Bid.VisibilityAvailability.invisible.find((element) => (element === "ТехническоеЗадание")) === undefined) {
-        accordion = <Accordion>
+        return <Accordion>
             <AccordionTab header="Требования">
                 <Spec available={true} showBidDiscussionDialog={props.showBidDiscussionDialog} setBidSpec={props.setBidSpec} tableName={'userStory'} dataTable={props.Bid.userStory} />
             </AccordionTab>
-            <AccordionTab header="Техническое задание"><Spec available={true} showBidDiscussionDialog={props.showBidDiscussionDialog} setBidSpec={props.setBidSpec} tableName={'specifications'} dataTable={props.Bid.specifications} /></AccordionTab>
+            <AccordionTab header="Техническое задание">
+                <Spec available={true} showBidDiscussionDialog={props.showBidDiscussionDialog} setBidSpec={props.setBidSpec} tableName={'specifications'} dataTable={props.Bid.specifications} />
+            </AccordionTab>
         </Accordion>
+    } else {
+        return <Accordion>
+        <AccordionTab header="Требования">
+            <Spec available={props.Bid.VisibilityAvailability.unavailable.find((element) => (element === "Задание")) === undefined} showBidDiscussionDialog={props.showBidDiscussionDialog} setBidSpec={props.setBidSpec} tableName={'userStory'} dataTable={props.Bid.userStory} />
+        </AccordionTab>
+    </Accordion>
     }
+}
+
+const BidMain: React.FC<PropsType> = (props) => {
 
     return (
         <React.Fragment>
@@ -129,7 +134,7 @@ const BidMain: React.FC<PropsType> = (props) => {
                 </div>
             </div>
             <h3>Задание</h3>
-            {accordion}
+            <MyAccordion Bid={props.Bid} setBidSpec={props.setBidSpec} showBidDiscussionDialog={props.showBidDiscussionDialog} />
             {props.Bid.userStory.length > 0 && <Dialog style={{maxWidth: '600px'}} header="Обсуждение (создание)" visible={props.Bid.DialogDiscussionData.isVisible} 
                 onHide={() => {props.setBidProp('DialogDiscussionData', {...props.Bid.DialogDiscussionData, isVisible: false})}} 
                 footer={<Button icon='pi pi-check' onClick={props.sendBidDiscussionForUSLine} label="OK" />}>
@@ -140,7 +145,7 @@ const BidMain: React.FC<PropsType> = (props) => {
 }
 
 const getSolving = (VisibilityAvailability: {invisible: Array<string>, unavailable: Array<string>}, solving: string, setBidProp: setBidPropType) => {
-    if (VisibilityAvailability.invisible.find((element: string) => (element === "Решение")) !== undefined) { return <div></div> }
+    if (VisibilityAvailability.invisible.find((element: string) => (element === "Решение")) !== undefined) { return null }
     else {
         const readOnly = (VisibilityAvailability.unavailable.find((element: string) => (element === "Основание")) !== undefined);
 

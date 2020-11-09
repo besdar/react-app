@@ -52,8 +52,7 @@ const Tasks: React.FC<PropsType> = (props) => {
                 if (isNaN(node.data.number)) { return node.data.number }
                 else { return <NavLink to={'/tasks/' + node.data.number}>{node.data.number}</NavLink> }
             }} />
-        }
-        else if (col.field === 'label') {return <Column expander key={col.field} field={col.field} header={col.header} />}
+        } else if (col.field === 'label') {return <Column expander key={col.field} field={col.field} header={col.header} />}
         else { return <Column key={col.field} style={{width: col.width}} field={col.field} header={col.header} /> }
     });
 
