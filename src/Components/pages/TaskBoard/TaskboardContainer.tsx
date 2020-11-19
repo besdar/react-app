@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import Taskboard from "./Taskboard";
 import { connect } from "react-redux";
 import {
     getTaskboardData,
     setCurrentStateOfCards,
     changeTaskStatus,
-    setError,  
-    setCurrentStateOfCardsList, 
+    setError,
+    setCurrentStateOfCardsList,
     setHeaderVisibility,
     setCardState,
     expandAllCards,
@@ -82,32 +82,29 @@ type DispatchPropsType = {
 
 type PropsType = MapPropsType & DispatchPropsType & RouteComponentProps;
 
-class TaskboardContainer extends React.Component<PropsType> {
-    componentDidMount() {
-        document.title = "Taskboard";
-        this.props.getTaskboardData(true);
-    }
+const TaskboardContainer: React.FC<PropsType> = (props) => {
+    useLayoutEffect(() => {
+        props.getTaskboardData(true);
+        // ошибка что мы передаем не пропсы а пустой массив. Намеренно, чтобы сработало аналогично ComponentDidMount
+        // eslint-disable-next-line 
+    }, []);
 
-    render() {
-        return (
-            <Taskboard {...this.props.Taskboard}
-                changeTaskStatus={this.props.changeTaskStatus}
-                getTaskboardData={this.props.getTaskboardData}
-                setCurrentStateOfCards={this.props.setCurrentStateOfCards}
-                setCurrentStateOfCardsList={this.props.setCurrentStateOfCardsList}
-                setError={this.props.setError}
-                setHeaderVisibility={this.props.setHeaderVisibility}
-                setCardState={this.props.setCardState}
-                expandAllCards={this.props.expandAllCards}
-                collapseAllMaintainerTabs={this.props.collapseAllMaintainerTabs}
-                collapseAllMaintainerStatusesByTab={this.props.collapseAllMaintainerStatusesByTab}
-                changeTaskPriority={this.props.changeTaskPriority}
-                setTaskboardFilter={this.props.setTaskboardFilter}
-                queryParams={queryString.parse(this.props.location.search)}
-                Cards={filterCards(this.props.Taskboard.Cards, this.props.Taskboard.filters)} // мутация данных. Но это фильтр и в теории данные сами по себе не меняются
-            />
-        );
-    }
+    return <Taskboard {...props.Taskboard}
+        changeTaskStatus={props.changeTaskStatus}
+        getTaskboardData={props.getTaskboardData}
+        setCurrentStateOfCards={props.setCurrentStateOfCards}
+        setCurrentStateOfCardsList={props.setCurrentStateOfCardsList}
+        setError={props.setError}
+        setHeaderVisibility={props.setHeaderVisibility}
+        setCardState={props.setCardState}
+        expandAllCards={props.expandAllCards}
+        collapseAllMaintainerTabs={props.collapseAllMaintainerTabs}
+        collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab}
+        changeTaskPriority={props.changeTaskPriority}
+        setTaskboardFilter={props.setTaskboardFilter}
+        queryParams={queryString.parse(props.location.search)}
+        Cards={filterCards(props.Taskboard.Cards, props.Taskboard.filters)} // мутация данных. Но это фильтр и в теории данные сами по себе не меняются
+    />;
 }
 
 const mapStateToProps = (state: AppStateType) => ({ Taskboard: state.TaskboardPage })

@@ -33,7 +33,7 @@ const Taskboard: React.FC<PropsType> = (props) => {
 
     let toast = useRef<any>(null);
 
-    if (props.errorMessage !== '') {
+    if (props.errorMessage) {
         toast.current.show({ severity: 'error', summary: 'Ошибка', detail: props.errorMessage, life: 10000 });
         props.setError();
     }

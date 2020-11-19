@@ -1,11 +1,9 @@
 import { TaskAPI, pushTaskButtonObjectType } from "../../api/task-api";
 import { BaseThunkType, InferActionsTypes, ReturnObjectValuesType } from '../store/redux-store';
 import { ToastMessage } from "primereact/toast";
-
-export type attachementItemType = {
-    link: string,
-    value: string
-}
+import { attachementItemType } from "../../Components/libriary/AttachementTable/AttachementTable";
+import { discussionDataType } from "../../Components/libriary/DiscussionChat/DiscussionChat";
+import { connectedBidsItem } from "../../Components/pages/Bid/tabs/ConnectedBidsTable";
 
 export type commentsItemType = {
     isActive: boolean,
@@ -23,17 +21,6 @@ export type TaskSpecType = {
     testStatus: number,
     stringUID: string,
     comments: Array<commentsItemType>
-}
-
-export type connectedTasksItem = {
-    number: string,
-    name: string,
-    project: string,
-    author: string,
-    weight: number,
-    type: string,
-    basement: string,
-    status: string
 }
 
 type EnumTaskType = {
@@ -77,16 +64,18 @@ const initialState = {
         type: 0,
         attachement_count: 0,
         analisysStatus: 0,
+        discussionData: {} as discussionDataType,
         source: {
             number: "",
-            value: ""
+            value: "",
+            type: "" as '' | 'Задачи' | 'Заявки'
         },
         VisibilityAvailability: {
             invisible: [] as Array<string>,
             unavailable: [] as Array<string>
         },
         solving: "",
-        connectedTasks: [] as Array<connectedTasksItem>,
+        connectedTasks: [] as Array<connectedBidsItem>,
         linkedPeople: [] as Array<attachementItemType>,
         fistInit: false as boolean | undefined,
         loaded: false, // отвечает за отображение заглушки загрузки
@@ -128,8 +117,9 @@ type specificationKeystype = keyof specificationType;
 export type ErrorType = typeof initialState.NowMessage;
 type NowMessageSeverityType = 'success' | 'info' | 'warn' | 'error';
 export type userItemType = typeof initialState.TaskMetadata.nowUser;
+export type sourceType = typeof initialState.Task.source;
 
-export const TaskReducer = (state = initialState, action: ActionsType): InitialStateType => {
+export const TaskReducer = (state = initialState, action: ActionsType): TaskInitialStateType => {
     switch (action.type) {
         case 'SET_TASK_DATA':
             return {
@@ -155,9 +145,9 @@ export const TaskReducer = (state = initialState, action: ActionsType): InitialS
                     // если id пустой то это новая строка ТЗ иначе это редактирование существующей
                     ...state.Task, specification: {
                         ...state.Task.specification,
-                        selectedLineNumber: (action.id === '') ? state.Task.specification.specifications.length : parseInt(action.id) - 1,
+                        selectedLineNumber: (!action.id) ? state.Task.specification.specifications.length : parseInt(action.id) - 1,
                         specifications: (
-                            (action.id === '') ?
+                            (!action.id) ?
                                 // we will add new items
                                 [...state.Task.specification.specifications, { value: '', number: state.Task.specification.specifications.length + 1, isReady: null, testStatus: 0, comments: [], stringUID: '' }] 
                             :
@@ -184,21 +174,36 @@ export const TaskReducer = (state = initialState, action: ActionsType): InitialS
                         [action.name]: action.value
                     }
                 }
+            };
+        case 'SET_DISCUSSION_DATA':
+            return {
+                ...state,
+                Task: {
+                    ...state.Task,
+                    discussionData: action.data
+                },
+                NowMessage: {
+                    life: 5000,
+                    severity: 'success',
+                    summary: 'Успешно!',
+                    detail: 'Всё получилось!'
+                }
             }
         default: return state;
     }
 }
 
 const actions = {
-    setCurrentTaskState: (name: initialStateKeys, data: ReturnObjectValuesType<InitialStateType>) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
+    setCurrentTaskState: (name: initialStateKeys, data: ReturnObjectValuesType<TaskInitialStateType>) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
     setTaskSpec: (id: string, value: ReturnObjectValuesType<TaskSpecType>, name: keyof TaskSpecType | 'none') => ({ type: 'SET_TASK_SPEC', id: id, value: value, name: name } as const),
     setTaskProp: (property: TaskKeysType, value: ReturnObjectValuesType<TaskType>) => ({ type: 'SET_TASK_PROP', property: property, value: value } as const),
     addAttachement: (attachement: attachementItemType, attachement_link: attachementItemType) => ({ type: 'ADD_ATTACHEMENT', attachement: attachement, attachement_link: attachement_link } as const),
     setTaskData: (Task: TaskType, TaskMetadata: TaskMetadataType, firstInit = false, NowMessage = initialState.NowMessage) => ({ type: 'SET_TASK_DATA', Task: Task, TaskMetadata: TaskMetadata, firstInit: firstInit, NowMessage: NowMessage } as const),
-    setSpecificationContext: (name: specificationKeystype, value: ReturnObjectValuesType<specificationType>) => ({ type: 'SET_SPECIFICATION_CONTEXT', name: name, value: value } as const)
+    setSpecificationContext: (name: specificationKeystype, value: ReturnObjectValuesType<specificationType>) => ({ type: 'SET_SPECIFICATION_CONTEXT', name: name, value: value } as const),
+    setDiscussionData: (data: discussionDataType) => ({ type: 'SET_DISCUSSION_DATA', data: data } as const)
 }
 
-export const setCurrentTaskState = (name: initialStateKeys, data: ReturnObjectValuesType<InitialStateType>): ThunkType => async (dispatch) => { dispatch(actions.setCurrentTaskState(name, data)) }
+export const setCurrentTaskState = (name: initialStateKeys, data: ReturnObjectValuesType<TaskInitialStateType>): ThunkType => async (dispatch) => { dispatch(actions.setCurrentTaskState(name, data)) }
 export const setTaskSpec = (id = '', name = 'none' as TaskSpecTypeKeys | 'none', value = '' as ReturnObjectValuesType<TaskSpecType>): ThunkType => async (dispatch) => { dispatch(actions.setTaskSpec(id, value, name)) }
 export const setSpecificationContext = (name: specificationKeystype, value: ReturnObjectValuesType<specificationType>): ThunkType => async (dispatch) => { dispatch(actions.setSpecificationContext(name, value)) }
 
@@ -224,24 +229,21 @@ export const getTaskData = (number: string): ThunkType => async (dispatch) => {
 
 export const pushTaskButton = (type: pushTaskButtonObjectType): ThunkType => async (dispatch, getState) => {
     const nowState = getState().TaskPage;
-    const response = await TaskAPI.pushTaskButton({ type: type, taskPage: nowState.Task }, nowState.Task.number);
+    let number = "";
+    if (nowState.Task.number === "") {number = "000"} else {number = nowState.Task.number};
+    const response = await TaskAPI.pushTaskButton({ type: type, taskPage: nowState.Task }, number);
     if (typeof response === "string") {
         if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
         else { dispatch(actions.setCurrentTaskState('NowMessage', { ...nowState.NowMessage, detail: response })) }
     } else { dispatch(actions.setTaskData({ ...((response as { Task: TaskType }).Task as TaskType), loaded: true }, nowState.TaskMetadata, false, { life: 5000, severity: 'success', detail: 'Всё хорошо!', summary: 'Замечательно!' })) }
 }
 
-export const setNewTaskData = (): ThunkType => async (dispatch, getState) => {
-    const nowState = getState().TaskPage;
-    // если это переход по ссылке внутри реакта, а не ввод в адресную строку ссылки, сбросим данные заявки
-    if (nowState.TaskMetadata.modeSelectItems.length) { dispatch(actions.setTaskData(initialState.Task, nowState.TaskMetadata)) }
-    else {
-        const response = await TaskAPI.getTaskData("NewTask");
-        if (typeof response === 'string') {
-            if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
-            else { alert(response) }
-        } else { dispatch(actions.setTaskData(initialState.Task, response.taskMetadata)) }
-    }
+export const setNewTaskData = (): ThunkType => async (dispatch) => {
+    const response = await TaskAPI.getTaskData("NewTask");
+    if (typeof response === 'string') {
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        else { alert(response) }
+    } else {dispatch(actions.setTaskData(response.task,response.taskMetadata)) }
 }
 export const setTaskData = (Task: TaskType, TaskMetadata: TaskMetadataType): ThunkType => async (dispatch, getState) => {
     const nowState = getState();
@@ -252,7 +254,7 @@ export const setNewTaskAttachement = (attachement: attachementItemType, attachem
 
 export default TaskReducer;
 
-export type InitialStateType = typeof initialState;
+export type TaskInitialStateType = typeof initialState;
 type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 

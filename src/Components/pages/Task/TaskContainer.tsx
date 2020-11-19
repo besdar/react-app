@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import Task from './Task';
 import { connect } from "react-redux";
 import { setCurrentTaskState, setTaskProp, setTaskSpec, pushTaskButton, getTaskData, setNewTaskData, setNewTaskAttachement, setNewTaskDataType, getTaskDataType, setCurrentTaskStateType, setTaskPropType, setTaskSpecType, pushTaskButtonType, setNewTaskAttachementType, setSpecificationContext, setSpecificationContextType } from "../../../redux/reducers/task-reducer";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { compose } from "redux";
-import {AppStateType} from '../../../redux/store/redux-store';
+import { AppStateType } from '../../../redux/store/redux-store';
+import { sendBidReplyType, sendBidReply } from '../../../redux/reducers/bid-reducer';
 
 type MapPropsType = ReturnType<typeof mapStateToProps>
 type DispatchPropsType = {
@@ -15,7 +16,8 @@ type DispatchPropsType = {
     setTaskSpec: setTaskSpecType,
     pushTaskButton: pushTaskButtonType,
     setNewTaskAttachement: setNewTaskAttachementType,
-    setSpecificationContext: setSpecificationContextType
+    setSpecificationContext: setSpecificationContextType,
+    sendBidReply: sendBidReplyType
 }
 
 type PathParamsType = {
@@ -24,34 +26,34 @@ type PathParamsType = {
 
 type PropsType = MapPropsType & DispatchPropsType & RouteComponentProps<PathParamsType>;
 
-class TaskContainer extends React.Component<PropsType> {
+const TaskContainer: React.FC<PropsType> = (props) => {
 
-    componentDidMount() {
-        document.title = "Задача";
-        if (!isNaN(parseInt(this.props.match.params.taskNumber))) {this.props.getTaskData(this.props.match.params.taskNumber)}
-        else {this.props.setNewTaskData()}
-    }
+    useLayoutEffect(() => {
+        if (!isNaN(parseInt(props.match.params.taskNumber))) { props.getTaskData(props.match.params.taskNumber) }
+        else { props.setNewTaskData() }
+        // ошибка что мы передаем не пропсы а пустой массив. Намеренно, чтобы сработало аналогично ComponentDidMount
+        // eslint-disable-next-line 
+    }, []);
 
     //componentDidUpdate() {
-        // if (this.props.fistInit === true) {
-        //     window.setTimeout(resize, 0.1); //бага веба, нужно разобраться почему scrollHeight браузером при первом открытии вычисляется неверно
-            //this.props.setCurrentTaskState('fistInit', false);
-        // }  
+    // if (props.fistInit === true) {
+    //     window.setTimeout(resize, 0.1); //бага веба, нужно разобраться почему scrollHeight браузером при первом открытии вычисляется неверно
+    //props.setCurrentTaskState('fistInit', false);
+    // }  
     //}
 
-    render() {
-        return <Task Task={this.props.Task}
-                TaskMetadata={this.props.TaskMetadata}
-                setTaskProp={this.props.setTaskProp}
-                setTaskSpec={this.props.setTaskSpec}
-                pushTaskButton={this.props.pushTaskButton}
-                setCurrentTaskState={this.props.setCurrentTaskState}
-                NowMessage={this.props.NowMessage}
-                setNewTaskAttachement={this.props.setNewTaskAttachement}
-                getTaskData={this.props.getTaskData}
-                setNewTaskData={this.props.setNewTaskData}
-                setSpecificationContext={this.props.setSpecificationContext} />
-    }
+    return <Task Task={props.Task}
+        TaskMetadata={props.TaskMetadata}
+        setTaskProp={props.setTaskProp}
+        setTaskSpec={props.setTaskSpec}
+        pushTaskButton={props.pushTaskButton}
+        setCurrentTaskState={props.setCurrentTaskState}
+        NowMessage={props.NowMessage}
+        setNewTaskAttachement={props.setNewTaskAttachement}
+        getTaskData={props.getTaskData}
+        setNewTaskData={props.setNewTaskData}
+        setSpecificationContext={props.setSpecificationContext}
+        sendBidReply={props.sendBidReply} />
 }
 
 // function resize() {
@@ -71,4 +73,4 @@ const mapStateToProps = (state: AppStateType) => {
     })
 }
 
-export default compose<React.ComponentType>(connect(mapStateToProps, {setCurrentTaskState, setTaskProp, setTaskSpec, pushTaskButton, getTaskData, setNewTaskData, setNewTaskAttachement, setSpecificationContext}), withRouter)(TaskContainer);
+export default compose<React.ComponentType>(connect(mapStateToProps, { setCurrentTaskState, setTaskProp, setTaskSpec, pushTaskButton, getTaskData, setNewTaskData, setNewTaskAttachement, setSpecificationContext, sendBidReply }), withRouter)(TaskContainer);

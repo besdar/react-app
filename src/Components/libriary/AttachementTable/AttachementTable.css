@@ -1,0 +1,13 @@
+#attachement_preview_iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.attachement_file_row > * {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.attachement_file_row > *:hover {
+    color: darkblue;
+}

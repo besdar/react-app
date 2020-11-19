@@ -1,5 +1,5 @@
 import React from "react";
-import Loader from "../Components/common/Loader/Loader";
+import Loader from "./Components/common/Loader/Loader";
 
 export function withSuspense<WCP>(WrappedComponent: React.ComponentType<WCP>) {
     return (props: WCP) => {

@@ -1,18 +1,20 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Switch, withRouter } from "react-router-dom";
 
 import { connect, Provider } from "react-redux";
 import { compose } from "redux";
 import store, { AppStateType } from "./redux/store/redux-store";
-import { withSuspense } from "./hoc/withSuspense";
+import { withSuspense } from "./withSuspense";
 import LoginPageContainer from "./Components/common/LoginPage/LoginPageContainer";
-import MainPageContainer from "./Components/common/MainPage/MainPageContentContainer";
+import MainPage from "./Components/common/MainPage/MainPage";
 import { logout, logoutType } from "./redux/reducers/auth-reducer";
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 import './app.css';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
 
 type MapPropsType = ReturnType<typeof mapStateToProps>;
 type DispatchPropsType = {
@@ -25,6 +27,7 @@ const TasksContainer = React.lazy(() => import('./Components/pages/Tasks/TasksCo
 const BidContainer = React.lazy(() => import('./Components/pages/Bid/BidContainer'));
 const TaskContainer = React.lazy(() => import('./Components/pages/Task/TaskContainer'));
 const TaskboardContainer = React.lazy(() => import('./Components/pages/TaskBoard/TaskboardContainer'));
+const ReportContainer = React.lazy(() => import('./Components/pages/Reports/ReportContainer'));
 
 // const SuspendedParadocs = withSuspense(ParadocsContainer);
 const SuspendedBids = withSuspense(BidsContainer);
@@ -32,17 +35,18 @@ const SuspendedTasks = withSuspense(TasksContainer);
 const SuspendedBid = withSuspense(BidContainer);
 const SuspendedTask = withSuspense(TaskContainer);
 const SuspendedTaskboard = withSuspense(TaskboardContainer);
+const SuspendedReport = withSuspense(ReportContainer);
 
-class App extends Component<MapPropsType & DispatchPropsType> {
+//class App extends Component<MapPropsType & DispatchPropsType> 
+const App: React.FC<MapPropsType & DispatchPropsType> = (props) => {
 
-    render() {
-        if (!this.props.isAuth) { return <LoginPageContainer /> }
+    if (!props.isAuth) { return <LoginPageContainer /> }
 
         return (
             <React.Fragment>
                 <Switch>
                     <Route exact path='/'
-                        render={() => <MainPageContainer />} />
+                        render={() => <MainPage />} />
 
                     {/* <Route exact path='/paradocs'
                         render={() => <SuspendedParadocs />} /> */}
@@ -62,7 +66,10 @@ class App extends Component<MapPropsType & DispatchPropsType> {
                     <Route exact path='/taskboard'
                         render={() => <SuspendedTaskboard />} />
 
-                    <Route path='/logout' render={() => { this.props.logout(); return <div>bye</div> }} />
+                    <Route path='/reports/:reportName'
+                        render={() => <SuspendedReport />} />
+
+                    <Route path='/logout' render={() => { props.logout(); window.location.href = '/'; return <div>bye</div> }} />
 
                     <Route path='/login'
                         render={() => <LoginPageContainer />} />
@@ -71,7 +78,6 @@ class App extends Component<MapPropsType & DispatchPropsType> {
                 </Switch>
             </React.Fragment>
         )
-    }
 }
 
 const mapStateToProps = (state: AppStateType) => ({
@@ -85,7 +91,11 @@ const AppContainer = compose<React.ComponentType>(
 const BioSphereJSApp: React.FC = () => {
     return <BrowserRouter >
         <Provider store={store}>
-            <AppContainer />
+            <MuiPickersUtilsProvider utils={MomentUtils} locale='ru'>
+                <React.StrictMode>
+                    <AppContainer />
+                </React.StrictMode>
+            </MuiPickersUtilsProvider>
         </Provider>
     </BrowserRouter>
 }

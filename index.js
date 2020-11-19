@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import path from 'path';
 import config from './server/config.js';
-import {checkToken, logout, checkUserAuthPost, getBidDataFrom1C, pushBidButtonOn1C, getGetBidsListFrom1C, GetTaskboardDataFrom1C, pushTaskButtonTo1C,getGetTasksListFrom1C, getTaskDataFrom1C} from './server/connectTo1C.js';
+import { checkToken, logout, checkUserAuthPost, getBidDataFrom1C, pushBidButtonOn1C, getReportResultFrom1C, getGetBidsListFrom1C, GetTaskboardDataFrom1C, pushTaskButtonTo1C, getGetTasksListFrom1C, getTaskDataFrom1C } from './server/connectTo1C.js';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync.js';
 //import cors from 'cors';
@@ -20,7 +20,7 @@ AuthDataBase.defaults({ authUids: [] }).write();
 // Express application
 const app = express();
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(compression());
 app.use(cookieParser());
 //app.use(cors({origin: config.clientHost + ':' + config.reactPort})); //allow CORS (from react app to node) from same ip // we need to do something with it later
@@ -41,15 +41,18 @@ app.post('/GetBidData', checkToken, getBidDataFrom1C);
 app.post('/GetTaskboardData', checkToken, GetTaskboardDataFrom1C);
 app.post('/pushTaskButton', checkToken, pushTaskButtonTo1C);
 app.post('/GetTaskData', checkToken, getTaskDataFrom1C);
+app.post('/getReport', checkToken, getReportResultFrom1C);
 
 // ++ продуктив ++ //
-const sendIndex = (req, res) => {res.sendFile(path.join(path.resolve(path.dirname('')), 'build', 'index.html'))};
+const sendIndex = (req, res) => { res.sendFile(path.join(path.resolve(path.dirname('')), 'build', 'index.html')) };
 app.get('/', sendIndex);
 // ТАК БЫТЬ НЕ ДОЛЖНО НАДО ПЕРЕДЕЛАТЬ (ВДРУГ БУДЕТ 1000 СТРАНИЦ). Но пока так 
 // app.get('/paradocs', sendIndex);
 app.get('/bids', sendIndex);
 app.get('/taskboard', sendIndex);
 app.get('/bids/:bidNumber', sendIndex);
+app.get('/tasks/:taskNumber', sendIndex);
+app.get('/reports/:reportName', sendIndex);
 app.get('/login', sendIndex);
 app.get('/logout', logout); // только в продуктиве
 
@@ -61,4 +64,4 @@ app.use('/assets', express.static('build/assets')); // стили глобаль
 app.listen(config.nodePort);
 
 // Right way to shutdown application. Close connections etc.
-process.on('SIGINT', () => {process.exit(0)});
+process.on('SIGINT', () => { process.exit(0) });

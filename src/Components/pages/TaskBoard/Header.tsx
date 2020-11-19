@@ -58,6 +58,7 @@ const Header: React.FC<PropsType> = (props) => {
           includeInputInList
           renderInput={(params) => <TextField {...params} label="Номер или название задачи" variant="outlined" />}
           value={props.searchFilter.FullTextOfSelectedCard}
+          getOptionSelected={(option) => (!!option)}
           options={props.searchFilter.cardsSearchArray} />
         <div className="rightHeader">
           <div onClick={() => props.setTaskboardFilter('invisibleCardNames', 'ready')}>{props.isReadyVisible ? <MdCallMissedOutgoing title="Выполненные скрыть" size='2em' /> : <MdCallMissed title="Выполненные отобразить" size='2em' />}</div>

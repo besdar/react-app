@@ -7,6 +7,7 @@ import TasksReducer from "../reducers/tasks-reducer";
 import TaskReducer from "../reducers/task-reducer";
 import TaskboardReducer from "../reducers/taskboard-reducer";
 import AuthReducer from "../reducers/auth-reducer";
+import ReportsReducer from "../reducers/reports-reducer";
 
 let reducers = combineReducers({
     ParadocsPage: ParadocsReducer,
@@ -15,7 +16,8 @@ let reducers = combineReducers({
     TaskboardPage: TaskboardReducer,
     AuthReducer: AuthReducer,
     TasksPage: TasksReducer,
-    TaskPage: TaskReducer
+    TaskPage: TaskReducer,
+    Reports: ReportsReducer
 });
 
 type RootReducerType = typeof reducers; // (globalstate: AppStateType) => AppStateType

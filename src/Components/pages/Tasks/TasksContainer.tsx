@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import Tasks from './Tasks';
 import { connect } from "react-redux";
 import { getTasksList, setTasksCurrentState, setTasksContextMenu, getTasksListType, setTasksCurrentStateType, setTasksContextMenuType } from "../../../redux/reducers/tasks-reducer";
@@ -17,20 +17,19 @@ type DispatchPropsType = {
 
 type PropsType = MapPropsType & DispatchPropsType;
 
-class TasksContainer extends React.Component<PropsType> {
+const TasksContainer: React.FC<PropsType> = (props) => {
 
-    componentDidMount() {
-        document.title = "Задачи";
-        this.props.getTasksList();
-    }
+    useLayoutEffect(() => {
+        props.getTasksList();
+        // ошибка что мы передаем не пропсы а пустой массив. Намеренно, чтобы сработало аналогично ComponentDidMount
+        // eslint-disable-next-line 
+    }, []);
 
-    render() {
-        return <Tasks
-            tasksList={this.props.tasksList}
-            setTasksCurrentState={this.props.setTasksCurrentState}
-            setTasksContextMenu={this.props.setTasksContextMenu}
-            AllowedItems={this.props.AllowedItems} />
-    }
+    return <Tasks
+        tasksList={props.tasksList}
+        setTasksCurrentState={props.setTasksCurrentState}
+        setTasksContextMenu={props.setTasksContextMenu}
+        AllowedItems={props.AllowedItems} />
 }
 
 const mapStateToProps = (state: AppStateType) => {

@@ -1,10 +1,8 @@
 import { BidsAPI, pushBidButtonObjectType } from "../../api/bids-api";
+import { attachementItemType } from "../../Components/libriary/AttachementTable/AttachementTable";
+import { discussionDataType } from "../../Components/libriary/DiscussionChat/DiscussionChat";
+import { connectedBidsItem } from "../../Components/pages/Bid/tabs/ConnectedBidsTable";
 import { BaseThunkType, InferActionsTypes, ReturnObjectValuesType } from '../store/redux-store';
-
-export type attachementItemType = {
-    link: string,
-    value: string
-}
 
 export type BidSpecType = {
     value: string,
@@ -36,82 +34,63 @@ type projectSelectType = {
 
 type projectValueType = typeof initialState.Bid.project;
 
-type discussionDataItem = {
-    id: string,
-    dateString: string,
-    text: string,
-    title: string,
-    type: string,
-    position: 'left' | 'right',
-    titleColor: string,
-    isActual: boolean
-}
 
-export type connectedBidsItem = {
-    number: string,
-    name: string,
-    project: string,
-    author: string,
-    time: string,
-    type: string,
-    basement: string,
-    status: string,
-    childrens: Array<string>
-}
+
+const initialBid = {
+    specifications: [] as Array<BidSpecType>, // тех задание
+    userStory: [] as Array<BidSpecUsersType>, // задание заказчика
+    attachement: [] as Array<attachementItemType>, // вложения ввиде бинарных строк
+    attachement_links: [] as Array<attachementItemType>, // те же самые вложения но в виде ссылок для отображения, служит для подсчета количества
+    number: "",
+    name: "",
+    customer: "",
+    author: "",
+    date: '',
+    duration: 0,
+    status: 'Заявка',
+    project: {
+        id: '',
+        filterArray: [] as Array<string>
+    },
+    priority: 1,
+    mode: 0,
+    type: 0,
+    attachement_count: 0,
+    paid_off: false,
+    analisysStatus: 0,
+    source: {
+        number: "",
+        value: ""
+    },
+    VisibilityAvailability: {
+        invisible: ["Решение"] as Array<string>,
+        unavailable: [] as Array<string>
+    },
+    solving: "",
+    discussionData: {
+        id: "",
+        childs: []
+    } as discussionDataType,
+    nowReplyMessageId: "",
+    connectedBids: [] as Array<connectedBidsItem>,
+    linkedPeople: [] as Array<attachementItemType>,
+    fistInit: false as boolean | undefined,
+    loaded: false, // отвечает за отображение заглушки загрузки
+    DialogDiscussionData: {
+        isVisible: false,
+        index: 0,
+        DiscussionData: {
+            id: '',
+            value: '',
+            count: 0 // we do not need it here, but it necessary in the type
+        } as discussionSpecUsersType
+    },
+    OpenTime: new Date() as Date | undefined,
+    expandedRows: [] as Array<any> | undefined
+};
 
 const initialState = {
-    Bid: {
-        specifications: [], // тех задание
-        userStory: [], // задание заказчика
-        attachement: [], // вложения ввиде бинарных строк
-        attachement_links: [], // те же самые вложения но в виде ссылок для отображения, служит для подсчета количества
-        number: "",
-        name: "",
-        customer: "",
-        author: "",
-        date: '',
-        duration: 0,
-        status: 'Заявка',
-        project: {
-            id: '',
-            filterArray: []
-        },
-        priority: 1,
-        mode: 0,
-        type: 0,
-        attachement_count: 0,
-        paid_off: false,
-        analisysStatus: 0,
-        source: {
-            number: "",
-            value: ""
-        },
-        VisibilityAvailability: {
-            invisible: ["Решение"],
-            unavailable: []
-        },
-        solving: "",
-        discussionData: {
-            id: "",
-            childs: []
-        },
-        nowReplyMessageId: "",
-        connectedBids: [],
-        linkedPeople: [],
-        fistInit: false,
-        loaded: false, // отвечает за отображение заглушки загрузки
-        DialogDiscussionData: {
-            isVisible: false,
-            index: 0,
-            DiscussionData: {
-                id: '',
-                value: '',
-                count: 0 // we do not need it here, but it necessary in the type
-            }
-        },
-        OpenTime: new Date(),
-        expandedRows: []
-    } as BidType,
+    Bid: { ...initialBid },
     BidMetadata: {
         projectSelectItems: [] as Array<projectSelectType>,
         prioritySelectItems: [] as Array<EnumBidType>,
@@ -119,67 +98,24 @@ const initialState = {
         modeSelectItems: [] as Array<EnumBidType>,
         statusSelectItems: [] as Array<EnumBidType>,
         customerSelectItems: [] as Array<EnumBidType>,
-        initialNewBid: {} as BidType
+        initialNewBid: { ...initialBid }
     }, // возможные значения перечислений. загружаем 1 раз при старте приложения
-    NowMessage: { life: 5000, severity: 'error' as 'success' | 'info' | 'warn' | 'error', summary: 'Ошибка', detail: '' } // текущее отображаемое сообщение
+    NowMessage: { 
+        life: 5000, 
+        severity: 'error' as 'success' | 'info' | 'warn' | 'error', 
+        summary: 'Ошибка', 
+        detail: '' 
+    } // текущее отображаемое сообщение
 };
 
 type initialStateKeys = keyof typeof initialState;
 type BidKeysType = keyof BidType;
 export type ErrorType = typeof initialState.NowMessage;
-export type BidType = {
-    specifications: Array<BidSpecType>, // тех задание
-    userStory: Array<BidSpecUsersType>, // задание заказчика
-    attachement: Array<attachementItemType>, // вложения ввиде бинарных строк
-    attachement_links: Array<attachementItemType>, // те же самые вложения но в виде ссылок для отображения, служит для подсчета количества
-    number: string,
-    name: string,
-    customer: string,
-    author: string,
-    date: string,
-    duration: number,
-    status: string,
-    project: {
-        id: string,
-        filterArray: Array<string>
-    },
-    priority: number,
-    mode: number,
-    type: number,
-    attachement_count: number,
-    paid_off: boolean,
-    analisysStatus: number,
-    source: {
-        number: string,
-        value: string
-    },
-    VisibilityAvailability: {
-        invisible: Array<string>,
-        unavailable: Array<string>
-    },
-    solving: string,
-    discussionData: {
-        id: string,
-        childs: Array<discussionDataItem>
-    },
-    nowReplyMessageId: string,
-    connectedBids: Array<connectedBidsItem>,
-    linkedPeople: Array<attachementItemType>,
-    fistInit?: boolean,
-    loaded: boolean, // отвечает за отображение заглушки загрузки
-    DialogDiscussionData: {
-        isVisible: boolean,
-        index: number,
-        DiscussionData: discussionSpecUsersType
-    },
-    OpenTime?: Date,
-    expandedRows?: Array<any>
-};
+export type BidType = typeof initialBid;
 export type BidMetadataType = typeof initialState.BidMetadata;
-export type discussionDataType = typeof initialState.Bid.discussionData;
-export type bidTableNametype = 'specifications' | 'userStory';
+export type BidTableNameType = 'specifications' | 'userStory';
 
-export const BidReducer = (state = initialState, action: ActionsType): InitialStateType => {
+export const BidReducer = (state = initialState, action: ActionsType): BidInitialStateType => {
     switch (action.type) {
         case 'SET_BID_DATA':
             return {
@@ -208,7 +144,7 @@ export const BidReducer = (state = initialState, action: ActionsType): InitialSt
                 Bid: {
                     // если id пустой то это новая строка ТЗ иначе это редактирование существующей
                     ...state.Bid, [action.tableName]: (
-                        (action.id === '') ?
+                        (!action.id) ?
                             // we will add new items
                             [...state.Bid[action.tableName], (action.tableName === 'specifications' ?
                                 // add new specification item
@@ -235,6 +171,12 @@ export const BidReducer = (state = initialState, action: ActionsType): InitialSt
                 Bid: {
                     ...state.Bid,
                     discussionData: action.data
+                },
+                NowMessage: {
+                    life: 5000,
+                    severity: 'success',
+                    summary: 'Успешно!',
+                    detail: 'Всё получилось!'
                 }
             }
         default: return state;
@@ -242,17 +184,17 @@ export const BidReducer = (state = initialState, action: ActionsType): InitialSt
 }
 
 const actions = {
-    setCurrentBidState: (name: initialStateKeys, data: ReturnObjectValuesType<InitialStateType>) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
-    setBidSpec: (id: string, value: ReturnObjectValuesType<BidSpecType>, name: keyof BidSpecUsersType | 'none', tableName: bidTableNametype) => ({ type: 'SET_BID_SPEC', id: id, value: value, name: name, tableName: tableName } as const),
+    setCurrentBidState: (name: initialStateKeys, data: ReturnObjectValuesType<BidInitialStateType>) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
+    setBidSpec: (id: string, value: ReturnObjectValuesType<BidSpecType>, name: keyof BidSpecUsersType | 'none', tableName: BidTableNameType) => ({ type: 'SET_BID_SPEC', id: id, value: value, name: name, tableName: tableName } as const),
     setBidProp: (property: BidKeysType, value: ReturnObjectValuesType<BidType>) => ({ type: 'SET_BID_PROP', property: property, value: value } as const),
     addAttachement: (attachement: attachementItemType, attachement_link: attachementItemType) => ({ type: 'ADD_ATTACHEMENT', attachement: attachement, attachement_link: attachement_link } as const),
     setBidData: (Bid: BidType, BidMetadata: BidMetadataType, firstInit = false, NowMessage = initialState.NowMessage) => ({ type: 'SET_BID_DATA', Bid: Bid, BidMetadata: BidMetadata, firstInit: firstInit, NowMessage: NowMessage } as const),
     setDiscussionData: (data: discussionDataType) => ({ type: 'SET_DISCUSSION_DATA', data: data } as const)
 }
 
-export const setCurrentBidState = (name: initialStateKeys, data: ReturnObjectValuesType<InitialStateType>): ThunkType => async (dispatch) => { dispatch(actions.setCurrentBidState(name, data)) }
+export const setCurrentBidState = (name: initialStateKeys, data: ReturnObjectValuesType<BidInitialStateType>): ThunkType => async (dispatch) => { dispatch(actions.setCurrentBidState(name, data)) }
 export const showBidDiscussionDialog = (index: number): ThunkType => async (dispatch, getState) => { dispatch(actions.setBidProp('DialogDiscussionData', { isVisible: true, index: index - 1, DiscussionData: getState().BidPage.Bid.userStory[index - 1].discussionData })) }
-export const setBidSpec = (tableName: bidTableNametype, id = '', value = '', name = 'none' as BidSpecTypeKeys): ThunkType => async (dispatch) => { dispatch(actions.setBidSpec(id, value, name, tableName)) }
+export const setBidSpec = (tableName: BidTableNameType, id = '', value = '', name = 'none' as BidSpecTypeKeys): ThunkType => async (dispatch) => { dispatch(actions.setBidSpec(id, value, name, tableName)) }
 
 export const setBidProp = (property: BidKeysType, value: ReturnObjectValuesType<BidType>): ThunkType => async (dispatch) => { dispatch(actions.setBidProp(property, value)) }
 export const getBidData = (number: string): ThunkType => async (dispatch) => {
@@ -304,19 +246,17 @@ export const setBidData = (Bid: BidType, BidMetadata: BidMetadataType): ThunkTyp
 }
 
 export const sendBidReply = (id: string, text: string): ThunkType => async (dispatch, getState) => {
-    const nowState = getState().BidPage;
-    if (nowState.Bid.number !== '') {
-        const response = await BidsAPI.sendCurrentReply(id, text, nowState.Bid.number);
+    const nowState = getState();
+    const BidNumber = nowState.BidPage.Bid.number || nowState.TaskPage.Task.source.number;
+    if (BidNumber) {
+        const response = await BidsAPI.sendCurrentReply(id, text, BidNumber);
         if (typeof response === "string") {
             if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
-            else { dispatch(actions.setCurrentBidState('NowMessage', { ...nowState.NowMessage, detail: response })) }
-        }
-        else {
+            else { dispatch(actions.setCurrentBidState('NowMessage', { ...initialState.NowMessage, detail: response })) }
+        } else {
             dispatch(actions.setDiscussionData(response));
-            alert("Успешно!");
         }
-    }
-    else { alert("Обсуждения будут доступны только после сохранения заявки.") }
+    } else { alert("Обсуждения будут доступны только после сохранения заявки.") }
 }
 
 export const setNewBidAttachement = (attachement: attachementItemType, attachement_link: attachementItemType): ThunkType => async (dispatch) => { dispatch(actions.addAttachement(attachement, attachement_link)); }
@@ -345,7 +285,7 @@ export const sendBidDiscussionForUSLine = (): ThunkType => async (dispatch, getS
 
 export default BidReducer;
 
-export type InitialStateType = typeof initialState;
+export type BidInitialStateType = typeof initialState;
 type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 

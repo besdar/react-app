@@ -48,7 +48,7 @@ export type searchFilterType = typeof initialState.filters.searchFilter;
 export type taskboardMetadataType = typeof initialState.metadata;
 export type filtersType = typeof initialState.filters;
 type filtersTypeKeys = keyof filtersType;
-type stateKeys = keyof InitialStateType;
+type stateKeys = keyof TaskboardInitialStateType;
 export type CardsType = typeof initialState.Cards;
 export type CardNames = 'waiting' | 'atProgress' | 'testing' | 'currentRelease' | 'cyberTest' | 'implementation' | 'ready';
 type CardsItemTypeKeys = keyof CardsItemType;
@@ -82,7 +82,7 @@ export type CardListsType = {
     isCollapse?: boolean
 }
 
-const TaskboardReducer = (state = initialState, action: ActionsType): InitialStateType => {
+const TaskboardReducer = (state = initialState, action: ActionsType): TaskboardInitialStateType => {
     switch (action.type) {
         case 'INITIALIZE_TASKBOARD':
             return {
@@ -135,7 +135,7 @@ const TaskboardReducer = (state = initialState, action: ActionsType): InitialSta
 }
 
 const actions = {
-    setTaskboardState: (name: stateKeys, value: ReturnObjectValuesType<InitialStateType>) => ({ type: 'SET_TASKBOARD_STATE', name: name, value: value } as const),
+    setTaskboardState: (name: stateKeys, value: ReturnObjectValuesType<TaskboardInitialStateType>) => ({ type: 'SET_TASKBOARD_STATE', name: name, value: value } as const),
     setTaskboardData: (Cards: CardsType, metadata: taskboardMetadataType, isItFirstInit = false) => ({ type: 'INITIALIZE_TASKBOARD', Cards: Cards, isItFirstInit: isItFirstInit, metadata: metadata } as const),
     setPropOfOneOfCardsState: (name: CardsItemTypeKeys, cardsName: CardNames, data: ReturnObjectValuesType<CardsItemType>) => ({ type: 'SET_PROP_STATE_FOR_ONE_STATUS_CARS_LIST', name: name, cardsName: cardsName, data: data } as const),
     setError: (errorText: string) => ({ type: 'SET_ERROR', errorText: errorText } as const),
@@ -165,7 +165,7 @@ export const setCardState = (id: string, cardName: CardNames, PropName: CardKeyT
 export const setTaskboardFilter = (filterName: filtersTypeKeys, filterValue: ReturnObjectValuesType<filtersType>): ThunkType => async (dispatch, getState) => {
     const nowState = JSON.parse(JSON.stringify(getState().TaskboardPage.filters));
     if (filterName === 'visibleProject' || filterName === 'visibleMaintainer') {
-        nowState[filterName] = nowState[filterName] === '' ? filterValue : '';
+        nowState[filterName] = (!nowState[filterName] ? filterValue : '');
     } else if (filterName === 'searchFilter') {
         nowState[filterName] = filterValue;
     } else {
@@ -315,7 +315,7 @@ export const changeTaskStatus = (number: string, status: string): ThunkType => a
                 nowCatdsState[key].lists[j].list = element.list.reduce((accumulator, elem) => {
                     if (elem.number === number) {
                         changedCardInfo.card = { ...elem };
-                        if (elem.atWork.maintainer !== '') {
+                        if (elem.atWork.maintainer) {
                             accumulator.push({ ...elem, status: changedStatusCard.data.status, allowedStatuses: changedStatusCard.data.allowedStatuses });
                         }
                     } else { accumulator.push(elem) }
@@ -362,7 +362,7 @@ export const changeTaskStatus = (number: string, status: string): ThunkType => a
             }
         }
 
-        if (changedStatusCard.newStatus !== '' && changedCardInfo.card.atWork.maintainer === '') { // card can get such status that get no appearance on the screen
+        if (changedStatusCard.newStatus && !changedCardInfo.card.atWork.maintainer) { // card can get such status that get no appearance on the screen
             let maintainerFound = false;
             for (let j = 0; j < nowCatdsState[changedStatusCard.newStatus].lists.length; j++) { // do maintainer already exist in CardsList with this status?
                 const element = nowCatdsState[changedStatusCard.newStatus].lists[j];
@@ -423,7 +423,7 @@ export const changeTaskPriority = (number: string, status: CardNames): ThunkType
 
 export default TaskboardReducer;
 
-export type InitialStateType = typeof initialState;
+export type TaskboardInitialStateType = typeof initialState;
 type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 

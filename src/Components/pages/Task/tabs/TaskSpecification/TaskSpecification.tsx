@@ -41,6 +41,9 @@ const Spec: React.FC<PropsType> = (props) => {
         }
     ];
 
+    let valueSpec: any = "";
+    if (props.Task.specification.specifications.length === 0){valueSpec = props.setTaskSpec("")} else {valueSpec = props.Task.specification.specifications[props.Task.specification.selectedLineNumber].comments};
+
     return <React.Fragment>
         <ContextMenu ref={cm} model={items} />
         <Dialog modal={true} header="Введите комментарий" visible={props.Task.specification.dialogData.visible}
@@ -55,10 +58,10 @@ const Spec: React.FC<PropsType> = (props) => {
         <div className="p-grid">
             <div className='p-col-9 tableContainer'>
                 <div className="p-col">
-                    <DataTable scrollable={true} scrollHeight={'400px'} header={<SpecificationHeader setTaskSpec={props.setTaskSpec} />} value={props.Task.specification.specifications}>
+                    <DataTable scrollable={true} scrollHeight={'400px'} value={props.Task.specification.specifications}>
                         <Column field="number" header="#" style={{ width: '5%' }} body={(rowData: TaskSpecType) => <div onClick={() => props.setSpecificationContext('selectedLineNumber', rowData.number - 1)} className="center_cell">{rowData.number}</div>} />
                         <Column field="isReady" header="" style={{ width: '5%' }} body={(rowData: TaskSpecType) => checkboxIsTaskPointReady(rowData, props.setTaskSpec)} />
-                        <Column field="value" header="Описание задачи" body={(rowData: TaskSpecType) => <TextEditor number={rowData.number} value={rowData.value} setTaskSpec={props.setTaskSpec} />} />
+                        <Column field="value" header={<div style={{display: 'flex', alignItems: 'center'}}><span>Описание задачи</span><SpecificationHeader setTaskSpec={props.setTaskSpec} /></div>} body={(rowData: TaskSpecType) => <TextEditor number={rowData.number} value={rowData.value} setTaskSpec={props.setTaskSpec} />} />
                         <Column field="testStatus" header="" style={{ width: '20%' }} body={(rowData: TaskSpecType) => testStatusTemplate(rowData, cm, props.setSpecificationContext)} />
                     </DataTable>
                 </div>
@@ -78,7 +81,7 @@ const Spec: React.FC<PropsType> = (props) => {
             <div className='p-col-3 tableContainer'>
                 <DataTable scrollable={true} scrollHeight={'400px'} className="p-col"
                     header={<CommentsHeader nowUser={props.nowUser} setSpecificationContext={props.setSpecificationContext} setTaskSpec={props.setTaskSpec} specification={props.Task.specification} />}
-                    value={props.Task.specification.specifications[props.Task.specification.selectedLineNumber].comments} filters={props.Task.specification.commentFilters}>
+                    value={valueSpec} filters={props.Task.specification.commentFilters}>
                     <Column field="value" header={<div><span>Дата, автор</span><span>Текст</span></div>} body={(rowData: commentsItemType) => CommentLineTemplate(rowData)} />
                 </DataTable>
                 <div className='p-col'>

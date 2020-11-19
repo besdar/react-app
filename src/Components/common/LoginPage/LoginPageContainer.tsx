@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import LoginPage from "./LoginPage";
-import {connect} from "react-redux";
-import {AppStateType} from '../../../redux/store/redux-store';
+import { connect } from "react-redux";
+import { AppStateType } from '../../../redux/store/redux-store';
 import { getAuthUserDataType, getAuthUserData } from '../../../redux/reducers/auth-reducer';
 
 type MapPropsType = ReturnType<typeof mapStateToProps>
@@ -11,20 +11,19 @@ type DispatchPropsType = {
 
 type PropsType = MapPropsType & DispatchPropsType;
 
-class LoginPageContainer extends React.Component<PropsType> {
+const LoginPageContainer: React.FC<PropsType> = (props) => {
 
-    componentDidMount() {
-        document.title = "Sketchdesk";
-        this.props.getAuthUserData();
-    }
+    useLayoutEffect(() => {
+        props.getAuthUserData();
+        // ошибка что мы передаем не пропсы а пустой массив. Намеренно, чтобы сработало аналогично ComponentDidMount
+        // eslint-disable-next-line 
+    }, []);
 
-    render() {
-        return <LoginPage {...this.props} />
-    }
+    return <LoginPage {...props} />
 }
 
 const mapStateToProps = (state: AppStateType) => ({
-    
+
 });
 
-export default connect(mapStateToProps, {getAuthUserData})(LoginPageContainer);
+export default connect(mapStateToProps, { getAuthUserData })(LoginPageContainer);

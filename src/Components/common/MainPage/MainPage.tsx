@@ -1,9 +1,7 @@
 import React from 'react';
 import LinkList from './LinkList';
 
-type PropsType = {}
-
-const MainPage: React.FC<PropsType> = (props) => {
+const MainPage: React.FC = () => {
     return <div>
         <h1>Projector</h1>
         <LinkList />

@@ -2,7 +2,7 @@ import React from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Link } from 'react-router-dom';
-import { TaskType, TaskMetadataType, setTaskPropType, pushTaskButtonType, getTaskDataType, setTaskSpecType } from '../../../../../redux/reducers/task-reducer';
+import { TaskType, TaskMetadataType, setTaskPropType, pushTaskButtonType, getTaskDataType, setTaskSpecType, sourceType } from '../../../../../redux/reducers/task-reducer';
 import { InputNumber } from 'primereact/inputnumber';
 import { ToggleButton } from 'primereact/togglebutton';
 import { DataTable } from 'primereact/datatable';
@@ -14,7 +14,23 @@ type PropsType = {
     TaskMetadata: TaskMetadataType,
     setTaskSpec: setTaskSpecType,
     pushTaskButton: pushTaskButtonType,
-    getTaskData: getTaskDataType
+    getTaskData: getTaskDataType,
+}
+
+const SourceLink = (props: { source: sourceType, getTaskData: getTaskDataType }) => {
+    let linkComponent = null;
+    if (props.source.type === "Задачи") {
+        linkComponent = <Link to={"/tasks/" + props.source.number}>{props.source.value}</Link>;
+    } else if (props.source.type === "Заявки") {
+        linkComponent = <Link to={"/bids/" + props.source.number}>{props.source.value}</Link>;
+    }
+
+    if (props.source.value && linkComponent) {
+        return <div className="p-col">
+            <label htmlFor="source">Основание: </label>
+            {linkComponent}
+        </div>
+    } else { return null }
 }
 
 const TaskMain: React.FC<PropsType> = (props) => {
@@ -25,13 +41,10 @@ const TaskMain: React.FC<PropsType> = (props) => {
                 <label htmlFor="name">Наименование: </label>
                 <InputText type="text" id="name" value={props.Task.name} onChange={(e) => props.setTaskProp('name', (e.target as HTMLInputElement).value)} />
             </div>
-            {props.Task.source.value !== '' && <div className="p-col">
-                <label htmlFor="source">Основание: </label>
-                <Link to={"/tasks/" + props.Task.source.number} onClick={() => props.getTaskData(props.Task.source.number)}>{" " + props.Task.source.value}</Link>
-            </div>}
+            <SourceLink source={props.Task.source} getTaskData={props.getTaskData} />
         </div>
         <div className="p-grid">
-            <div className="p-grid-col p-col" style={{paddingLeft: 0}}>
+            <div className="p-grid-col p-col" style={{ paddingLeft: 0 }}>
                 <div className="p-col">
                     <label htmlFor="number">Номер: </label>
                     <InputText id="number" value={props.Task.number} disabled={true} />
@@ -65,7 +78,7 @@ const TaskMain: React.FC<PropsType> = (props) => {
                     <ToggleButton checked={props.Task.isNeedTest} onChange={(e) => props.setTaskProp('isNeedTest', e.value)} onLabel="Тестировать" offLabel="Не тестировать" />
                 </div>
             </div>
-            <div className="p-grid-col p-col" style={{paddingRight: 0}}>
+            <div className="p-grid-col p-col" style={{ paddingRight: 0 }}>
                 <div className="p-col">
                     <label htmlFor="status">Статус: </label>
                     <InputText disabled type="text" id="status" value={props.Task.status} />

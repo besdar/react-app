@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button } from "primereact/button";
-import { Link } from 'react-router-dom';
 import { TaskType, pushTaskButtonType } from '../../../redux/reducers/task-reducer';
 
 type PropsType = {
@@ -16,7 +15,6 @@ const Header: React.FC<PropsType> = (props) => {
     </div>
     <div className="p-col-2 head_buttons">
         <Button style={{ display: "inline-flex" }} icon="pi pi-save" onClick={() => props.pushTaskButton('Сохранить')} />
-        <Link style={{ display: "inline-flex" }} to='/tasks'><Button icon="pi pi-arrow-left" /></Link> 
     </div>
 </div>
 }

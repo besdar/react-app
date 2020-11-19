@@ -104,6 +104,7 @@ export const getBidDataFrom1C = (req, res) => { AxiosMethodTo1C('get', req.cooki
 export const GetTaskboardDataFrom1C = (req, res) => { AxiosMethodTo1C('get', req.cookies.token, res, 'taskboard', {}) }
 export const pushTaskButtonTo1C = (req, res) => { AxiosMethodTo1C('post', req.cookies.token, res, 'task/' + req.body.number, req.body.TaskObject) }
 export const getTaskDataFrom1C = (req, res) => { AxiosMethodTo1C('get', req.cookies.token, res, 'task/' + req.body.number, {}) }
+export const getReportResultFrom1C = (req, res) => { AxiosMethodTo1C('post', req.cookies.token, res, 'report', req.body.reportState) }
 
 const AxiosMethodTo1C = (method, token, res, link1C, dataFor1C) => {
     axios.get(config.serverHost + config.databaseLink + '/api/getUserAuth/' + (token || "null"), config.bioSphereAuth).then((response) => {

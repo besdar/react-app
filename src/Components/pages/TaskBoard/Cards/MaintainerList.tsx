@@ -17,8 +17,9 @@ const MaintainerList = (props: MaintainerListPropsType) => {
     if ((props.list.isCollapse !== undefined && (props.list.isCollapse || props.status === 'atProgress')) && props.list.list.length > 0) { return null }
   
     return <div style={{ gridTemplateColumns: props.status === "waiting" && props.isItDesktop ? props.isReadyVisible ? '1fr 1fr' : '1fr 1fr 1fr' : '1fr' }} className="p-col cardsStickersContainer">
-      {props.list.list.map((el) => {
+      {props.list.list.map((el, index) => {
         return <Card
+            key={index}
             changeTaskStatus={props.changeTaskStatus}
             status={props.status}
             data={el}

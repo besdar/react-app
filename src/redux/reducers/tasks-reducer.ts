@@ -17,7 +17,7 @@ const initialState = {
     ListOfAllowedItems: [] as Array<ListOfAllowedItemsType>
 };
 
-export const TasksReducer = (state = initialState, action: ActionsType): InitialStateType => {
+export const TasksReducer = (state = initialState, action: ActionsType): TasksInitialStateType => {
     switch (action.type) {
         case 'SET_TASKS_LIST':
             return {
@@ -35,11 +35,11 @@ export const TasksReducer = (state = initialState, action: ActionsType): Initial
 }
 
 const actions = {
-    setTasksCurrentState: (name: initialStateKeysType, data: ReturnObjectValuesType<InitialStateType>) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
+    setTasksCurrentState: (name: initialStateKeysType, data: ReturnObjectValuesType<TasksInitialStateType>) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
     setTasksList: (tasksList: Array<TreeNode>) => ({ type: 'SET_TASKS_LIST', tasksList: tasksList} as const)
 }
 
-export const setTasksCurrentState = (name: initialStateKeysType, data: ReturnObjectValuesType<InitialStateType>): ThunkType => async (dispatch) => { dispatch(actions.setTasksCurrentState(name, data)) }
+export const setTasksCurrentState = (name: initialStateKeysType, data: ReturnObjectValuesType<TasksInitialStateType>): ThunkType => async (dispatch) => { dispatch(actions.setTasksCurrentState(name, data)) }
 
 export const getTasksList = (): ThunkType => async (dispatch) => {
     const response = await TasksAPI.getTasksList();
@@ -74,7 +74,7 @@ export const setTasksContextMenu = (number: string, status: string): ThunkType =
 
 export default TasksReducer;
 
-export type InitialStateType = typeof initialState;
+export type TasksInitialStateType = typeof initialState;
 type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 

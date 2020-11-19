@@ -19,7 +19,7 @@ const initialState = {
 export type formType = typeof initialState.formData;
 type formKeysType = keyof formType;
 
-const authReducer = (state = initialState, action: ActionsType): InitialStateType => {
+const authReducer = (state = initialState, action: ActionsType): AuthInitialStateType => {
     switch (action.type) {
         case 'SET_AUTH_USER_DATA':
             return {
@@ -128,7 +128,7 @@ export const logout = (): ThunkType => async (dispatch) => {
 
 export default authReducer;
 
-export type InitialStateType = typeof initialState;
+export type AuthInitialStateType = typeof initialState;
 type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType | FormAction>;
 

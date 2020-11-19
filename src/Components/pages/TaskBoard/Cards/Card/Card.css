@@ -72,11 +72,14 @@
 .cardExpandArrow {
     display: none;
     position: absolute;
-    bottom: calc(6px - 0.625em);
+    bottom: -6px;
     left: 0;
     right: 0;
     align-items: center;
     justify-content: center;
+    width: fit-content;
+    width: -moz-fit-content;
+    margin: auto;
 }
 
 .sticker:hover .cardExpandArrow {

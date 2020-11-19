@@ -1,6 +1,7 @@
 import axios from "axios";
-import { BidType, BidMetadataType, discussionDataType } from '../redux/reducers/bid-reducer';
+import { BidType, BidMetadataType } from '../redux/reducers/bid-reducer';
 import TreeNode from "primereact/components/treenode/TreeNode";
+import { discussionDataType } from "../Components/libriary/DiscussionChat/DiscussionChat";
 //import config from '../clientConfig';
 
 export type pushBidButtonObjectType = 'Сохранить' | 'Утверждено' | 'ПринятьЗаказчиком' 

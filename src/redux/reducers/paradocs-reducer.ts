@@ -16,7 +16,7 @@ const initialState = {
     showPopup: false as boolean // отображение вопроса
 };
 
-export const ParadocsReducer = (state = initialState, action: ActionsType): InitialStateType => {
+export const ParadocsReducer = (state = initialState, action: ActionsType): ParadocsInitialStateType => {
     switch (action.type) {
         case 'SET_PARADOCS_MENU':
             return {
@@ -78,7 +78,7 @@ export const DialogOnExit = (isModified = false): ThunkType => async (dispatch) 
 
 export default ParadocsReducer;
 
-export type InitialStateType = typeof initialState;
+export type ParadocsInitialStateType = typeof initialState;
 type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 

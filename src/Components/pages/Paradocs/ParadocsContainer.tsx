@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import Paradocs from "./Paradocs";
 import { connect } from "react-redux";
 import { getParadocsMenu, getParadocsEditors, SaveCurrentEditor, setEditorState, DialogOnExit, SaveCurrentEditors, getParadocsEditorsType, SaveCurrentEditorType, setEditorStateType, DialogOnExitType, SaveCurrentEditorsType, getParadocsMenuType } from "../../../redux/reducers/paradocs-reducer";
-import {withRouter} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { compose } from "redux";
-import {AppStateType} from '../../../redux/store/redux-store';
+import { AppStateType } from '../../../redux/store/redux-store';
 
 type MapPropsType = ReturnType<typeof mapStateToProps>
 type DispatchPropsType = {
@@ -18,26 +18,25 @@ type DispatchPropsType = {
 
 type PropsType = MapPropsType & DispatchPropsType;
 
-class ParadocsContainer extends React.Component<PropsType> {
+const ParadocsContainer: React.FC<PropsType> = (props) => {
 
-    componentDidMount() {
-        document.title = "Paradocs";
-        this.props.getParadocsMenu();
-    }
+    useLayoutEffect(() => {
+        props.getParadocsMenu();
+        // ошибка что мы передаем не пропсы а пустой массив. Намеренно, чтобы сработало аналогично ComponentDidMount
+        // eslint-disable-next-line 
+    }, []);
 
-    render() {
-        return <Paradocs 
-                    items={this.props.items} 
-                    editors={this.props.editors} 
-                    getParadocsEditors={this.props.getParadocsEditors} 
-                    uid={this.props.uid} 
-                    SaveCurrentEditor={this.props.SaveCurrentEditor}
-                    setEditorState={this.props.setEditorState}
-                    editorModified={this.props.editorModified} 
-                    DialogOnExit={this.props.DialogOnExit}
-                    showPopup={this.props.showPopup}
-                    SaveCurrentEditors={this.props.SaveCurrentEditors} />
-    }
+    return <Paradocs
+        items={props.items}
+        editors={props.editors}
+        getParadocsEditors={props.getParadocsEditors}
+        uid={props.uid}
+        SaveCurrentEditor={props.SaveCurrentEditor}
+        setEditorState={props.setEditorState}
+        editorModified={props.editorModified}
+        DialogOnExit={props.DialogOnExit}
+        showPopup={props.showPopup}
+        SaveCurrentEditors={props.SaveCurrentEditors} />
 }
 
 const mapStateToProps = (state: AppStateType) => {

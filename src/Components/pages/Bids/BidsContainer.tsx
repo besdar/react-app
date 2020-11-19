@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import Bids from './Bids';
 import { connect } from "react-redux";
 import { getBidsList, setBidsCurrentState, sendBidsReply, projectSelectType, getBidsListType, sendBidsReplyType, setBidsCurrentStateType } from "../../../redux/reducers/bids-reducer";
@@ -17,23 +17,22 @@ type DispatchPropsType = {
 
 type PropsType = MapPropsType & DispatchPropsType;
 
-class BidsContainer extends React.Component<PropsType> {
+const BidsContainer: React.FC<PropsType> = (props) => {
 
-    componentDidMount() {
-        document.title = "Заявки";
-        this.props.getBidsList();
-    }
+    useLayoutEffect(() => {
+        props.getBidsList();
+        // ошибка что мы передаем не пропсы а пустой массив. Намеренно, чтобы сработало аналогично ComponentDidMount
+        // eslint-disable-next-line 
+    }, []);
 
-    render() {
-        return <Bids
-            bidsList={this.props.bidsList}
-            messagesList={this.props.messagesList}
-            styleDisplayOfMessages={this.props.styleDisplayOfMessages}
-            sendBidsReply={this.props.sendBidsReply}
-            setBidsCurrentState={this.props.setBidsCurrentState}
-            projectSelectItems={this.props.projectSelectItems}
-            selectedProjectSelectItems={this.props.selectedProjectSelectItems} />
-    }
+    return <Bids
+        bidsList={props.bidsList}
+        messagesList={props.messagesList}
+        styleDisplayOfMessages={props.styleDisplayOfMessages}
+        sendBidsReply={props.sendBidsReply}
+        setBidsCurrentState={props.setBidsCurrentState}
+        projectSelectItems={props.projectSelectItems}
+        selectedProjectSelectItems={props.selectedProjectSelectItems} />
 }
 
 const mapStateToProps = (state: AppStateType) => {

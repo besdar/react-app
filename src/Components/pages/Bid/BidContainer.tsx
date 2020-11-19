@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import Bid from './Bid';
 import { connect } from "react-redux";
 import { setCurrentBidState, setBidProp, setBidSpec, pushBidButton, getBidData, setNewBidData, setNewBidAttachement, sendBidReply, showBidDiscussionDialog, createNewBidBaseOnThisBid, sendBidDiscussionForUSLine, setNewBidDataType, getBidDataType, setCurrentBidStateType, setBidPropType, setBidSpecType, pushBidButtonType, setNewBidAttachementType, sendBidReplyType, showBidDiscussionDialogType, sendBidDiscussionForUSLineType, createNewBidBaseOnThisBidType } from "../../../redux/reducers/bid-reducer";
@@ -36,38 +36,37 @@ type PathParamsType = {
 
 type PropsType = MapPropsType & DispatchPropsType & RouteComponentProps<PathParamsType>;
 
-class BidContainer extends React.Component<PropsType> {
+const BidContainer: React.FC<PropsType> = (props) => {
 
-    componentDidMount() {
-        document.title = "Заявка";
-        if (!isNaN(parseInt(this.props.match.params.bidNumber))) {this.props.getBidData(this.props.match.params.bidNumber)}
-        else {this.props.setNewBidData()}
-    }
+    useLayoutEffect(() => {
+        if (!isNaN(parseInt(props.match.params.bidNumber))) {props.getBidData(props.match.params.bidNumber)}
+        else {props.setNewBidData()}
+        // ошибка что мы передаем не пропсы а пустой массив. Намеренно, чтобы сработало аналогично ComponentDidMount
+        // eslint-disable-next-line 
+    }, []);
 
     //componentDidUpdate() {
-        // if (this.props.fistInit === true) {
+        // if (props.fistInit === true) {
         //     window.setTimeout(resize, 0.1); //бага веба, нужно разобраться почему scrollHeight браузером при первом открытии вычисляется неверно
-            //this.props.setCurrentBidState('fistInit', false);
+            //props.setCurrentBidState('fistInit', false);
         // }  
     //}
 
-    render() {
-        return <Bid Bid={this.props.Bid}
-                BidMetadata={this.props.BidMetadata}
-                setBidProp={this.props.setBidProp}
-                setBidSpec={this.props.setBidSpec}
-                pushBidButton={this.props.pushBidButton}
-                setCurrentBidState={this.props.setCurrentBidState}
-                NowMessage={this.props.NowMessage}
-                setNewBidAttachement={this.props.setNewBidAttachement}
-                sendBidReply={this.props.sendBidReply}
-                showBidDiscussionDialog={this.props.showBidDiscussionDialog}
-                getBidData={this.props.getBidData}
-                createNewBidBaseOnThisBid={this.props.createNewBidBaseOnThisBid}
-                sendBidDiscussionForUSLine={this.props.sendBidDiscussionForUSLine}
-                setNewBidData={this.props.setNewBidData}
-                queryParams={queryString.parse(this.props.location.search)} />
-    }
+    return <Bid Bid={props.Bid}
+                BidMetadata={props.BidMetadata}
+                setBidProp={props.setBidProp}
+                setBidSpec={props.setBidSpec}
+                pushBidButton={props.pushBidButton}
+                setCurrentBidState={props.setCurrentBidState}
+                NowMessage={props.NowMessage}
+                setNewBidAttachement={props.setNewBidAttachement}
+                sendBidReply={props.sendBidReply}
+                showBidDiscussionDialog={props.showBidDiscussionDialog}
+                getBidData={props.getBidData}
+                createNewBidBaseOnThisBid={props.createNewBidBaseOnThisBid}
+                sendBidDiscussionForUSLine={props.sendBidDiscussionForUSLine}
+                setNewBidData={props.setNewBidData}
+                queryParams={queryString.parse(props.location.search)} />
 }
 
 const mapStateToProps = (state: AppStateType) => {

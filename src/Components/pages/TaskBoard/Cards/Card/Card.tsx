@@ -68,7 +68,7 @@ const Card: React.FC<PropsType> = (props) => {
     return <PrimeCard className="sticker" style={{ backgroundColor: 'rgb(' + props.data.color + ')' }}>
       <CardContent className="cardContent">
         <div className="avatarCardBlock" style={{ color: props.data.priority === 0 ? "red" : "orange", height: (props.data.isExpanded ? '65px' : '48px') }}>
-          <img loading="lazy" alt="avatar" style={{ height: (props.data.isExpanded ? '20px' : '1.3em'), width: (props.data.isExpanded ? '20px' : '1.3em') }} src={props.data.atWork.avatar !== '' ? props.data.atWork.avatar : props.avatar} />
+          <img loading="lazy" alt="avatar" style={{ height: (props.data.isExpanded ? '20px' : '1.3em'), width: (props.data.isExpanded ? '20px' : '1.3em') }} src={props.data.atWork.avatar ? props.data.atWork.avatar : props.avatar} />
           <span onClick={(e) => { e.stopPropagation(); props.changeTaskPriority(props.data.number, props.status) }}>
             <StatusIcon status={props.data.status} size={props.data.isExpanded ? '1.8em' : '1.3em'} isHeader={true} />
           </span>

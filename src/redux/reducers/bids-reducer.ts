@@ -37,7 +37,7 @@ const initialState = {
     NowMessage: '' // текущее отображаемое сообщение
 };
 
-export const BidsReducer = (state = initialState, action: ActionsType): InitialStateType => {
+export const BidsReducer = (state = initialState, action: ActionsType): BidsInitialStateType => {
     switch (action.type) {
         case 'SET_BIDS_LIST':
             return {
@@ -71,7 +71,7 @@ export const BidsReducer = (state = initialState, action: ActionsType): InitialS
 }
 
 const actions = {
-    setCurrentState: (name: initialStateKeysType, data: ReturnObjectValuesType<InitialStateType>) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
+    setCurrentState: (name: initialStateKeysType, data: ReturnObjectValuesType<BidsInitialStateType>) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
     setBidsList: (bidsList: Array<TreeNode>, messagesList: Array<TreeNode>, projectSelectItems: Array<projectSelectType>) => ({ type: 'SET_BIDS_LIST', bidsList: bidsList, messagesList: messagesList, projectSelectItems: projectSelectItems } as const),
     deleteReplyMessage: (current_reply_id: string) => ({ type: 'DELETE_REPLY_MESSAGE', current_reply_id: current_reply_id } as const),
     setBidSpec: (id: string, value: string, name: string) => ({ type: 'SET_BID_SPEC', id: id, value: value, name: name } as const),
@@ -79,7 +79,7 @@ const actions = {
     addAttachement: (attachement: attachementItemType, attachement_link: attachementItemType) => ({ type: 'ADD_ATTACHEMENT', attachement: attachement, attachement_link: attachement_link } as const)
 }
 
-export const setBidsCurrentState = (name: initialStateKeysType, data: ReturnObjectValuesType<InitialStateType>): ThunkType => async (dispatch) => { dispatch(actions.setCurrentState(name, data)) }
+export const setBidsCurrentState = (name: initialStateKeysType, data: ReturnObjectValuesType<BidsInitialStateType>): ThunkType => async (dispatch) => { dispatch(actions.setCurrentState(name, data)) }
 export const setBidsSpec = (id = '', value = '', name = 'none'): ThunkType => async (dispatch) => { dispatch(actions.setBidSpec(id, value, name)) }
 export const setBidsUserStory = (id = '', value = ''): ThunkType => async (dispatch) => { dispatch(actions.setUserStory(id, value)) }
 
@@ -107,7 +107,7 @@ export const setBidsNewAttachement = (attachement: attachementItemType, attachem
 
 export default BidsReducer;
 
-export type InitialStateType = typeof initialState;
+export type BidsInitialStateType = typeof initialState;
 type ActionsType = InferActionsTypes<typeof actions>;
 type ThunkType = BaseThunkType<ActionsType>;
 

@@ -31,7 +31,7 @@ const LoginForm: React.FC<PropsType> = (props) => {
                 <InputText required type="text" placeholder="Логин" value={props.formData.username} onChange={(e) => props.setFormData("username", e.currentTarget.value)} />
             </div>
             <div className="p-field">
-                <InputText required type="password" className={(props.message === '' ? '' : 'shake-horisontal')} placeholder="Пароль" value={props.formData.passwd} onChange={(e) => {e.currentTarget.classList.remove('shake-horisontal'); props.setFormData("passwd", e.currentTarget.value)}} />
+                <InputText required type="password" className={(!props.message ? '' : 'shake-horisontal')} placeholder="Пароль" value={props.formData.passwd} onChange={(e) => {e.currentTarget.classList.remove('shake-horisontal'); props.setFormData("passwd", e.currentTarget.value)}} />
                 <small id="error">{props.message}</small>
             </div>
             <div className="p-field-checkbox">

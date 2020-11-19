@@ -7,19 +7,19 @@ import './Bid.css';
 import BidMain from './tabs/BidMain/BidMain';
 
 import Loader from '../../common/Loader/Loader';
-import { BidType, BidMetadataType, attachementItemType, ErrorType, setNewBidDataType, getBidDataType, setCurrentBidStateType, setBidPropType, setBidSpecType, pushBidButtonType, setNewBidAttachementType, sendBidReplyType, showBidDiscussionDialogType, sendBidDiscussionForUSLineType, createNewBidBaseOnThisBidType } from '../../../redux/reducers/bid-reducer';
+import { BidType, BidMetadataType, ErrorType, setNewBidDataType, getBidDataType, setCurrentBidStateType, setBidPropType, setBidSpecType, pushBidButtonType, setNewBidAttachementType, sendBidReplyType, showBidDiscussionDialogType, sendBidDiscussionForUSLineType, createNewBidBaseOnThisBidType } from '../../../redux/reducers/bid-reducer';
 
 import DiscussionChat from '../../libriary/DiscussionChat/DiscussionChat';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { FileUpload } from 'primereact/fileupload';
-import BidConnected from './tabs/BidConnected';
+import BidConnected from './tabs/ConnectedBidsTable';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { FaBusinessTime, FaComments } from 'react-icons/fa';
 import { FiUsers } from 'react-icons/fi';
 import { GoLink } from 'react-icons/go';
 import { IoIosAttach } from 'react-icons/io';
 import { ParsedQuery } from 'query-string';
+import AttachementTable from '../../libriary/AttachementTable/AttachementTable';
 
 type PropsType = {
     Bid: BidType,
@@ -39,32 +39,13 @@ type PropsType = {
     queryParams: ParsedQuery
 }
 
-const linkTemplate = (el: attachementItemType) => (<a rel="noopener noreferrer" target="_blank" href={el.link}>{el.value}</a>)
-
-const uploadFile = (event: any, setNewBidAttachement: setNewBidAttachementType) => {
-    let reader = new FileReader();
-    // @ts-ignore - cannot define types of it now
-    reader.onload = (function (theFile) { return function (el) { setNewBidAttachement({ data: el.target.result, filename: theFile.name }, { link: theFile.url, value: theFile.name }) }; })({ name: event.files[0].name, url: event.files[0].objectURL });
-    reader.readAsDataURL(event.files.pop());
-    // @ts-ignore - error 'object possibly be null'
-    document.getElementById("file_upload").firstElementChild.lastElementChild.style.display = 'inline'; //its work of primereact, but why do they think i need it to do!??
-}
-
-const AttachementHeader = (props: {attachement_links_length: number, setNewBidAttachement: setNewBidAttachementType}) => <React.Fragment>
-    <h3>Вложения</h3>
-    <div id="file_upload">
-        <FileUpload chooseLabel='Выбрать файл' mode="basic" name="upload" maxFileSize={500000} auto={true} customUpload={true} uploadHandler={(e: any) => uploadFile(e, props.setNewBidAttachement)} />
-        <sup className="badge">{props.attachement_links_length}</sup>
-    </div>
-</React.Fragment>;
-
 const Bid: React.FC<PropsType> = (props) => {
 
     let toast = useRef<any>(null);
 
     if (!props.Bid.loaded) { return <Loader nameOfProcess="загружаем данные сделки" /> }
 
-    if (props.NowMessage.detail !== '') {
+    if (props.NowMessage.detail) {
         toast.current.show(props.NowMessage);
         props.setCurrentBidState('NowMessage', { ...props.NowMessage, detail: '' });
     }
@@ -80,19 +61,15 @@ const Bid: React.FC<PropsType> = (props) => {
                 <div className='p-col'>
                     <DiscussionChat
                         showAllMessagesButton={true}
-                        maxHeight='none'
                         data={props.Bid.discussionData}
                         sendReply={props.sendBidReply} />
                 </div>
-                
             </TabPanel>
             <TabPanel header={<React.Fragment><IoIosAttach /><span>Вложения</span></React.Fragment>}>
-                <DataTable value={props.Bid.attachement_links}>
-                    <Column header={<AttachementHeader attachement_links_length={props.Bid.attachement_links.length} setNewBidAttachement={props.setNewBidAttachement} />} body={linkTemplate} />
-                </DataTable>
+                <AttachementTable attachement_links={props.Bid.attachement_links} setNewAttachement={props.setNewBidAttachement} />
             </TabPanel>
             <TabPanel header={<React.Fragment><GoLink /><span>Связанные</span></React.Fragment>}>
-                <BidConnected connectedBids={props.Bid.connectedBids} expandedRows={props.Bid.expandedRows} sendBidReply={props.sendBidReply} setBidProp={props.setBidProp} />
+                <BidConnected connectedBids={props.Bid.connectedBids} expandedRows={props.Bid.expandedRows} setBidProp={props.setBidProp} />
             </TabPanel>
             <TabPanel header={<React.Fragment><FiUsers /><span>Наблюдатели</span></React.Fragment>}>
                 <DataTable value={props.Bid.linkedPeople}>
