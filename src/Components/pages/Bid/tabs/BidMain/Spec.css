@@ -7,3 +7,54 @@
 .commandPallete {
     text-align: start;
 }
+
+.widthFivePercent {
+    width: 5%;
+}
+
+.discussionsButtonsOuterContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.discussionsButtonsInnerContainer {
+    position: relative;
+    width: min-content;
+}
+
+.centerTextAlign {
+    text-align: center;
+}
+
+.numberWeightCell input {
+    width: 30px;
+    text-align: center;
+}
+
+.toggleRowButton {
+    display: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 0 5px;
+}
+
+.toggleRowButton:hover {
+    color: blue;
+}
+
+.specificationNumberCell:hover .toggleRowButton {
+    display: block;
+}
+
+.specificationNumberCell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.specificationNumberCellContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

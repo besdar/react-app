@@ -15,13 +15,15 @@ import 'primeflex/primeflex.css';
 import './app.css';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
+import NotFoundPage from './Components/common/NotFoundPage/NotFoundPage';
+import GlobalErrorBoundary from './Components/common/GlobalErrorBoundary/GlobalErrorBoundary';
 
 type MapPropsType = ReturnType<typeof mapStateToProps>;
 type DispatchPropsType = {
     logout: logoutType
 }
 
-// const ParadocsContainer = React.lazy(() => import('./Components/pages/Paradocs/ParadocsContainer'));
+const ParadocsContainer = React.lazy(() => import('./Components/pages/Paradocs/ParadocsContainer'));
 const BidsContainer = React.lazy(() => import('./Components/pages/Bids/BidsContainer'));
 const TasksContainer = React.lazy(() => import('./Components/pages/Tasks/TasksContainer'));
 const BidContainer = React.lazy(() => import('./Components/pages/Bid/BidContainer'));
@@ -29,7 +31,7 @@ const TaskContainer = React.lazy(() => import('./Components/pages/Task/TaskConta
 const TaskboardContainer = React.lazy(() => import('./Components/pages/TaskBoard/TaskboardContainer'));
 const ReportContainer = React.lazy(() => import('./Components/pages/Reports/ReportContainer'));
 
-// const SuspendedParadocs = withSuspense(ParadocsContainer);
+const SuspendedParadocs = withSuspense(ParadocsContainer);
 const SuspendedBids = withSuspense(BidsContainer);
 const SuspendedTasks = withSuspense(TasksContainer);
 const SuspendedBid = withSuspense(BidContainer);
@@ -37,7 +39,6 @@ const SuspendedTask = withSuspense(TaskContainer);
 const SuspendedTaskboard = withSuspense(TaskboardContainer);
 const SuspendedReport = withSuspense(ReportContainer);
 
-//class App extends Component<MapPropsType & DispatchPropsType> 
 const App: React.FC<MapPropsType & DispatchPropsType> = (props) => {
 
     if (!props.isAuth) { return <LoginPageContainer /> }
@@ -48,8 +49,8 @@ const App: React.FC<MapPropsType & DispatchPropsType> = (props) => {
                     <Route exact path='/'
                         render={() => <MainPage />} />
 
-                    {/* <Route exact path='/paradocs'
-                        render={() => <SuspendedParadocs />} /> */}
+                    <Route exact path='/paradocs'
+                        render={() => <SuspendedParadocs />} />
 
                     <Route path='/bids/:bidNumber'
                         render={() => <SuspendedBid />} />
@@ -74,7 +75,7 @@ const App: React.FC<MapPropsType & DispatchPropsType> = (props) => {
                     <Route path='/login'
                         render={() => <LoginPageContainer />} />
 
-                    <Route path='*' render={() => <div>404 NOT FOUND</div>} />
+                    <Route path='*' render={() => <NotFoundPage />} />
                 </Switch>
             </React.Fragment>
         )
@@ -93,26 +94,13 @@ const BioSphereJSApp: React.FC = () => {
         <Provider store={store}>
             <MuiPickersUtilsProvider utils={MomentUtils} locale='ru'>
                 <React.StrictMode>
-                    <AppContainer />
+                    <GlobalErrorBoundary>
+                        <AppContainer />
+                    </GlobalErrorBoundary>
                 </React.StrictMode>
             </MuiPickersUtilsProvider>
         </Provider>
     </BrowserRouter>
 }
-
-// const AppTest = () => {
-//     return (
-//         <div>
-//             <div><p>Welcome to 1C</p></div>
-//             {/* <Route path='/bind/:id'
-//                            render={ () => <BindFormContainer /> }/>               */}
-//             <div><NavLink to={'/logout'}></NavLink></div>
-//         </div>
-//     );
-// }
-
-// --------------------
-// function BioSphereJSApp() {return <span>test</span>;}
-// ------------------
 
 export default BioSphereJSApp;

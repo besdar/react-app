@@ -1,0 +1,12 @@
+.tasksHeaderContainer {
+    margin-top: 5px;
+    padding: 0 0.857em;
+}
+
+.tasksHeaderTitle {
+    margin: 0px;
+}
+
+.tasksHeaderButtonBadgeContainer {
+    position: relative;
+}

@@ -1,0 +1,15 @@
+.paradocsEditor {
+    min-height: 100px;
+}
+
+.headerContainer {
+    display: flex;
+    align-items: center;
+}
+
+.editButtonContainer {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    cursor: pointer;
+}

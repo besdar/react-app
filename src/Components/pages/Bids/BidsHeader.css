@@ -1,0 +1,12 @@
+.bidsHeaderContainer {
+    margin-top: 5px;
+    padding: 0 0.857em;
+}
+
+.bidsHeaderTitle {
+    margin: 0px;
+}
+
+.bidsHeaderCommentsButtonContainer {
+    position: relative;
+}

@@ -1,13 +1,13 @@
 import React, { useRef } from 'react';
 import { Toast } from 'primereact/toast';
 
-import Header from './header';
+import Header from './BidHeader';
 
 import './Bid.css';
 import BidMain from './tabs/BidMain/BidMain';
 
 import Loader from '../../common/Loader/Loader';
-import { BidType, BidMetadataType, ErrorType, setNewBidDataType, getBidDataType, setCurrentBidStateType, setBidPropType, setBidSpecType, pushBidButtonType, setNewBidAttachementType, sendBidReplyType, showBidDiscussionDialogType, sendBidDiscussionForUSLineType, createNewBidBaseOnThisBidType } from '../../../redux/reducers/bid-reducer';
+import { BidType, BidMetadataType, ErrorType, setNewBidDataType, getBidDataType, setCurrentBidStateType, setBidPropType, setBidSpecType, pushBidButtonType, setNewBidAttachementType, sendBidReplyType, showBidDiscussionDialogType, sendBidDiscussionForUSLineType, createNewBidBaseOnThisBidType, toggleBidSpecType } from '../../../redux/reducers/bid-reducer';
 
 import DiscussionChat from '../../libriary/DiscussionChat/DiscussionChat';
 import { DataTable } from 'primereact/datatable';
@@ -36,7 +36,8 @@ type PropsType = {
     showBidDiscussionDialog: showBidDiscussionDialogType,
     createNewBidBaseOnThisBid: createNewBidBaseOnThisBidType,
     sendBidDiscussionForUSLine: sendBidDiscussionForUSLineType,
-    queryParams: ParsedQuery
+    queryParams: ParsedQuery,
+    toggleBidSpec: toggleBidSpecType
 }
 
 const Bid: React.FC<PropsType> = (props) => {
@@ -55,12 +56,12 @@ const Bid: React.FC<PropsType> = (props) => {
         <Header createNewBidBaseOnThisBid={props.createNewBidBaseOnThisBid} Bid={props.Bid} pushBidButton={props.pushBidButton} />
         <TabView activeIndex={props.queryParams.openTab === 'Discussion' ? 1 : 0}>
             <TabPanel header={<React.Fragment><FaBusinessTime /><span>Основное</span></React.Fragment>}>
-                <BidMain sendBidDiscussionForUSLine={props.sendBidDiscussionForUSLine} getBidData={props.getBidData} showBidDiscussionDialog={props.showBidDiscussionDialog} Bid={props.Bid} setBidSpec={props.setBidSpec} setBidProp={props.setBidProp} BidMetadata={props.BidMetadata} pushBidButton={props.pushBidButton} />
+                <BidMain toggleBidSpec={props.toggleBidSpec} sendBidDiscussionForUSLine={props.sendBidDiscussionForUSLine} getBidData={props.getBidData} showBidDiscussionDialog={props.showBidDiscussionDialog} Bid={props.Bid} setBidSpec={props.setBidSpec} setBidProp={props.setBidProp} BidMetadata={props.BidMetadata} pushBidButton={props.pushBidButton} />
             </TabPanel>
             <TabPanel header={<React.Fragment><FaComments /><span>Обсуждения</span></React.Fragment>}>
                 <div className='p-col'>
                     <DiscussionChat
-                        showAllMessagesButton={true}
+                        showAllMessagesButton
                         data={props.Bid.discussionData}
                         sendReply={props.sendBidReply} />
                 </div>

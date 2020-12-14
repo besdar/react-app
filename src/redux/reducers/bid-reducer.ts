@@ -1,24 +1,29 @@
 import { BidsAPI, pushBidButtonObjectType } from "../../api/bids-api";
+import { openLoginPage } from "../../commonFunctions";
 import { attachementItemType } from "../../Components/libriary/AttachementTable/AttachementTable";
 import { discussionDataType } from "../../Components/libriary/DiscussionChat/DiscussionChat";
+import { SpecToggleType } from "../../Components/pages/Bid/tabs/BidMain/Spec";
 import { connectedBidsItem } from "../../Components/pages/Bid/tabs/ConnectedBidsTable";
 import { BaseThunkType, InferActionsTypes, ReturnObjectValuesType } from '../store/redux-store';
 
-export type BidSpecType = {
-    value: string,
-    weight: number,
-    number: number
+const InitialBidSpecItem = {
+    value: '',
+    number: 0,
+    weight: 0
 }
 
-export type BidSpecUsersType = BidSpecType & {
-    discussionData: discussionSpecUsersType
+const InitialBidSpecUsersItem = {
+    ...InitialBidSpecItem,
+    discussionData: {
+        id: '',
+        value: '',
+        count: 0
+    }
 }
 
-type discussionSpecUsersType = {
-    id: string, // uid in 1C of discussion link. if empty then it's new line, that isn't in 1C yet
-    value: string,
-    count: number // count of discussions for table row 
-}
+export type BidSpecType = typeof InitialBidSpecItem;
+export type BidSpecUsersType = typeof InitialBidSpecUsersItem;
+type discussionSpecUsersType = typeof InitialBidSpecUsersItem.discussionData;
 
 type BidSpecTypeKeys = keyof BidSpecType | 'none';
 
@@ -148,12 +153,12 @@ export const BidReducer = (state = initialState, action: ActionsType): BidInitia
                             // we will add new items
                             [...state.Bid[action.tableName], (action.tableName === 'specifications' ?
                                 // add new specification item
-                                { weight: 0, value: '', number: state.Bid[action.tableName].length + 1, isItNew: true } :
+                                { ...InitialBidSpecItem, number: state.Bid[action.tableName].length + 1 } :
                                 // add new UserStory item
-                                { weight: 0, value: '', number: state.Bid[action.tableName].length + 1, isItNew: true, discussionData: { count: 0, id: '', value: '' } })] :
+                                { ...InitialBidSpecUsersItem, number: state.Bid[action.tableName].length + 1 })] :
                             // we'll change existing item
                             (state.Bid[action.tableName] as Array<BidSpecType | BidSpecUsersType>).map((el, index: number) => {
-                                if (parseInt(action.id) === index + 1) { return { ...el, [action.name]: action.value } }
+                                if (action.id === index + 1) { return { ...el, [action.name]: action.value } }
                                 return el;
                             }))
                 }
@@ -185,7 +190,7 @@ export const BidReducer = (state = initialState, action: ActionsType): BidInitia
 
 const actions = {
     setCurrentBidState: (name: initialStateKeys, data: ReturnObjectValuesType<BidInitialStateType>) => ({ type: 'SET_CURRENT_STATE', name: name, data: data } as const),
-    setBidSpec: (id: string, value: ReturnObjectValuesType<BidSpecType>, name: keyof BidSpecUsersType | 'none', tableName: BidTableNameType) => ({ type: 'SET_BID_SPEC', id: id, value: value, name: name, tableName: tableName } as const),
+    setBidSpec: (id: number, value: ReturnObjectValuesType<BidSpecType>, name: keyof BidSpecUsersType | 'none', tableName: BidTableNameType) => ({ type: 'SET_BID_SPEC', id: id, value: value, name: name, tableName: tableName } as const),
     setBidProp: (property: BidKeysType, value: ReturnObjectValuesType<BidType>) => ({ type: 'SET_BID_PROP', property: property, value: value } as const),
     addAttachement: (attachement: attachementItemType, attachement_link: attachementItemType) => ({ type: 'ADD_ATTACHEMENT', attachement: attachement, attachement_link: attachement_link } as const),
     setBidData: (Bid: BidType, BidMetadata: BidMetadataType, firstInit = false, NowMessage = initialState.NowMessage) => ({ type: 'SET_BID_DATA', Bid: Bid, BidMetadata: BidMetadata, firstInit: firstInit, NowMessage: NowMessage } as const),
@@ -194,14 +199,14 @@ const actions = {
 
 export const setCurrentBidState = (name: initialStateKeys, data: ReturnObjectValuesType<BidInitialStateType>): ThunkType => async (dispatch) => { dispatch(actions.setCurrentBidState(name, data)) }
 export const showBidDiscussionDialog = (index: number): ThunkType => async (dispatch, getState) => { dispatch(actions.setBidProp('DialogDiscussionData', { isVisible: true, index: index - 1, DiscussionData: getState().BidPage.Bid.userStory[index - 1].discussionData })) }
-export const setBidSpec = (tableName: BidTableNameType, id = '', value = '', name = 'none' as BidSpecTypeKeys): ThunkType => async (dispatch) => { dispatch(actions.setBidSpec(id, value, name, tableName)) }
+export const setBidSpec = (tableName: BidTableNameType, id: number, value = '', name = 'none' as BidSpecTypeKeys): ThunkType => async (dispatch) => { dispatch(actions.setBidSpec(id, value, name, tableName)) }
 
 export const setBidProp = (property: BidKeysType, value: ReturnObjectValuesType<BidType>): ThunkType => async (dispatch) => { dispatch(actions.setBidProp(property, value)) }
 export const getBidData = (number: string): ThunkType => async (dispatch) => {
     dispatch(actions.setBidProp('loaded', false)); //надо сразу установить экран загрузки
     const response = await BidsAPI.getBidData(number);
     if (typeof response === 'string') {
-        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { openLoginPage() }
         else { alert(response) }
     }
     else {
@@ -217,11 +222,32 @@ export const getBidData = (number: string): ThunkType => async (dispatch) => {
     }
 }
 
+export const toggleBidSpec = (tableName: BidTableNameType, toggleCase = 'add' as SpecToggleType, index?: number): ThunkType => async (dispatch, getState) => { 
+    const nowState = [...getState().BidPage.Bid[tableName]];
+    const InitialItemState = (tableName === 'specifications' ? {...InitialBidSpecItem} : {...InitialBidSpecUsersItem});
+    if (toggleCase === 'add') {
+        if (index !== undefined && index + 1 < nowState.length) { 
+            nowState.splice(index + 1, 0, {...InitialItemState});
+            nowState.forEach((element, index) => {nowState[index].number = index + 1});
+        } else { // значит добавим в конец
+            nowState.push({...InitialItemState, number: nowState.length + 1});
+        }
+    } else {
+        if (index !== undefined) { 
+            nowState.splice(index, 1);
+            nowState.forEach((element, index) => {nowState[index].number = index + 1});
+        } else { // значит удалим последнюю запись
+            nowState.pop();
+        }
+    }
+    dispatch(actions.setBidProp(tableName, nowState));
+}
+
 export const pushBidButton = (type: pushBidButtonObjectType): ThunkType => async (dispatch, getState) => {
     const nowState = getState().BidPage;
     const response = await BidsAPI.pushBidButton({ type: type, bidPage: nowState.Bid }, nowState.Bid.number);
     if (typeof response === "string") {
-        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { openLoginPage(); }
         else { dispatch(actions.setCurrentBidState('NowMessage', { ...nowState.NowMessage, detail: response })) }
     }
     else { dispatch(actions.setBidData({ ...response, loaded: true }, nowState.BidMetadata, false, { life: 5000, severity: 'success', detail: 'Всё хорошо!', summary: 'Замечательно!' })) }
@@ -234,7 +260,7 @@ export const setNewBidData = (): ThunkType => async (dispatch, getState) => {
     else {
         const response = await BidsAPI.getBidData("NewBid");
         if (typeof response === 'string') {
-            if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+            if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { openLoginPage(); }
             else { alert(response) }
         }
         else { dispatch(actions.setBidData(response.bidMetadata.initialNewBid, response.bidMetadata)) }
@@ -251,7 +277,7 @@ export const sendBidReply = (id: string, text: string): ThunkType => async (disp
     if (BidNumber) {
         const response = await BidsAPI.sendCurrentReply(id, text, BidNumber);
         if (typeof response === "string") {
-            if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+            if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { openLoginPage(); }
             else { dispatch(actions.setCurrentBidState('NowMessage', { ...initialState.NowMessage, detail: response })) }
         } else {
             dispatch(actions.setDiscussionData(response));
@@ -264,7 +290,7 @@ export const createNewBidBaseOnThisBid = (type: 'СоздатьНаОснова�
     const nowState = getState().BidPage;
     const response = await BidsAPI.pushBidButton({ type: type, bidPage: nowState.Bid }, nowState.Bid.number);
     if (typeof response === "string") {
-        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { openLoginPage(); }
         else { dispatch(actions.setCurrentBidState('NowMessage', { ...nowState.NowMessage, detail: response })) }
     }
     else {
@@ -277,7 +303,7 @@ export const sendBidDiscussionForUSLine = (): ThunkType => async (dispatch, getS
     const nowState = getState().BidPage;
     const response = await BidsAPI.pushBidButton({ type: 'ЗаписатьКомментарийПоСтрокеЗадания', bidPage: nowState.Bid }, nowState.Bid.number);
     if (typeof response === "string") {
-        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { openLoginPage(); }
         else { dispatch(actions.setCurrentBidState('NowMessage', { ...nowState.NowMessage, detail: response })) }
     }
     else { dispatch(actions.setBidProp('DialogDiscussionData', initialState.Bid.DialogDiscussionData)) }
@@ -302,3 +328,4 @@ export type setNewBidAttachementType = typeof setNewBidAttachement;
 export type createNewBidBaseOnThisBidType = typeof createNewBidBaseOnThisBid;
 export type sendBidDiscussionForUSLineType = typeof sendBidDiscussionForUSLine;
 export type sendBidReplyType = typeof sendBidReply;
+export type toggleBidSpecType = typeof toggleBidSpec;

@@ -1,0 +1,17 @@
+.oneSubcolumnsColumnMaintainerList {
+    grid-template-columns: 1fr;
+}
+
+.twoSubcolumnsColumnMaintainerList {
+    grid-template-columns: 1fr 1fr;
+}
+
+.threeSubcolumnsColumnMaintainerList {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.cardsStickersContainer {
+    display: grid;
+    row-gap: 0.625em;
+    column-gap: 0.625em;
+}

@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import Bid from './Bid';
 import { connect } from "react-redux";
-import { setCurrentBidState, setBidProp, setBidSpec, pushBidButton, getBidData, setNewBidData, setNewBidAttachement, sendBidReply, showBidDiscussionDialog, createNewBidBaseOnThisBid, sendBidDiscussionForUSLine, setNewBidDataType, getBidDataType, setCurrentBidStateType, setBidPropType, setBidSpecType, pushBidButtonType, setNewBidAttachementType, sendBidReplyType, showBidDiscussionDialogType, sendBidDiscussionForUSLineType, createNewBidBaseOnThisBidType } from "../../../redux/reducers/bid-reducer";
+import { setCurrentBidState, setBidProp, setBidSpec, pushBidButton, toggleBidSpec, getBidData, setNewBidData, setNewBidAttachement, sendBidReply, showBidDiscussionDialog, createNewBidBaseOnThisBid, sendBidDiscussionForUSLine, setNewBidDataType, getBidDataType, setCurrentBidStateType, setBidPropType, setBidSpecType, pushBidButtonType, setNewBidAttachementType, sendBidReplyType, showBidDiscussionDialogType, sendBidDiscussionForUSLineType, createNewBidBaseOnThisBidType, toggleBidSpecType } from "../../../redux/reducers/bid-reducer";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { compose } from "redux";
 import {AppStateType} from '../../../redux/store/redux-store';
@@ -27,7 +27,8 @@ type DispatchPropsType = {
     sendBidReply: sendBidReplyType,
     showBidDiscussionDialog: showBidDiscussionDialogType,
     createNewBidBaseOnThisBid: createNewBidBaseOnThisBidType,
-    sendBidDiscussionForUSLine: sendBidDiscussionForUSLineType
+    sendBidDiscussionForUSLine: sendBidDiscussionForUSLineType,
+    toggleBidSpec: toggleBidSpecType
 }
 
 type PathParamsType = {
@@ -66,6 +67,7 @@ const BidContainer: React.FC<PropsType> = (props) => {
                 createNewBidBaseOnThisBid={props.createNewBidBaseOnThisBid}
                 sendBidDiscussionForUSLine={props.sendBidDiscussionForUSLine}
                 setNewBidData={props.setNewBidData}
+                toggleBidSpec={props.toggleBidSpec}
                 queryParams={queryString.parse(props.location.search)} />
 }
 
@@ -78,4 +80,4 @@ const mapStateToProps = (state: AppStateType) => {
     })
 }
 
-export default compose<React.ComponentType>(connect(mapStateToProps, {setCurrentBidState, setBidProp, setBidSpec, pushBidButton, getBidData, setNewBidData, setNewBidAttachement, sendBidReply, showBidDiscussionDialog, createNewBidBaseOnThisBid, sendBidDiscussionForUSLine}), withRouter)(BidContainer);
+export default compose<React.ComponentType>(connect(mapStateToProps, {setCurrentBidState, toggleBidSpec, setBidProp, setBidSpec, pushBidButton, getBidData, setNewBidData, setNewBidAttachement, sendBidReply, showBidDiscussionDialog, createNewBidBaseOnThisBid, sendBidDiscussionForUSLine}), withRouter)(BidContainer);

@@ -1,49 +1,92 @@
 import React from 'react';
-import { Editor as EditorType, SaveCurrentEditorType, setEditorStateType } from '../../../../redux/reducers/paradocs-reducer';
+import { DialogOnExitType, ParadocsEditorType, SaveCurrentEditorType, setEditorEditableStateType, setEditorStateType } from '../../../../redux/reducers/paradocs-reducer';
 import { Editor } from 'primereact/editor';
+import style from './Editor.module.css';
+import { InputText } from 'primereact/inputtext';
+import { AiFillEdit, AiOutlineEdit } from 'react-icons/ai';
 
 type PropsType = {
     uid: string,
-    editors: Array<EditorType>,
+    editors: Array<ParadocsEditorType>,
+    setEditorState: setEditorStateType,
+    DialogOnExit: DialogOnExitType,
     SaveCurrentEditor: SaveCurrentEditorType,
-    setEditorState: setEditorStateType
+    setEditorEditableState: setEditorEditableStateType
 }
+
+const ParadocsEditor: React.FC<ParadocsEditorComponentType> = React.memo((props) => {
+    if (!!props.isEditable) {
+        return <React.Fragment>
+            <div className={style.headerContainer}>
+                <InputText type="text" className="p-inputtext-lg p-d-block" value={props.heading} onChange={(e) => props.setEditorState(false, (e.target as HTMLInputElement).value, props.id, true)} />
+                <div className={style.editButtonContainer} onClick={() => props.setEditorEditableState(props.id, false)}><AiFillEdit size='2em' title='Снять редактирование' /></div>
+            </div>
+        <Editor
+            className={style.paradocsEditor}
+            value={props.text}
+            headerTemplate={<EditorHeader SaveCurrentEditor={props.SaveCurrentEditor} DialogOnExit={props.DialogOnExit} editorNumber={props.id} uid={props.uid} setEditorState={props.setEditorState} />}
+            key={props.id}
+            id={props.id.toString()}
+            onTextChange={(e) => props.setEditorState(false, e.htmlValue as string, props.id, false)} />
+    </React.Fragment>
+    } else {
+        return <React.Fragment>
+            <div className={style.headerContainer}>
+                <h3>{props.heading}</h3>
+                <div className={style.editButtonContainer} onClick={() => props.setEditorEditableState(props.id, true)}><AiOutlineEdit size='2em' title='Начать редактирование' /></div>
+            </div>
+            <div dangerouslySetInnerHTML={{__html: props.text}}></div>
+    </React.Fragment>
+    }
+})
 
 export const Editors: React.FC<PropsType> = (props) => {
     if (!props.editors.length) { return null }
 
     return <React.Fragment>
-        {props.editors.map(m => <Editor
-            style={{ minHeight: "300px" }}
-            value={m.text}
-            headerTemplate={<EditorHeader SaveCurrentEditor={props.SaveCurrentEditor} setEditorState={props.setEditorState} />}
-            key={m.id}
-            id={m.id.toString()}
-            onTextChange={() => props.setEditorState(true, false)} />)}
+        {props.editors.map(m => <ParadocsEditor {...m}
+            setEditorState={props.setEditorState}
+            setEditorEditableState={props.setEditorEditableState}
+            DialogOnExit={props.DialogOnExit}
+            SaveCurrentEditor={props.SaveCurrentEditor}
+            uid={props.uid} />)}
     </React.Fragment>
 }
 
-type EditorHeaderPropsType = {
+type ParadocsEditorComponentType = {
+    setEditorState: setEditorStateType,
+    DialogOnExit: DialogOnExitType,
     SaveCurrentEditor: SaveCurrentEditorType,
-    setEditorState: setEditorStateType
+    setEditorEditableState: setEditorEditableStateType,
+    uid: string
+} & ParadocsEditorType
+
+
+
+type EditorHeaderPropsType = {
+    setEditorState: setEditorStateType,
+    uid: string,
+    editorNumber: number,
+    DialogOnExit: DialogOnExitType,
+    SaveCurrentEditor: SaveCurrentEditorType
 }
 
-const EditorHeader = (props: EditorHeaderPropsType) => (
+const EditorHeader = React.memo((props: EditorHeaderPropsType) => (
     <span className="ql-formats">
-        <select className="ql-header" defaultValue="0">
+        <select title="Подзаголовок" className="ql-header" defaultValue="0">
             <option value="1">Heading</option>
             <option value="2">Subheading</option>
             <option value="0">Normal</option>
         </select>
-        <select className="ql-font">
+        <select title="Шрифт" className="ql-font">
             <option></option>
             <option value="serif"></option>
             <option value="monospace"></option>
         </select>
-        <button className="ql-bold" aria-label="Bold"></button>
-        <button className="ql-italic" aria-label="Italic"></button>
-        <button className="ql-underline" aria-label="Underline"></button>
-        <select className="ql-color">
+        <button title="Жирный" className="ql-bold" aria-label="Bold"></button>
+        <button title="Курсив" className="ql-italic" aria-label="Italic"></button>
+        <button title="Подчеркнутый" className="ql-underline" aria-label="Underline"></button>
+        <select title="Цвет текста" className="ql-color">
             <option value="#e60000"></option>
             <option value="#ff9900"></option>
             <option value="#ffff00"></option>
@@ -79,7 +122,7 @@ const EditorHeader = (props: EditorHeaderPropsType) => (
             <option value="#002966"></option>
             <option value="#3d1466"></option>
         </select>
-        <select className="ql-background">
+        <select title="Цвет фона" className="ql-background">
             <option value="#000000"></option>
             <option value="#e60000"></option>
             <option value="#ff9900"></option>
@@ -116,28 +159,27 @@ const EditorHeader = (props: EditorHeaderPropsType) => (
             <option value="#3d1466"></option>
         </select>
         <span className="ql-formats">
-            <button className="ql-list" value="ordered" aria-label="Ordered List" type="button"></button>
-            <button className="ql-list" value="bullet" aria-label="Unordered List" type="button"></button>
-            <select className="ql-align" >
+            <button title="Числовой список" className="ql-list" value="ordered" aria-label="Ordered List" type="button"></button>
+            <button title="Список" className="ql-list" value="bullet" aria-label="Unordered List" type="button"></button>
+            <select title="Выравнивание" className="ql-align" >
                 <option></option>
                 <option value="center"></option>
                 <option value="right"></option>
                 <option value="justify"></option>
             </select>
         </span>
-        <button className="ql-link" aria-label="Insert Link" type="button"></button>
-        <button className="ql-image" aria-label="Insert Image" type="button"></button>
-        <button className="ql-code-block" aria-label="Insert Code Block" type="button"></button>
-        <button className="pi pi-save" aria-label="Save texts" type="button" onClick={e => {
-            // в теории эта кнопка должна взять состояние текстов из стейта и отправить в базу 1С с сервера, 
-            // но для этого на сервак ноды нужно постоянно передавать изменения текста (передавать только маленький измененный кусочек) 
-            // и это правильно с точки зрения FLUX (методология редакта). Сейчас этого не делается и методология нарушается 
-            // так как на начальном этапе реализовывать функционал обработки дельты (измененного текста) нет, нет пока причины выделять на это время.
+        <button title="Область кода" className="ql-code-block" aria-label="Insert Code Block" type="button"></button>
+        <button title="Добавить ссылку" className="ql-link" aria-label="Insert Link" type="button"></button>
+        {/* <button title="Вставить картинку" className="ql-image" aria-label="Insert Image" type="button"></button> */}
+
+        <button title="Сохранить" className="pi pi-save" aria-label="Save texts" type="button" onClick={e => {
             // @ts-ignore
-            props.SaveCurrentEditor(e.currentTarget.parentElement.parentElement.parentElement.id, props.uid, e.currentTarget.parentElement.parentElement.nextElementSibling.firstElementChild.innerHTML);
-            props.setEditorState(false, false);
+            let currentId = e.currentTarget.parentElement.parentElement.parentElement.id;
+            props.SaveCurrentEditor(parseInt(currentId));
+            props.DialogOnExit(false);
+            alert("Сохранено!");
         }}></button>
     </span>
-);
+));
 
-export default Editors;
+export default React.memo(Editors);

@@ -1,0 +1,149 @@
+.avatarCardBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.avatarCardBlock img {
+    border-radius: 100%;
+}
+
+.avatarCardBlock span {
+    display: flex;
+}
+
+.p-card-footer {
+    overflow: hidden;
+}
+
+.cardFooter {
+    display: flex;
+    align-items: center;
+    float: right;
+    width: fit-content;
+}
+
+.cardFooter svg {
+    margin: 0px 5px;
+}
+
+.cardFooter svg:hover {
+    fill: #007ad9;
+}
+
+.cardContent {
+    display: flex;
+    align-items: flex-start;
+}
+
+.cardContentText {
+    position: relative;
+    margin-left: 10px;
+}
+
+.p-card-content {
+    overflow: auto;
+    padding: 0!important
+}
+
+.p-card-body {
+    padding: 0.625em!important;
+}
+
+.sticker {
+    border: 1px solid #bdbdbd;
+    height: fit-content;
+    height: -moz-fit-content;
+    position: relative;
+}
+
+.sticker:hover {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25), 0 5px 10px rgba(0,0,0,0.22);
+}
+
+.shortCardContent {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cardExpandArrow {
+    display: none;
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    width: -moz-fit-content;
+    margin: auto;
+}
+
+.sticker:hover .cardExpandArrow {
+    display: flex;
+}
+
+.cardExpandArrow svg:hover {
+    fill: #007ad9
+}
+
+.cardFooterActions {
+    flex-direction: column;
+    align-items: flex-end!important;
+}
+
+.sticker:hover .cardExpandArrow svg, .avatarCardBlock svg:hover, .cardFooter>div {
+    cursor: pointer;
+}
+
+.totalCardWeight {
+    right: 0.625em;
+    position: absolute;
+}
+
+.pointerCursor {
+    cursor: pointer;
+}
+
+.inheritColor {
+    color: inherit;
+}
+
+.emptyCard {
+    position: relative;
+}
+
+.emptyCardContent {
+    color: #ff8c69;
+    font-size: 1.17em;
+    font-weight: bolder;
+}
+
+.importantPriorityCard {
+    color: red;
+}
+
+.usualPriorituCard {
+    color: orange;
+}
+
+.expandedAvatarContainerHeight {
+    height: 65px;
+}
+
+.inexpandedAvatarContainerHeight {
+    height: 48px;
+}
+
+.expandedAvatar {
+    height: 20px;
+    width: 20px;
+}
+
+.inexpandedAvatar {
+    height: 1.3em;
+    width: 1.3em;
+}

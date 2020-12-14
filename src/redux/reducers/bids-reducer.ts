@@ -2,6 +2,7 @@ import { BidsAPI } from "../../api/bids-api";
 import { BaseThunkType, InferActionsTypes, ReturnObjectValuesType } from '../store/redux-store';
 import { setBidData } from "./bid-reducer";
 import TreeNode from "primereact/components/treenode/TreeNode";
+import { openLoginPage } from "../../commonFunctions";
 
 // модуль объективно перегружен, слишком много методов и свойств
 // но заявка находится в одном модуле со списком заявки т.к. при открытии завки/списка
@@ -86,7 +87,7 @@ export const setBidsUserStory = (id = '', value = ''): ThunkType => async (dispa
 export const getBidsList = (): ThunkType => async (dispatch) => {
     const response = await BidsAPI.getBidsList();
     if (typeof response === 'string') {
-        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { openLoginPage() }
         else { alert(response) }
     } else {
         dispatch(actions.setBidsList(response.bidsList, response.messagesList, response.bidMetadata.projectSelectItems));

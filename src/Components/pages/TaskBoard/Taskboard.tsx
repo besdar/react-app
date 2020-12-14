@@ -3,8 +3,8 @@ import { Toast } from 'primereact/toast';
 import Cards from './Cards/Cards';
 import Header from './Header';
 
-import { CardsType, getTaskboardDataType, changeTaskStatusType, setCurrentStateOfCardsType, setCurrentStateOfCardsListType, setErrorType, setHeaderVisibilityType, setCardStateType, expandAllCardsType, collapseAllMaintainerTabsType, collapseAllMaintainerStatusesByTabType, changeTaskPriorityType, setTaskboardFilterType, filtersType, taskboardVisibilityType } from '../../../redux/reducers/taskboard-reducer';
-import './Taskboard.css';
+import { CardsType, getTaskboardDataType, changeTaskStatusType, setCurrentStateOfCardsType, setCurrentStateOfCardsListType, setErrorType, setHeaderVisibilityType, setCardStateType, expandAllCardsType, collapseAllMaintainerTabsType, collapseAllMaintainerStatusesByTabType, changeTaskPriorityType, setTaskboardFilterType, filtersType, taskboardVisibilityType, CardListsType, CardNames } from '../../../redux/reducers/taskboard-reducer';
+import style from './Taskboard.module.css';
 import { ParsedQuery } from 'query-string';
 
 type PropsType = {
@@ -27,6 +27,27 @@ type PropsType = {
     filters: filtersType,
     visibility: taskboardVisibilityType,
     queryParams: ParsedQuery
+}
+
+type CardsColumnPropsType = {
+    lists?: Array<CardListsType>,
+    status?: CardNames,
+    isReadyVisible: boolean,
+    isVisible?: boolean
+}
+
+const CardsColumn: React.FC<CardsColumnPropsType> = (props) => {
+
+    if (props.isVisible !== true && (props.lists !== undefined && props.lists.find((elem) => (elem.list.length)) === undefined)) {
+        return null;
+    }
+
+    let columnsCountClass = '';
+    if (props.status === 'waiting') {columnsCountClass = props.isReadyVisible ? style.twoSubcolumnsColumn : style.threeSubcolumnsColumn;}
+
+    return <div className={'p-col ' + style.taskboardColumn + ' ' + columnsCountClass}>
+        {props.children}
+    </div>
 }
 
 const Taskboard: React.FC<PropsType> = (props) => {
@@ -52,8 +73,8 @@ const Taskboard: React.FC<PropsType> = (props) => {
     return (<React.Fragment>
         <Toast ref={toast} position='bottomright' />
         <Header searchFilter={props.filters.searchFilter} visibility={props.visibility} isReadyVisible={isReadyVisible} setTaskboardFilter={props.setTaskboardFilter} isAllCollapsed={props.isAllCollapsed} isAllCardExpanded={props.isAllCardExpanded} collapseAllMaintainerTabs={props.collapseAllMaintainerTabs} expandAllCards={props.expandAllCards} setHeaderVisibility={props.setHeaderVisibility} getTaskboardData={props.getTaskboardData} />
-        <div className={isItDesktop ? "p-grid" : "p-grid-col"} style={{ marginRight: '0' }}>
-            {props.Cards.waiting.lists.find((elem) => (elem.list.length)) !== undefined && <div className='p-col' style={{ flexGrow: isReadyVisible ? 2 : 3 }}>
+        <div className={(isItDesktop ? "p-grid " : "p-grid-col ") + style.taskboardBodyContainer}> {/* если маленький экран (телефон) то показывать всё в 1 столбик */}
+            <CardsColumn isReadyVisible={isReadyVisible} lists={props.Cards.waiting.lists} status='waiting'>
                 <Cards
                     changeTaskPriority={props.changeTaskPriority}
                     collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab}
@@ -66,29 +87,28 @@ const Taskboard: React.FC<PropsType> = (props) => {
                     isReadyVisible={isReadyVisible}
                     isItDesktop={isItDesktop}
                     setTaskboardFilter={props.setTaskboardFilter} />
-            </div>}
-            {props.Cards.testing.lists.find((elem) => (elem.list.length)) !== undefined && <div className='p-col taskboardColumn'>
+            </CardsColumn>
+            <CardsColumn isReadyVisible={isReadyVisible} lists={props.Cards.testing.lists} status='testing'>
                 <Cards isItDesktop={isItDesktop} setTaskboardFilter={props.setTaskboardFilter} isReadyVisible={isReadyVisible} changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="testing" data={props.Cards.testing} />
-            </div>}
-            {isAnyOfCardsFilteredDataCommonColumnFilled &&
-                <div className='p-col taskboardColumn'>
-                    {props.Cards.atProgress.lists.find((elem) => (elem.list.length)) !== undefined && <Cards setTaskboardFilter={props.setTaskboardFilter} isReadyVisible={isReadyVisible}
-                        changeTaskPriority={props.changeTaskPriority}
-                        collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab}
-                        setCardState={props.setCardState}
-                        setCurrentStateOfCardsList={props.setCurrentStateOfCardsList}
-                        changeTaskStatus={props.changeTaskStatus}
-                        setCurrentStateOfCards={props.setCurrentStateOfCards}
-                        status="atProgress"
-                        isItDesktop={isItDesktop}
-                        data={props.Cards.atProgress} />}
-                    {props.Cards.cyberTest.lists.find((elem) => (elem.list.length)) !== undefined && <Cards isItDesktop={isItDesktop} setTaskboardFilter={props.setTaskboardFilter} isReadyVisible={isReadyVisible} changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="cyberTest" data={props.Cards.cyberTest} />}
-                    {props.Cards.currentRelease.lists.find((elem) => (elem.list.length)) !== undefined && <Cards isItDesktop={isItDesktop} setTaskboardFilter={props.setTaskboardFilter} isReadyVisible={isReadyVisible} changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="currentRelease" data={props.Cards.currentRelease} />}
-                    {props.Cards.implementation.lists.find((elem) => (elem.list.length)) !== undefined && <Cards isItDesktop={isItDesktop} setTaskboardFilter={props.setTaskboardFilter} isReadyVisible={isReadyVisible} changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="implementation" data={props.Cards.implementation} />}
-                </div>}
-            {isReadyVisible && <div className='p-col taskboardColumn'>
+            </CardsColumn>
+            <CardsColumn isVisible={isAnyOfCardsFilteredDataCommonColumnFilled} isReadyVisible={isReadyVisible}>
+                 <Cards setTaskboardFilter={props.setTaskboardFilter} isReadyVisible={isReadyVisible}
+                    changeTaskPriority={props.changeTaskPriority}
+                    collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab}
+                    setCardState={props.setCardState}
+                    setCurrentStateOfCardsList={props.setCurrentStateOfCardsList}
+                    changeTaskStatus={props.changeTaskStatus}
+                    setCurrentStateOfCards={props.setCurrentStateOfCards}
+                    status="atProgress"
+                    isItDesktop={isItDesktop}
+                    data={props.Cards.atProgress} />
+                <Cards isItDesktop={isItDesktop} setTaskboardFilter={props.setTaskboardFilter} isReadyVisible={isReadyVisible} changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="cyberTest" data={props.Cards.cyberTest} />
+                <Cards isItDesktop={isItDesktop} setTaskboardFilter={props.setTaskboardFilter} isReadyVisible={isReadyVisible} changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="currentRelease" data={props.Cards.currentRelease} />
+                <Cards isItDesktop={isItDesktop} setTaskboardFilter={props.setTaskboardFilter} isReadyVisible={isReadyVisible} changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="implementation" data={props.Cards.implementation} />
+            </CardsColumn>
+            <CardsColumn isVisible={isReadyVisible} isReadyVisible={isReadyVisible}>
                 <Cards isItDesktop={isItDesktop} setTaskboardFilter={props.setTaskboardFilter} isReadyVisible={isReadyVisible} changeTaskPriority={props.changeTaskPriority} collapseAllMaintainerStatusesByTab={props.collapseAllMaintainerStatusesByTab} setCardState={props.setCardState} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} changeTaskStatus={props.changeTaskStatus} setCurrentStateOfCards={props.setCurrentStateOfCards} status="ready" data={props.Cards.ready} />
-            </div>}
+            </CardsColumn>
         </div>
     </React.Fragment>)
 }

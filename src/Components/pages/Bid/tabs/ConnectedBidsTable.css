@@ -1,0 +1,9 @@
+.connectedRowNumber {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.connectedNumberColumn {
+    width: 3em;
+}

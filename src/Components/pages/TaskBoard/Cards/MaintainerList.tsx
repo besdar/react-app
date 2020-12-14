@@ -1,6 +1,7 @@
 import React from "react";
 import { CardListsType, CardNames, changeTaskPriorityType, changeTaskStatusType, setCardStateType, setTaskboardFilterType } from "../../../../redux/reducers/taskboard-reducer";
 import Card from "./Card/Card";
+import style from './MaintainerList.module.css';
 
 type MaintainerListPropsType = {
     list: CardListsType,
@@ -16,7 +17,10 @@ type MaintainerListPropsType = {
 const MaintainerList = (props: MaintainerListPropsType) => {
     if ((props.list.isCollapse !== undefined && (props.list.isCollapse || props.status === 'atProgress')) && props.list.list.length > 0) { return null }
   
-    return <div style={{ gridTemplateColumns: props.status === "waiting" && props.isItDesktop ? props.isReadyVisible ? '1fr 1fr' : '1fr 1fr 1fr' : '1fr' }} className="p-col cardsStickersContainer">
+    let columnsCountClass = style.oneSubcolumnsColumnMaintainerList + ' ';
+    if (props.status === 'waiting' && props.isItDesktop) {columnsCountClass = (props.isReadyVisible ? style.twoSubcolumnsColumnMaintainerList : style.threeSubcolumnsColumnMaintainerList)}
+
+    return <div className={"p-col " + style.cardsStickersContainer + ' ' + columnsCountClass}>
       {props.list.list.map((el, index) => {
         return <Card
             key={index}

@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import Paradocs from "./Paradocs";
 import { connect } from "react-redux";
-import { getParadocsMenu, getParadocsEditors, SaveCurrentEditor, setEditorState, DialogOnExit, SaveCurrentEditors, getParadocsEditorsType, SaveCurrentEditorType, setEditorStateType, DialogOnExitType, SaveCurrentEditorsType, getParadocsMenuType } from "../../../redux/reducers/paradocs-reducer";
+import { SaveEditorsOnClick, setEditorEditableState, SaveCurrentEditor, getParadocsMenu, getParadocsEditors, setEditorState, DialogOnExit, getParadocsEditorsType, setEditorStateType, DialogOnExitType, getParadocsMenuType, SaveCurrentEditorType, SaveEditorsOnClickType, setEditorEditableStateType } from "../../../redux/reducers/paradocs-reducer";
 import { withRouter } from "react-router-dom";
 import { compose } from "redux";
 import { AppStateType } from '../../../redux/store/redux-store';
@@ -9,11 +9,12 @@ import { AppStateType } from '../../../redux/store/redux-store';
 type MapPropsType = ReturnType<typeof mapStateToProps>
 type DispatchPropsType = {
     getParadocsEditors: getParadocsEditorsType,
-    SaveCurrentEditor: SaveCurrentEditorType,
     setEditorState: setEditorStateType,
     DialogOnExit: DialogOnExitType,
-    SaveCurrentEditors: SaveCurrentEditorsType,
-    getParadocsMenu: getParadocsMenuType
+    getParadocsMenu: getParadocsMenuType,
+    SaveCurrentEditor: SaveCurrentEditorType,
+    SaveEditorsOnClick: SaveEditorsOnClickType,
+    setEditorEditableState: setEditorEditableStateType
 }
 
 type PropsType = MapPropsType & DispatchPropsType;
@@ -29,14 +30,14 @@ const ParadocsContainer: React.FC<PropsType> = (props) => {
     return <Paradocs
         items={props.items}
         editors={props.editors}
-        getParadocsEditors={props.getParadocsEditors}
-        uid={props.uid}
         SaveCurrentEditor={props.SaveCurrentEditor}
+        SaveEditorsOnClick={props.SaveEditorsOnClick}
+        getParadocsEditors={props.getParadocsEditors}
+        setEditorEditableState={props.setEditorEditableState}
+        uid={props.uid}
         setEditorState={props.setEditorState}
-        editorModified={props.editorModified}
         DialogOnExit={props.DialogOnExit}
-        showPopup={props.showPopup}
-        SaveCurrentEditors={props.SaveCurrentEditors} />
+        showPopup={props.showPopup}/>
 }
 
 const mapStateToProps = (state: AppStateType) => {
@@ -44,9 +45,8 @@ const mapStateToProps = (state: AppStateType) => {
         items: state.ParadocsPage.items,
         editors: state.ParadocsPage.editors,
         uid: state.ParadocsPage.uid,
-        editorModified: state.ParadocsPage.editorModified,
         showPopup: state.ParadocsPage.showPopup
     })
 }
 
-export default compose<React.ComponentType>(connect(mapStateToProps, { getParadocsMenu, getParadocsEditors, SaveCurrentEditor, setEditorState, DialogOnExit, SaveCurrentEditors }), withRouter)(ParadocsContainer);
+export default compose<React.ComponentType>(connect(mapStateToProps, { SaveEditorsOnClick, SaveCurrentEditor, getParadocsMenu, getParadocsEditors, setEditorState, DialogOnExit, setEditorEditableState }), withRouter)(ParadocsContainer);

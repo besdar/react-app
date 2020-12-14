@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { withRouter, RouteComponentProps, Switch, Route } from "react-router-dom";
 import { compose } from "redux";
 import { AppStateType } from '../../../redux/store/redux-store';
-import WithReport from './withReport';
+import WithReport from './WithReport';
 import ActualWork from './ActualWork/ActualWork';
 import { ReportNameType, setDefaultValuesForReport, generateReport, setDefaultValuesForReportType, generateReportType, changeStatePropType, changeStateProp } from '../../../redux/reducers/reports-reducer';
 

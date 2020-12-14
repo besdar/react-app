@@ -61,3 +61,22 @@
 .mssg-box {
     display: grid;
 }
+
+.discussionMessageList {
+    display: flex;
+    flex-direction: column
+}
+
+.discussionInputTextarea {
+    width: 100%;
+}
+
+.leftDiscussionMessage {
+    align-self: flex-start;
+    border-radius: 20px 20px 20px 0;
+}
+
+.rightDiscussionMessage {
+    align-self: flex-end;
+    border-radius: 20px 20px 0 20px;
+}

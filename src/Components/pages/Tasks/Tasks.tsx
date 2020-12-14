@@ -5,18 +5,15 @@ import { Column } from "primereact/column";
 import './Tasks.css';
 import { NavLink } from 'react-router-dom';
 
-import Header from './header';
+import Header from './TasksHeader';
 import Loader from '../../common/Loader/Loader';
 import TreeNode from 'primereact/components/treenode/TreeNode';
 import {ContextMenu} from 'primereact/contextmenu';
 import { MenuItem } from 'primereact/components/menuitem/MenuItem';
-import { setTasksCurrentStateType, setTasksContextMenuType } from '../../../redux/reducers/tasks-reducer';
 
 type PropsType = {
     tasksList: Array<TreeNode>,
-    setTasksCurrentState: setTasksCurrentStateType,
-    AllowedItems: Array<MenuItem>,
-    setTasksContextMenu: setTasksContextMenuType
+    AllowedItems: Array<MenuItem>
 }
 
 const Tasks: React.FC<PropsType> = (props) => {
@@ -56,17 +53,17 @@ const Tasks: React.FC<PropsType> = (props) => {
         else { return <Column key={col.field} style={{width: col.width}} field={col.field} header={col.header} /> }
     });
 
-    return (<React.Fragment>
+    return <React.Fragment>
         <ContextMenu model={props.AllowedItems} ref={cm}></ContextMenu>
         <Header />
         <div className={window.innerWidth > 1030 ? "p-grid" : "p-grid p-dir-col-rev"}>
             <div className="p-col">
-                <TreeTable ref={dt} value={props.tasksList} autoLayout={true}>
+                <TreeTable ref={dt} value={props.tasksList} autoLayout>
                     {CreateATasksTreeTable}
                 </TreeTable>
             </div>
         </div>
-    </React.Fragment>)
+    </React.Fragment>
 }
 
 export default Tasks;

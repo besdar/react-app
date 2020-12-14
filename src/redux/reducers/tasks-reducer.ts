@@ -3,6 +3,7 @@ import { BaseThunkType, InferActionsTypes, ReturnObjectValuesType } from '../sto
 //import { setTaskData } from "./task-reducer";
 import TreeNode from "primereact/components/treenode/TreeNode";
 import { MenuItem } from "primereact/components/menuitem/MenuItem";
+import { openLoginPage } from "../../commonFunctions";
 
 type initialStateKeysType = keyof typeof initialState;
 type ListOfAllowedItemsType = {
@@ -44,7 +45,7 @@ export const setTasksCurrentState = (name: initialStateKeysType, data: ReturnObj
 export const getTasksList = (): ThunkType => async (dispatch) => {
     const response = await TasksAPI.getTasksList();
     if (typeof response === 'string') {
-        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login'}
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { openLoginPage() }
         else {alert(response)}
     } else {
         dispatch(actions.setTasksList(response.tasksList));

@@ -1,5 +1,4 @@
 import React from "react";
-import "./Cards.css";
 import { CardsItemType, CardNames, changeTaskStatusType, setCurrentStateOfCardsType, setCurrentStateOfCardsListType, setCardStateType, collapseAllMaintainerStatusesByTabType, changeTaskPriorityType, setTaskboardFilterType } from '../../../../redux/reducers/taskboard-reducer';
 import StatusHeader from './StatusHeader';
 import StatusList from "./StatusList";
@@ -20,10 +19,6 @@ type PropsType = {
 
 const Cards: React.FC<PropsType> = (props) => {
 
-  if (!props.data.lists.length) {
-    return null;
-  }
-
   let tasksCount = 0;
   let commonWeight = 0;
 
@@ -32,8 +27,8 @@ const Cards: React.FC<PropsType> = (props) => {
     commonWeight = commonWeight + list.weight;
   });
 
-  if (!tasksCount) {
-    return null
+  if (!props.data.lists.length || !tasksCount) {
+    return null;
   }
 
   return (

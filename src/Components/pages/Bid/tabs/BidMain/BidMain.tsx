@@ -5,11 +5,12 @@ import { Button } from "primereact/button";
 import { Link } from 'react-router-dom';
 import { ToggleButton } from 'primereact/togglebutton';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { BidType, BidMetadataType, setBidPropType, sendBidDiscussionForUSLineType, pushBidButtonType, showBidDiscussionDialogType, getBidDataType, setBidSpecType } from '../../../../../redux/reducers/bid-reducer';
+import { BidType, BidMetadataType, setBidPropType, sendBidDiscussionForUSLineType, pushBidButtonType, showBidDiscussionDialogType, getBidDataType, setBidSpecType, toggleBidSpecType } from '../../../../../redux/reducers/bid-reducer';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { InputNumber } from 'primereact/inputnumber';
 import Spec from './Spec';
 import { Dialog } from 'primereact/dialog';
+import './BidMain.css';
 
 type PropsType = {
     Bid: BidType,
@@ -19,17 +20,18 @@ type PropsType = {
     pushBidButton: pushBidButtonType,
     showBidDiscussionDialog: showBidDiscussionDialogType,
     getBidData: getBidDataType,
-    sendBidDiscussionForUSLine: sendBidDiscussionForUSLineType
+    sendBidDiscussionForUSLine: sendBidDiscussionForUSLineType,
+    toggleBidSpec: toggleBidSpecType
 }
 
-const MyAccordion = (props: { Bid: BidType, showBidDiscussionDialog: showBidDiscussionDialogType, setBidSpec: setBidSpecType }) => {
+const MyAccordion = (props: { Bid: BidType, showBidDiscussionDialog: showBidDiscussionDialogType, setBidSpec: setBidSpecType, toggleBidSpec: toggleBidSpecType }) => {
     const AccordionTabs = [<AccordionTab key={1} header="Требования">
-        <Spec available={props.Bid.VisibilityAvailability.unavailable.find((element) => (element === "Задание")) === undefined} showBidDiscussionDialog={props.showBidDiscussionDialog} setBidSpec={props.setBidSpec} tableName={'userStory'} dataTable={props.Bid.userStory} />
+        <Spec toggleBidSpec={props.toggleBidSpec} available={props.Bid.VisibilityAvailability.unavailable.find((element) => (element === "Задание")) === undefined} showBidDiscussionDialog={props.showBidDiscussionDialog} setBidSpec={props.setBidSpec} tableName={'userStory'} dataTable={props.Bid.userStory} />
     </AccordionTab>]
 
     if (props.Bid.VisibilityAvailability.invisible.find((element) => (element === "ТехническоеЗадание")) === undefined) {
         AccordionTabs.push(<AccordionTab key={2} header="Техническое задание">
-            <Spec available={true} showBidDiscussionDialog={props.showBidDiscussionDialog} setBidSpec={props.setBidSpec} tableName={'specifications'} dataTable={props.Bid.specifications} />
+            <Spec toggleBidSpec={props.toggleBidSpec} available showBidDiscussionDialog={props.showBidDiscussionDialog} setBidSpec={props.setBidSpec} tableName={'specifications'} dataTable={props.Bid.specifications} />
         </AccordionTab>);
     }
     return <Accordion>
@@ -52,11 +54,11 @@ const BidMain: React.FC<PropsType> = (props) => {
                 </div>}
             </div>
             <div className="p-grid">
-                <div className="p-col" style={{ paddingLeft: 0 }}>
+                <div className="p-col leftPartOfBidProps">
                     <div className="p-grid-col">
                         <div className="p-col">
                             <label htmlFor="number">Номер: </label>
-                            <InputText id="number" value={props.Bid.number} disabled={true} />
+                            <InputText id="number" value={props.Bid.number} disabled />
                         </div>
                         <div className="p-col">
                             <label htmlFor="project">Проект: </label>
@@ -68,7 +70,7 @@ const BidMain: React.FC<PropsType> = (props) => {
                         </div>
                         <div className="p-col">
                             <label htmlFor="customer">Заказчик: </label>
-                            <Dropdown filter={true} filterMatchMode="startsWith" id="customer" disabled={props.Bid.VisibilityAvailability.unavailable.find((element) => (element === 'Заказчик')) !== undefined} value={props.Bid.customer} options={props.BidMetadata.customerSelectItems} onChange={(e) => props.setBidProp('customer', e.target.value)} />
+                            <Dropdown filter filterMatchMode="startsWith" id="customer" disabled={props.Bid.VisibilityAvailability.unavailable.find((element) => (element === 'Заказчик')) !== undefined} value={props.Bid.customer} options={props.BidMetadata.customerSelectItems} onChange={(e) => props.setBidProp('customer', e.target.value)} />
                         </div>
                     </div>
                 </div>
@@ -92,14 +94,14 @@ const BidMain: React.FC<PropsType> = (props) => {
                         </div>
                     </div>
                 </div>
-                <div className="p-col" style={{ paddingRight: 0 }}>
+                <div className="p-col rightPartOfBidProps">
                     <div className="p-grid-col">
                         <div className="p-grid p-col">
                             <div className="p-col">
                                 <label htmlFor="status">Статус: </label>
                                 <InputText disabled type="text" id="status" value={props.Bid.status} />
                             </div>
-                            {props.Bid.VisibilityAvailability.invisible.find((element) => (element === "Рассчитались")) === undefined && <div className="p-col" style={{ display: 'flex', alignItems: 'flex-end' }}>
+                            {props.Bid.VisibilityAvailability.invisible.find((element) => (element === "Рассчитались")) === undefined && <div className="p-col paidOffContainer">
                                 <ToggleButton checked={props.Bid.paid_off} onChange={(e) => props.setBidProp('paid_off', e.value)} onLabel="Рассчитались" offLabel="Не рассчитались" />
                             </div>}
                         </div>
@@ -130,8 +132,8 @@ const BidMain: React.FC<PropsType> = (props) => {
                 </div>
             </div>
             <h3>Задание</h3>
-            <MyAccordion Bid={props.Bid} setBidSpec={props.setBidSpec} showBidDiscussionDialog={props.showBidDiscussionDialog} />
-            {props.Bid.userStory.length > 0 && <Dialog style={{ maxWidth: '600px' }} header="Обсуждение (создание)" visible={props.Bid.DialogDiscussionData.isVisible}
+            <MyAccordion toggleBidSpec={props.toggleBidSpec} Bid={props.Bid} setBidSpec={props.setBidSpec} showBidDiscussionDialog={props.showBidDiscussionDialog} />
+            {props.Bid.userStory.length > 0 && <Dialog className='createDisscussionDialog' header="Обсуждение (создание)" visible={props.Bid.DialogDiscussionData.isVisible}
                 onHide={() => { props.setBidProp('DialogDiscussionData', { ...props.Bid.DialogDiscussionData, isVisible: false }) }}
                 footer={<Button icon='pi pi-check' onClick={props.sendBidDiscussionForUSLine} label="OK" />}>
                 <div>{props.Bid.userStory[props.Bid.DialogDiscussionData.index].value}</div>

@@ -1,0 +1,16 @@
+.leftPartOfBidProps {
+    padding-left: 0px;
+}
+
+.rightPartOfBidProps {
+    padding-right: 0px;
+}
+
+.paidOffContainer {
+    display: flex;
+    align-items: flex-end;
+}
+
+.createDisscussionDialog {
+    max-width: 600px;
+}

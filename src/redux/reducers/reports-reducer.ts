@@ -1,6 +1,6 @@
 import { ReportsAPI } from "../../api/reports-api";
 import { BaseThunkType, InferActionsTypes, ReturnObjectValuesType } from '../store/redux-store';
-import { FormAction } from 'redux-form/lib/actions';
+import { openLoginPage } from "../../commonFunctions";
 
 const initialState = {
     reportName: 'ActualWork' as ReportNameType,
@@ -50,7 +50,7 @@ export const generateReport = (): ThunkType => async (dispatch, getState) => {
     const nowState = getState().Reports;
     const response = await ReportsAPI.getReport({ ...nowState, reportName: nowState.reportName });
     if (typeof response === 'string') {
-        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { openLoginPage() }
         else { alert(response) }
     } else {
         dispatch(actions.setResult(response.reportResult));
@@ -63,7 +63,7 @@ export default reportsReducer;
 
 export type ReportInitialStateType = typeof initialState;
 type ActionsType = InferActionsTypes<typeof actions>;
-type ThunkType = BaseThunkType<ActionsType | FormAction>;
+type ThunkType = BaseThunkType<ActionsType>;
 
 // thunk types //
 export type setDefaultValuesForReportType = typeof setDefaultValuesForReport;

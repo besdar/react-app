@@ -1,17 +1,13 @@
 import React from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import './ConnectedBidsTable.css';
 
 const rowExpansionTemplate = (el: connectedBidsItem) => {
-    const DivStyleObj = {
-        alignItems: 'center',
-        display: 'flex',
-        justifyContent: 'center'
-    };
 
     return <div className="p-grid-col">
         {el.childrens.map((elem, index) => (<div key={index} className="p-grid">
-            <div key={index} style={DivStyleObj} className={"p-col-1"}>{index + 1}</div>
+            <div key={index} className="p-col-1 connectedRowNumber">{index + 1}</div>
             <div key={index} className="p-col">{elem}</div>
         </div>))}
     </div>
@@ -43,7 +39,7 @@ const AdditionalColumns = () => {
     
     return <React.Fragment>
         {columns.map((el, index) => {
-            if (!el.field) { return <Column header={el.header} key={index} expander={true} style={{ width: '3em' }} /> }
+            if (!el.field) { return <Column className='connectedNumberColumn' header={el.header} key={index} expander /> }
             else { return <Column key={index} field={el.field} header={el.header} /> }
         })}
     </React.Fragment>

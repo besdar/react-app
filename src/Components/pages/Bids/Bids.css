@@ -60,3 +60,29 @@ body .p-component {
         font-size: 1.6vw;
     }
 } */
+
+.bidsColumnLinkToBid {
+    text-decoration: none;
+    color: inherit;
+}
+
+.bidsParentMessageContainer {
+    color: lightgray;
+}
+
+.bidsDiscussionMessageTitle {
+    color: black;
+    font-weight: bold;
+}
+
+.bidsProjectSelect {
+    margin: 10px;
+}
+
+.bidsExpanderColumn {
+    width: 40px;
+}
+
+.bidsColumnProject {
+    display: none;
+}

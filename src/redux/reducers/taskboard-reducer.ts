@@ -1,6 +1,7 @@
 import { TaskboardAPI } from "../../api/taskboard-api";
 import { TaskAPI, changeStatusResponseType } from "../../api/task-api";
 import { BaseThunkType, InferActionsTypes, ReturnObjectValuesType } from '../store/redux-store';
+import { openLoginPage } from "../../commonFunctions";
 
 const initialStateCardsItem = {
     header: '',
@@ -207,7 +208,7 @@ export const getTaskboardData = (isItFirstInit = false): ThunkType => async (dis
     dispatch(actions.setTaskboardState('visibility', { ...nowState.visibility, showSpinner: true }));
     const response = await TaskboardAPI.getTaskboardData();
     if (typeof response === "string") {
-        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { openLoginPage() }
         else { dispatch(setError(response)); }
     } else {
         const TaskboardData = response;
@@ -244,7 +245,7 @@ export const getTaskboardData = (isItFirstInit = false): ThunkType => async (dis
                 inputSelectedCard: '',
                 FullTextOfSelectedCard: ''
             },
-            invisibleCardNames: isItFirstInit && (TaskboardData.Metadata.Roles.includes('Руководитель') || TaskboardData.Metadata.Roles.includes('РуководительПроектов')) ? ['ready'] : [...nowState.filters.invisibleCardNames]
+            invisibleCardNames: isItFirstInit && (TaskboardData.Metadata.Roles.includes('Руководитель') || TaskboardData.Metadata.Roles.includes('РуководительПроектов')) ? [...nowState.filters.invisibleCardNames, 'ready'] : [...nowState.filters.invisibleCardNames]
         }));
     }
 }
@@ -399,7 +400,7 @@ export const changeTaskPriority = (number: string, status: CardNames): ThunkType
         type: "СменитьПриоритетЗадачи"
     }, number);
     if (typeof response === "string") {
-        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { window.location.href = 'login' }
+        if (response === 'Истек срок действия авторизации. Необходимо авторизоваться.') { openLoginPage() }
         else { dispatch(actions.setError(response)); }
     }
     else {

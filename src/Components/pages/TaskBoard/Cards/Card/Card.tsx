@@ -5,7 +5,7 @@ import CardContent from '@material-ui/core/CardContent';
 //import { Card as PrimeCard } from "primereact/card";
 import { CardType, CardNames, setCardStateType, changeTaskPriorityType, changeTaskStatusType, setTaskboardFilterType } from '../../../../../redux/reducers/taskboard-reducer';
 
-import "./Card.css";
+import style from "./Card.module.css";
 import StatusIcon from "../../../../libriary/StatusIcon";
 import { Link } from "react-router-dom";
 import { FaAngleUp, FaAngleDown } from "react-icons/fa";
@@ -15,7 +15,7 @@ function footer(allowedStatuses: Array<string>, number: string, changeStatus: ch
     return (
       <React.Fragment>
         <div>{title}</div>
-        <div className="cardFooter">
+        <div className={style.cardFooter}>
           {allowedStatuses.map((status: string, index: number) => (<div key={index} onClick={(e) => { changeStatus(number, status); }}>
             <StatusIcon status={status} size={'1em'} isHeader={false} />
           </div>))}
@@ -39,21 +39,21 @@ type PropsType = {
 
 const HeaderCardBody = (props: { data: CardType, maintainer: string, setTaskboardFilter: setTaskboardFilterType }) => {
   if (props.data.isExpanded) {
-    return <div className="cardContentText">
+    return <div className={style.cardContentText}>
       <span>
-        <span style={{ cursor: 'pointer' }} onClick={() => props.setTaskboardFilter('visibleProject', props.data.project)}>{props.data.project + ', '}</span>
-        <Link style={{ color: 'inherit' }} to={'/tasks/' + props.data.number}>{props.data.number}</Link>
+        <span className={style.pointerCursor} onClick={() => props.setTaskboardFilter('visibleProject', props.data.project)}>{props.data.project + ', '}</span>
+        <Link className={style.inheritColor} to={'/tasks/' + props.data.number}>{props.data.number}</Link>
         {', ' + props.data.weight}
       </span>
       <br />
       <span>{props.data.customer + ', '}</span>
-      <span style={{ cursor: 'pointer' }} onClick={() => props.setTaskboardFilter('visibleMaintainer', props.maintainer)}>{props.maintainer}</span>
+      <span className={style.pointerCursor} onClick={() => props.setTaskboardFilter('visibleMaintainer', props.maintainer)}>{props.maintainer}</span>
     </div>
   }
   else {
-    return <div className="cardContentText">
-      <span className="shortCardContent">
-        <Link style={{ color: 'inherit' }} to={'/tasks/' + props.data.number}>
+    return <div className={style.cardContentText}>
+      <span className={style.shortCardContent}>
+        <Link className={style.inheritColor} to={'/tasks/' + props.data.number}>
           {props.data.weight + ', ' + props.data.number + '. '}
         </Link>
         {props.data.title}
@@ -65,21 +65,25 @@ const HeaderCardBody = (props: { data: CardType, maintainer: string, setTaskboar
 const Card: React.FC<PropsType> = (props) => {
 
   if (props.data.allowedStatuses.length) {
-    return <PrimeCard className="sticker" style={{ backgroundColor: 'rgb(' + props.data.color + ')' }}>
-      <CardContent className="cardContent">
-        <div className="avatarCardBlock" style={{ color: props.data.priority === 0 ? "red" : "orange", height: (props.data.isExpanded ? '65px' : '48px') }}>
-          <img loading="lazy" alt="avatar" style={{ height: (props.data.isExpanded ? '20px' : '1.3em'), width: (props.data.isExpanded ? '20px' : '1.3em') }} src={props.data.atWork.avatar ? props.data.atWork.avatar : props.avatar} />
+    const priorityColorClass = props.data.priority === 0 ? style.importantPriorityCard : style.usualPriorituCard;
+    const expandedHeightAvatarContainerClass = props.data.isExpanded ? style.expandedAvatarContainerHeight : style.inexpandedAvatarContainerHeight;
+    const expandedAvatarClass = props.data.isExpanded ? style.expandedAvatar : style.inexpandedAvatar;
+
+    return <PrimeCard className={style.sticker} style={{ backgroundColor: 'rgb(' + props.data.color + ')' }}>
+      <CardContent className={style.cardContent}>
+        <div className={style.avatarCardBlock + " " + priorityColorClass + ' ' + expandedHeightAvatarContainerClass}>
+          <img className={expandedAvatarClass} loading="lazy" alt={props.maintainer} src={props.data.atWork.avatar ? props.data.atWork.avatar : props.avatar} />
           <span onClick={(e) => { e.stopPropagation(); props.changeTaskPriority(props.data.number, props.status) }}>
-            <StatusIcon status={props.data.status} size={props.data.isExpanded ? '1.8em' : '1.3em'} isHeader={true} />
+            <StatusIcon status={props.data.status} size={props.data.isExpanded ? '1.8em' : '1.3em'} isHeader />
           </span>
         </div>
         <HeaderCardBody setTaskboardFilter={props.setTaskboardFilter} data={props.data} maintainer={props.maintainer} />
-        {props.data.isExpanded && <span title="фактический анализ + проектирование + разработка + тестирование" className="totalCardWeight p-badge">{props.data.totalWeight}</span>}
-        <div className="cardExpandArrow" onClick={() => { props.setCardState(props.data.id, props.status, "isExpanded", !props.data.isExpanded) }}>
+        {props.data.isExpanded && <span title="фактический анализ + проектирование + разработка + тестирование" className={style.totalCardWeight + " p-badge"}>{props.data.totalWeight}</span>}
+        <div className={style.cardExpandArrow} onClick={() => { props.setCardState(props.data.id, props.status, "isExpanded", !props.data.isExpanded) }}>
           {props.data.isExpanded ? <FaAngleUp size='2em' /> : <FaAngleDown size='2em' />}
         </div>
       </CardContent>
-      <CardActions className="cardFooterActions">
+      <CardActions className={style.cardFooterActions}>
         {props.data.isExpanded && footer(
           props.data.allowedStatuses,
           props.data.number,
@@ -90,8 +94,8 @@ const Card: React.FC<PropsType> = (props) => {
       </CardActions>
     </PrimeCard>
   } else {
-    return <PrimeCard style={{ position: 'relative' }}>
-      <span style={{ color: '#ff8c69', fontSize: '1.17em', fontWeight: 'bolder' }}>{props.data.title}</span>
+    return <PrimeCard className={style.emptyCard}>
+      <span className={style.emptyCardContent}>{props.data.title}</span>
     </PrimeCard>
   }
 

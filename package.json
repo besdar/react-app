@@ -1,33 +1,23 @@
 {
-  "name": "react-test",
-  "version": "0.1.0",
+  "name": "projector",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@date-io/moment": "^1.3.13",
-    "@material-ui/core": "^4.11.0",
+    "@material-ui/core": "^4.11.1",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/pickers": "^3.2.10",
     "@testing-library/jest-dom": "^5.11.6",
-    "@testing-library/react": "^11.1.2",
-    "@testing-library/user-event": "^12.2.2",
-    "@types/jest": "^26.0.15",
-    "@types/lowdb": "^1.0.9",
-    "@types/node": "^14.14.7",
-    "@types/node-rsa": "^1.0.0",
-    "@types/react": "^16.9.56",
-    "@types/react-dom": "^16.9.9",
-    "@types/react-redux": "^7.1.11",
-    "@types/react-router-dom": "^5.1.6",
-    "@types/react-transition-group": "^4.4.0",
-    "@types/redux-form": "^8.3.0",
+    "@testing-library/react": "^11.2.2",
+    "@testing-library/user-event": "^12.3.0",
     "axios": "^0.21.0",
     "classnames": "^2.2.6",
     "moment": "^2.29.1",
     "node-rsa": "^1.1.1",
     "primeflex": "^2.0.0",
-    "primeicons": "^4.0.0",
-    "primereact": "^5.0.1",
+    "primeicons": "^4.1.0",
+    "primereact": "^5.0.2",
     "query-string": "^6.13.7",
     "quill": "^1.3.7",
     "react": "^17.0.1",
@@ -35,12 +25,11 @@
     "react-icons": "^3.11.0",
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.0",
+    "react-scripts": "^4.0.1",
     "react-transition-group": "^4.4.1",
+    "react-virtualized": "^9.22.2",
     "redux": "^4.0.5",
-    "redux-form": "^8.3.6",
-    "redux-thunk": "^2.3.0",
-    "typescript": "^4.0.5"
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -61,7 +50,7 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
+      ">1%",
       "not dead",
       "not op_mini all"
     ],
@@ -74,6 +63,7 @@
   "proxy": "http://localhost:5000/",
   "type": "module",
   "devDependencies": {
+    "@types/react-virtualized": "^9.21.10",
     "body-parser": "^1.19.0",
     "concurrently": "^5.3.0",
     "cookie-parser": "^1.4.5",
@@ -84,6 +74,16 @@
     "nodemon": "^2.0.6",
     "os": "^0.1.1",
     "path": "^0.12.7",
-    "serve": "^11.3.2"
+    "serve": "^11.3.2",
+    "@types/jest": "^26.0.15",
+    "@types/lowdb": "^1.0.9",
+    "@types/node": "^14.14.10",
+    "@types/node-rsa": "^1.0.0",
+    "@types/react": "^16.14.2",
+    "@types/react-dom": "^16.9.10",
+    "@types/react-redux": "^7.1.11",
+    "@types/react-router-dom": "^5.1.6",
+    "@types/react-transition-group": "^4.4.0",
+    "typescript": "^4.1.2"
   }
 }

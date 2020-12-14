@@ -1,0 +1,46 @@
+.maintainerHeaderLine {
+    display: flex;
+    justify-content: space-between;
+    color: #ff6b23;
+}
+
+.maintainerHeaderLineRight {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.maintainerHeaderLineRight > * {
+    margin-left: 8px;
+}
+
+.avatarBlock {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+}
+
+.avatarBlock .avatar_img {
+    margin-right: 1vw;
+    display: flex;
+}
+
+.avatarBlock .avatar_img img {
+    border-radius: 100%;
+    height: 50px;
+    width: 50px;
+}
+
+.avatarBlock .title {
+    white-space: nowrap;
+    font-size: large;
+}
+
+.maintainerHeaderLineRight .showIcon path {
+    fill: #ff6b23;
+}
+
+.showIcon:hover path {
+    fill: darkblue;
+}

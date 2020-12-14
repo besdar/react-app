@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import Task from './Task';
 import { connect } from "react-redux";
-import { setCurrentTaskState, setTaskProp, setTaskSpec, pushTaskButton, getTaskData, setNewTaskData, setNewTaskAttachement, setNewTaskDataType, getTaskDataType, setCurrentTaskStateType, setTaskPropType, setTaskSpecType, pushTaskButtonType, setNewTaskAttachementType, setSpecificationContext, setSpecificationContextType } from "../../../redux/reducers/task-reducer";
+import { setCurrentTaskState, setTaskProp, setTaskSpec, pushTaskButton, getTaskData, setNewTaskData, toggleTaskSpec, setNewTaskAttachement, setNewTaskDataType, getTaskDataType, setCurrentTaskStateType, setTaskPropType, setTaskSpecType, pushTaskButtonType, setNewTaskAttachementType, setSpecificationContext, setSpecificationContextType, toggleTaskSpecType } from "../../../redux/reducers/task-reducer";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { compose } from "redux";
 import { AppStateType } from '../../../redux/store/redux-store';
@@ -17,7 +17,8 @@ type DispatchPropsType = {
     pushTaskButton: pushTaskButtonType,
     setNewTaskAttachement: setNewTaskAttachementType,
     setSpecificationContext: setSpecificationContextType,
-    sendBidReply: sendBidReplyType
+    sendBidReply: sendBidReplyType,
+    toggleTaskSpec: toggleTaskSpecType
 }
 
 type PathParamsType = {
@@ -53,7 +54,8 @@ const TaskContainer: React.FC<PropsType> = (props) => {
         getTaskData={props.getTaskData}
         setNewTaskData={props.setNewTaskData}
         setSpecificationContext={props.setSpecificationContext}
-        sendBidReply={props.sendBidReply} />
+        sendBidReply={props.sendBidReply}
+        toggleTaskSpec={props.toggleTaskSpec} />
 }
 
 // function resize() {
@@ -73,4 +75,4 @@ const mapStateToProps = (state: AppStateType) => {
     })
 }
 
-export default compose<React.ComponentType>(connect(mapStateToProps, { setCurrentTaskState, setTaskProp, setTaskSpec, pushTaskButton, getTaskData, setNewTaskData, setNewTaskAttachement, setSpecificationContext, sendBidReply }), withRouter)(TaskContainer);
+export default compose<React.ComponentType>(connect(mapStateToProps, { setCurrentTaskState, setTaskProp, setTaskSpec, toggleTaskSpec, pushTaskButton, getTaskData, setNewTaskData, setNewTaskAttachement, setSpecificationContext, sendBidReply }), withRouter)(TaskContainer);

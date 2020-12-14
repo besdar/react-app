@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import Tasks from './Tasks';
 import { connect } from "react-redux";
-import { getTasksList, setTasksCurrentState, setTasksContextMenu, getTasksListType, setTasksCurrentStateType, setTasksContextMenuType } from "../../../redux/reducers/tasks-reducer";
+import { getTasksList, getTasksListType} from "../../../redux/reducers/tasks-reducer";
 import { withRouter } from "react-router-dom";
 import { compose } from "redux";
 import { AppStateType } from '../../../redux/store/redux-store';
@@ -10,8 +10,6 @@ import { MenuItem } from 'primereact/components/menuitem/MenuItem';
 type MapPropsType = ReturnType<typeof mapStateToProps>
 type DispatchPropsType = {
     getTasksList: getTasksListType,
-    setTasksCurrentState: setTasksCurrentStateType,
-    setTasksContextMenu: setTasksContextMenuType,
     AllowedItems: Array<MenuItem>
 }
 
@@ -27,8 +25,6 @@ const TasksContainer: React.FC<PropsType> = (props) => {
 
     return <Tasks
         tasksList={props.tasksList}
-        setTasksCurrentState={props.setTasksCurrentState}
-        setTasksContextMenu={props.setTasksContextMenu}
         AllowedItems={props.AllowedItems} />
 }
 
@@ -39,4 +35,4 @@ const mapStateToProps = (state: AppStateType) => {
     })
 }
 
-export default compose<React.ComponentType>(connect(mapStateToProps, { setTasksCurrentState, getTasksList, setTasksContextMenu }), withRouter)(TasksContainer);
+export default compose<React.ComponentType>(connect(mapStateToProps, { getTasksList }), withRouter)(TasksContainer);

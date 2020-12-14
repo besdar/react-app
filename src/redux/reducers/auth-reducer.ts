@@ -1,7 +1,6 @@
 import { AuthAPI } from "../../api/auth-api";
 import { BaseThunkType, InferActionsTypes } from '../store/redux-store';
 import NodeRSA from 'node-rsa';
-import { FormAction } from 'redux-form/lib/actions';
 
 const initialState = {
     token: '',
@@ -116,7 +115,8 @@ export const login = (): ThunkType => async (dispatch, getState) => {
     else { 
         dispatch(actions.setAuthUserData(response.token, true));
         if (window.location.pathname === '/login') {
-            window.location.href = '/';
+            const previousPage = decodeURIComponent(readCookie('old_page')) || '/';
+            window.location.href = previousPage;
         } 
     }
 }
@@ -130,7 +130,7 @@ export default authReducer;
 
 export type AuthInitialStateType = typeof initialState;
 type ActionsType = InferActionsTypes<typeof actions>;
-type ThunkType = BaseThunkType<ActionsType | FormAction>;
+type ThunkType = BaseThunkType<ActionsType>;
 
 // thunk types //
 // нужно заменить на typeof

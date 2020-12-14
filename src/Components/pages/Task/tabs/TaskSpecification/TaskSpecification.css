@@ -30,3 +30,47 @@
     display: flex;
     flex-direction: column;
 }
+
+.taskSpecificationSmallColumn {
+    width: 5%;
+}
+
+.taskSpecificationMiddleColumn {
+    width: 20%;
+}
+
+.taskDescriptionCellContainer {
+    display: flex;
+    align-items: center;
+}
+
+.commentImplantation {
+    height: 100%;
+}
+
+.toggleRowButton {
+    display: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 0 5px;
+}
+
+.toggleRowButton:hover {
+    color: blue;
+}
+
+.specificationNumberCell:hover .toggleRowButton {
+    display: block;
+}
+
+.specificationNumberCell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.specificationNumberCellContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

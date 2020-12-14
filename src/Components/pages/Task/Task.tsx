@@ -1,13 +1,13 @@
 import React, { useRef } from 'react';
 import { Toast } from 'primereact/toast';
 
-import Header from './header';
+import Header from './TaskHeader';
 
 import './Task.css';
 import TaskMain from './tabs/TaskMain/TaskMain';
 
 import Loader from '../../common/Loader/Loader';
-import { TaskType, TaskMetadataType, ErrorType, setNewTaskDataType, getTaskDataType, setCurrentTaskStateType, setTaskPropType, setTaskSpecType, pushTaskButtonType, setNewTaskAttachementType, setSpecificationContextType } from '../../../redux/reducers/task-reducer';
+import { TaskType, TaskMetadataType, ErrorType, setNewTaskDataType, getTaskDataType, setCurrentTaskStateType, setTaskPropType, setTaskSpecType, pushTaskButtonType, setNewTaskAttachementType, setSpecificationContextType, toggleTaskSpecType } from '../../../redux/reducers/task-reducer';
 
 import { TabView, TabPanel } from 'primereact/tabview';
 import { FaBusinessTime, FaComments } from 'react-icons/fa';
@@ -29,6 +29,7 @@ type PropsType = {
     setTaskProp: setTaskPropType,
     setTaskSpec: setTaskSpecType,
     pushTaskButton: pushTaskButtonType,
+    toggleTaskSpec: toggleTaskSpecType,
     setNewTaskAttachement: setNewTaskAttachementType,
     setSpecificationContext: setSpecificationContextType,
     sendBidReply: sendBidReplyType
@@ -47,7 +48,7 @@ const Task: React.FC<PropsType> = (props) => {
 
     const DiscussionTabs = [
         <TabPanel key={1} header={<React.Fragment><FaBusinessTime /><span>Основное</span></React.Fragment>}>
-            <TaskMain getTaskData={props.getTaskData} Task={props.Task} setTaskSpec={props.setTaskSpec} setTaskProp={props.setTaskProp} TaskMetadata={props.TaskMetadata} pushTaskButton={props.pushTaskButton} />
+            <TaskMain getTaskData={props.getTaskData} Task={props.Task} setTaskProp={props.setTaskProp} TaskMetadata={props.TaskMetadata} pushTaskButton={props.pushTaskButton} />
         </TabPanel>,
         <TabPanel key={2} header={<React.Fragment><GoLink /><span>Связанные</span></React.Fragment>}>
             <ConnectedBidsTable expandedRows={props.Task.expandedRows} setBidProp={props.setTaskProp} connectedBids={props.Task.connectedTasks} />
@@ -61,19 +62,20 @@ const Task: React.FC<PropsType> = (props) => {
                 setTaskProp={props.setTaskProp}
                 setSpecificationContext={props.setSpecificationContext}
                 Task={props.Task}
-                setTaskSpec={props.setTaskSpec} />
+                setTaskSpec={props.setTaskSpec}
+                toggleTaskSpec={props.toggleTaskSpec} />
         </TabPanel>
     ];
     if (props.Task.source.type === 'Заявки') {
         DiscussionTabs.push(<TabPanel key={5} header={<React.Fragment><FaComments /><span>Обсуждения</span></React.Fragment>}>
-            <DiscussionChat data={props.Task.discussionData} showAllMessagesButton={true} sendReply={props.sendBidReply} />
+            <DiscussionChat data={props.Task.discussionData} showAllMessagesButton sendReply={props.sendBidReply} />
         </TabPanel>);
     }
 
     return (<div className="task">
         <Toast ref={toast} />
         <Header Task={props.Task} pushTaskButton={props.pushTaskButton} />
-        <TabView activeIndex={!props.Task.number ? 0 : 3}>
+        <TabView activeIndex={(props.Task.number === "" || isNaN(parseInt(window.location.pathname.slice(7)))) ? 0 : 3}>
             {DiscussionTabs}
         </TabView>
     </div>)

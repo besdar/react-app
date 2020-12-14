@@ -2,6 +2,7 @@ import React from "react";
 import { CardNames, CardsItemType, changeTaskPriorityType, changeTaskStatusType, setCardStateType, setCurrentStateOfCardsListType, setCurrentStateOfCardsType, setTaskboardFilterType } from "../../../../redux/reducers/taskboard-reducer";
 import MaintainerHeader from "./MaintainerHeader";
 import MaintainerList from "./MaintainerList";
+import style from "./StatusList.module.css";
 
 type StatusListPropsType = {
   data: CardsItemType,
@@ -21,7 +22,7 @@ const StatusList = (props: StatusListPropsType) => {
   if (props.data.isCollapse || (props.data.isCollapse === undefined && !props.isItDesktop)) { return null }
 
   return <React.Fragment>
-    {props.status === 'atProgress' && <div className="emptyMaintainerHeaderLine"></div>}
+    {props.status === 'atProgress' && <div className={style.emptyMaintainerHeaderLine}></div>}
     {props.data.lists.map((list, index) => {
       return list.list.length > 0 && <React.Fragment key={index}>
         <MaintainerHeader setTaskboardFilter={props.setTaskboardFilter} list={list} setCurrentStateOfCardsList={props.setCurrentStateOfCardsList} status={props.status} index={index} />

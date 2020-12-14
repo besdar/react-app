@@ -2,17 +2,17 @@ import React from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Link } from 'react-router-dom';
-import { TaskType, TaskMetadataType, setTaskPropType, pushTaskButtonType, getTaskDataType, setTaskSpecType, sourceType } from '../../../../../redux/reducers/task-reducer';
+import { TaskType, TaskMetadataType, setTaskPropType, pushTaskButtonType, getTaskDataType, sourceType } from '../../../../../redux/reducers/task-reducer';
 import { InputNumber } from 'primereact/inputnumber';
 import { ToggleButton } from 'primereact/togglebutton';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import './TaskMain.css';
 
 type PropsType = {
     Task: TaskType,
     setTaskProp: setTaskPropType,
     TaskMetadata: TaskMetadataType,
-    setTaskSpec: setTaskSpecType,
     pushTaskButton: pushTaskButtonType,
     getTaskData: getTaskDataType,
 }
@@ -44,10 +44,10 @@ const TaskMain: React.FC<PropsType> = (props) => {
             <SourceLink source={props.Task.source} getTaskData={props.getTaskData} />
         </div>
         <div className="p-grid">
-            <div className="p-grid-col p-col" style={{ paddingLeft: 0 }}>
+            <div className="p-grid-col p-col taskLeftFieldsContainer">
                 <div className="p-col">
                     <label htmlFor="number">Номер: </label>
-                    <InputText id="number" value={props.Task.number} disabled={true} />
+                    <InputText id="number" value={props.Task.number} disabled />
                 </div>
                 <div className="p-col">
                     <label htmlFor="project">Проект: </label>
@@ -67,25 +67,25 @@ const TaskMain: React.FC<PropsType> = (props) => {
                 </div>
                 <div className="p-col">
                     <label htmlFor="maintainer">Исполнитель: </label>
-                    <Dropdown filter={true} filterMatchMode="startsWith" id="maintainer" value={props.Task.maintainer} options={props.TaskMetadata.userSelectItems} onChange={(e) => props.setTaskProp('maintainer', e.target.value)} />
+                    <Dropdown filter filterMatchMode="startsWith" id="maintainer" value={props.Task.maintainer} options={props.TaskMetadata.userSelectItems} onChange={(e) => props.setTaskProp('maintainer', e.target.value)} />
                 </div>
                 <div className="p-col">
                     <label htmlFor="specificationWriter">Технический писатель: </label>
-                    <Dropdown filter={true} filterMatchMode="startsWith" id="specificationWriter" value={props.Task.specificationWriter} options={props.TaskMetadata.userSelectItems} onChange={(e) => props.setTaskProp('specificationWriter', e.target.value)} />
+                    <Dropdown filter filterMatchMode="startsWith" id="specificationWriter" value={props.Task.specificationWriter} options={props.TaskMetadata.userSelectItems} onChange={(e) => props.setTaskProp('specificationWriter', e.target.value)} />
                 </div>
                 <div className="p-col">
                     <span>Тестирование: </span>
                     <ToggleButton checked={props.Task.isNeedTest} onChange={(e) => props.setTaskProp('isNeedTest', e.value)} onLabel="Тестировать" offLabel="Не тестировать" />
                 </div>
             </div>
-            <div className="p-grid-col p-col" style={{ paddingRight: 0 }}>
+            <div className="p-grid-col p-col taskRightFieldsContainer">
                 <div className="p-col">
                     <label htmlFor="status">Статус: </label>
                     <InputText disabled type="text" id="status" value={props.Task.status} />
                 </div>
                 <div className="p-col">
                     <label htmlFor="customer">Заказчик: </label>
-                    <Dropdown filter={true} filterMatchMode="startsWith" id="customer" disabled={props.Task.VisibilityAvailability.unavailable.find((element) => (element === 'Заказчик')) !== undefined} value={props.Task.customer} options={props.TaskMetadata.customerSelectItems} onChange={(e) => props.setTaskProp('customer', e.target.value)} />
+                    <Dropdown filter filterMatchMode="startsWith" id="customer" disabled={props.Task.VisibilityAvailability.unavailable.find((element) => (element === 'Заказчик')) !== undefined} value={props.Task.customer} options={props.TaskMetadata.customerSelectItems} onChange={(e) => props.setTaskProp('customer', e.target.value)} />
                 </div>
                 <div className="p-col">
                     <label htmlFor="priority">Приоритет: </label>
@@ -103,11 +103,11 @@ const TaskMain: React.FC<PropsType> = (props) => {
                 </div>
                 <div className="p-col">
                     <label htmlFor="maintainer">Архитектор: </label>
-                    <Dropdown filter={true} filterMatchMode="startsWith" id="designer" value={props.Task.designer} options={props.TaskMetadata.userSelectItems} onChange={(e) => props.setTaskProp('designer', e.target.value)} />
+                    <Dropdown filter filterMatchMode="startsWith" id="designer" value={props.Task.designer} options={props.TaskMetadata.userSelectItems} onChange={(e) => props.setTaskProp('designer', e.target.value)} />
                 </div>
                 <div className="p-col">
                     <label htmlFor="tester">Тестировщик: </label>
-                    <Dropdown filter={true} filterMatchMode="startsWith" id="tester" value={props.Task.designer} options={props.TaskMetadata.userSelectItems} onChange={(e) => props.setTaskProp('tester', e.target.value)} />
+                    <Dropdown filter filterMatchMode="startsWith" id="tester" value={props.Task.designer} options={props.TaskMetadata.userSelectItems} onChange={(e) => props.setTaskProp('tester', e.target.value)} />
                 </div>
             </div>
         </div>

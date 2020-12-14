@@ -1,0 +1,15 @@
+.taskboardColumn {
+    min-width: 300px;
+}
+
+.taskboardBodyContainer {
+    margin-right: 0px;
+}
+
+.twoSubcolumnsColumn {
+   flex-grow: 2; 
+}
+
+.threeSubcolumnsColumn {
+    flex-grow: 3;
+}

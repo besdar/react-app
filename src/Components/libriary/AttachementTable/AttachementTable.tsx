@@ -38,7 +38,7 @@ type PropsType = {
 const AttachementHeader = (props: {attachement_links_length: number, setNewAttachement: setNewAttachementType}) => <React.Fragment>
     <h3>Вложения</h3>
     <div id="file_upload">
-        <FileUpload chooseLabel='Выбрать файл' mode="basic" name="upload" maxFileSize={500000} auto={true} customUpload={true} uploadHandler={(e: any) => uploadFile(e, props.setNewAttachement)} />
+        <FileUpload chooseLabel='Выбрать файл' mode="basic" name="upload" maxFileSize={500000} auto customUpload uploadHandler={(e: any) => uploadFile(e, props.setNewAttachement)} />
         <sup className="badge">{props.attachement_links_length}</sup>
     </div>
 </React.Fragment>;
@@ -50,7 +50,11 @@ const AttachementTable: React.FC<PropsType> = (props) => {
     <DataTable value={props.attachement_links}>
         <Column header={<AttachementHeader attachement_links_length={props.attachement_links.length} setNewAttachement={props.setNewAttachement} />} body={(el: attachementItemType) => linkTemplate(el, iframeRef)} />
     </DataTable>
-    <iframe id="attachement_preview_iframe" title='Предпросмотр вложения' ref={iframeRef} src=""></iframe>
+    <iframe 
+        style={{height: window.innerHeight
+            // - (document.getElementById('attachement_preview_iframe') as HTMLElement).offsetTop 
+            - 400 + 'px'}} 
+        id="attachement_preview_iframe" title='Предпросмотр вложения' ref={iframeRef} src=""></iframe>
     </React.Fragment>
 }
 

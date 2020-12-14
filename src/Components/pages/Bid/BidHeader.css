@@ -1,0 +1,11 @@
+.bidTitle {
+    margin: 0;
+}
+
+.inlineFlexDisplay {
+    display: inline-flex;
+}
+
+.linkWithoutDecoration {
+    text-decoration: none;
+}

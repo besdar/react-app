@@ -8,7 +8,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 //import { AutoComplete } from 'primereact/autocomplete';
 
-import "./Header.css";
+import style from "./Header.module.css";
 import { MdViewComfy, MdViewModule, MdCallMissedOutgoing, MdCallMissed } from "react-icons/md";
 import { AiOutlineFullscreenExit, AiOutlineFullscreen } from "react-icons/ai";
 import { FaHome, FaAngleUp, FaAngleDown, FaPlusCircle, FaBars } from "react-icons/fa";
@@ -31,20 +31,20 @@ type PropsType = {
 
 const Header: React.FC<PropsType> = (props) => {
   return (<React.Fragment>
-    {props.visibility.showSpinner && <LinearProgress className="progress_bar" />}
-    {props.visibility.headerVisible && <div className="header_white_margin"></div>}
+    {props.visibility.showSpinner && <LinearProgress className={style.progress_bar} />}
+    {props.visibility.headerVisible && <div className={style.header_white_margin}></div>}
     <Drawer anchor="left" variant="persistent" open={props.visibility.menuVisible}>
-      <div className="header_white_margin"></div>
+      <div className={style.header_white_margin}></div>
       <LinkList exclude='taskboard' />
     </Drawer>
-    <Drawer className="header_sidebar" anchor="top" open={props.visibility.headerVisible} variant="persistent" >
-      <div className="header">
-        <div className="leftHeader">
+    <Drawer className={style.header_sidebar} anchor="top" open={props.visibility.headerVisible} variant="persistent" >
+      <div className={style.header}>
+        <div className={style.leftHeader}>
           <div onClick={() => { props.setHeaderVisibility(props.visibility.headerVisible, !props.visibility.menuVisible) }}><FaBars title="Меню" size='2em' /></div>
           <h1>Taskboard</h1>
         </div>
         <Autocomplete
-          style={{ width: 300 }}
+          className={style.NumberNameAutocompleteFilterInput}
           onChange={(originalEvent, query) => {
             //seacrhCard(query as string, props.setTaskboardFilter, props.searchFilter.cardsSearchArray);
             props.setTaskboardFilter('searchFilter', { inputSelectedCard: query || "", cardsSearchArray: props.searchFilter.cardsSearchArray, FullTextOfSelectedCard: query || '' })
@@ -60,7 +60,7 @@ const Header: React.FC<PropsType> = (props) => {
           value={props.searchFilter.FullTextOfSelectedCard}
           getOptionSelected={(option) => (!!option)}
           options={props.searchFilter.cardsSearchArray} />
-        <div className="rightHeader">
+        <div className={style.rightHeader}>
           <div onClick={() => props.setTaskboardFilter('invisibleCardNames', 'ready')}>{props.isReadyVisible ? <MdCallMissedOutgoing title="Выполненные скрыть" size='2em' /> : <MdCallMissed title="Выполненные отобразить" size='2em' />}</div>
           <div onClick={() => props.getTaskboardData()}><FiRefreshCw title="Сброс и обновление данных доски" size='2em' /></div>
           <div onClick={props.expandAllCards}>{props.isAllCardExpanded ? <MdViewComfy size='2em' title="Сжатый вид" /> : <MdViewModule size='2em' title="Подробный вид" />}</div>
@@ -70,7 +70,7 @@ const Header: React.FC<PropsType> = (props) => {
         </div>
       </div>
     </Drawer>
-    <div className="showHeader" style={{ top: props.visibility.headerVisible ? 'calc(2rem + 45px)' : '0px' }} onClick={() => props.setHeaderVisibility(!props.visibility.headerVisible)}>
+    <div className={style.showHeader + ' ' + (props.visibility.headerVisible ? style.showHeaderOpen : style.showHeaderClosed)} onClick={() => props.setHeaderVisibility(!props.visibility.headerVisible)}>
       {props.visibility.headerVisible ? <FaAngleUp size='2em' /> : <FaAngleDown size='2em' />}
     </div>
   </React.Fragment>);

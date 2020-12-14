@@ -1,0 +1,45 @@
+.cardsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    color: #4c8dce;
+    flex-wrap: wrap;
+}
+
+.cardsHeader h3 {
+    margin-bottom: 0px;
+    -webkit-box-flex: 1;
+    flex: 1 0;
+    min-width: 0;
+    font-size: larger;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cardsHeader div {
+    white-space: nowrap;
+}
+
+.showIcon path {
+    fill: #4c8dce;
+}
+
+.showIcon:hover path {
+    fill: darkblue;
+}
+
+.statusHeaderLineRight {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.statusHeaderLineRight > * {
+    margin-left: 8px;
+}
+
+.cardsHeaderLine {
+    margin-top: 0px;
+}

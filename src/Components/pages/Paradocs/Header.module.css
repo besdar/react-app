@@ -1,0 +1,15 @@
+.paradocsHeaderTitle {
+    margin: 0px 5px 15px 0px;
+    line-height: 1;
+}
+
+.paradocsHeaderTitleIcon {
+    margin: 0px 5px 15px 0px;
+    color: #007ad9;
+    cursor: pointer;
+}
+
+.paradocsHeaderContainer {
+    display: flex;
+    align-items: flex-end;
+}

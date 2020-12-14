@@ -39,13 +39,13 @@ const DiscussionChat: React.FC<PropsType> = (props) => {
     const replyElement = props.data.childs.find((el) => (el.id === state.nowReplyMessageId));
 
     const messagesList = props.data.childs.map((element, index) => {
-        return <div className='msg-container' key={index} style={{ alignSelf: element.position === 'left' ? 'flex-start' : 'flex-end', borderRadius: element.position === 'left' ? '20px 20px 20px 0' : '20px 20px 0 20px' }}>
-            <div className='msg-content'>
-                <div className='msg-title' style={{ WebkitTextStrokeColor: element.titleColor }}>{element.title}</div>
-                <div className='msg-text'>{element.text}</div>
-                <div className='msg-footer'>
-                    <div className='msg-reply-btn' onClick={() => setState({ ...state, nowReplyMessageId: element.id })}>Ответить</div>
-                    <div className='msg-date'>{element.dateString}</div>
+        return <div className={'msg-container ' + (element.position === 'left' ? ' leftDiscussionMessage' : ' rightDiscussionMessage')} key={index} >
+            <div key={index} className='msg-content'>
+                <div key={index} className='msg-title' style={{ WebkitTextStrokeColor: element.titleColor }}>{element.title}</div>
+                <div key={index} className='msg-text'>{element.text}</div>
+                <div key={index} className='msg-footer'>
+                    <div key={index} className='msg-reply-btn' onClick={() => setState({ ...state, nowReplyMessageId: element.id })}>Ответить</div>
+                    <div key={index} className='msg-date'>{element.dateString}</div>
                 </div>
             </div>
         </div>
@@ -58,7 +58,7 @@ const DiscussionChat: React.FC<PropsType> = (props) => {
         <div className="p-col">
             <ScrollPanel style={{ maxHeight: props.maxHeight || 'none' }}>
                 <div className="mssg-box">
-                    <div className='msg-list' style={{display: 'flex', flexDirection: 'column'}}>
+                    <div className='msg-list discussionMessageList'>
                         {messagesList}
                     </div>
 
@@ -71,7 +71,7 @@ const DiscussionChat: React.FC<PropsType> = (props) => {
                     </div>}
 
                     <div className="send-inputgroup">
-                        <InputTextarea autoResize placeholder="Введите текст здесь..." value={state.currentReplyMessage} onChange={(e) => setState({ ...state, currentReplyMessage: e.currentTarget.value })} />
+                        <InputTextarea className="discussionInputTextarea" autoResize placeholder="Введите текст здесь..." value={state.currentReplyMessage} onChange={(e) => setState({ ...state, currentReplyMessage: e.currentTarget.value })} />
                         <div className='send-bttn' id={props.data.id} onClick={(element) => {
                             props.sendReply(state.nowReplyMessageId || (!replyElement ? '' : replyElement.id), state.currentReplyMessage);
                             setState({
